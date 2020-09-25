@@ -27,7 +27,7 @@ Pulsar - сервер-клієнт програмне забезпечення, 
 
 * Project manager - [name]()
 * Back developer - [name]()
-* Front developer - [name]()
+* Front developer - [name](Yaroslav Raschupkin)
 * Front developer - [name]()
 * QA lead - [name]()
 * Tester - [name]()

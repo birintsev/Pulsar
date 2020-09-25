@@ -31,7 +31,7 @@ Pulsar - сервер-клієнт програмне забезпечення, 
 * Tester - [Alla Sitalo](https://www.github.com/alla-sitalo)
 * QA lead - [Marina Suhostavec](https://www.github.com/MarySweetRollStolen)
 * Tester - [Andrey Skorohod](https://www.github.com/MacGregory-is-codding)
-* Tester- [name]()
+* Tester- [Andrey Bezpalyi] (https://www.github.com/andrey-bezpalyi)
 
 ### Installation, інсталяція
 

@@ -28,7 +28,7 @@ Pulsar - сервер-клієнт програмне забезпечення, 
 * Project manager - [Ilona Bielym](https://www.github.com/ilona-bielym)
 * Back developer - [Birintsev Mykhailo] (https://www.github.com/leader228228)
 * Front developer - [Yaroslav Raschupkin](https://www.github.com/yaroslav-raschupkin)
-* Front developer - [name]()
+* Tester - [Alla Sitalo](https://www.github.com/alla-sitalo)
 * QA lead - [Marina Suhostavec](https://www.github.com/MarySweetRollStolen)
 * Tester - [Andrey Skorohod](https://www.github.com/MacGregory-is-codding)
 * Tester- [name]()

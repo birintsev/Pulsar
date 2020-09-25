@@ -30,7 +30,7 @@ Pulsar - сервер-клієнт програмне забезпечення, 
 * Front developer - [Yaroslav Raschupkin](https://www.github.com/yaroslav-raschupkin)
 * Front developer - [name]()
 * QA lead - [Marina Suhostavec](https://www.github.com/MarySweetRollStolen)
-* Tester - [name]()
+* Tester - [Andrey Skorohod](https://www.github.com/MacGregory-is-codding)
 * Tester- [name]()
 
 ### Installation, інсталяція

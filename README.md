@@ -29,7 +29,7 @@ Pulsar - сервер-клієнт програмне забезпечення, 
 * Back developer - [Birintsev Mykhailo] (https://www.github.com/leader228228)
 * Front developer - [Yaroslav Raschupkin](https://www.github.com/yaroslav-raschupkin)
 * Front developer - [name]()
-* QA lead - [name]()
+* QA lead - [Marina Suhostavec](https://www.github.com/MarySweetRollStolen)
 * Tester - [name]()
 * Tester- [name]()
 

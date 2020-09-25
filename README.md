@@ -27,7 +27,7 @@ Pulsar - сервер-клієнт програмне забезпечення, 
 
 * Project manager - [name]()
 * Back developer - [Birintsev Mykhailo] (https://www.github.com/leader228228)
-* Front developer - [name](Yaroslav Raschupkin)
+* Front developer - [Yaroslav Raschupkin](https://www.github.com/yaroslav-raschupkin)
 * Front developer - [name]()
 * QA lead - [name]()
 * Tester - [name]()

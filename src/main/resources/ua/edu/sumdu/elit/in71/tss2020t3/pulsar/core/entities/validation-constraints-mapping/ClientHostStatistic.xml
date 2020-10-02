@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<constraint-mappings
+        xmlns="http://xmlns.jcp.org/xml/ns/validation/mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/validation/mapping
+            http://xmlns.jcp.org/xml/ns/validation/mapping/validation-mapping-2.0.xsd"
+        version="2.0">
+
+    <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic">
+        <field name="host">
+            <valid/>
+        </field>
+        <field name="clientLocalTime">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Client local time must be set</message>
+            </constraint>
+        </field>
+        <field name="bootTime">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Client boot time must be set</message>
+            </constraint>
+        </field>
+        <field name="clientHost">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Client host must be set</message>
+            </constraint>
+        </field>
+        <field name="agentVersion">
+            <constraint annotation="javax.validation.constraints.NotBlank">
+                <message>Agent version must be set</message>
+            </constraint>
+        </field>
+        <field name="cpuInfoList">
+            <valid/>
+        </field>
+        <field name="disksInfo">
+            <valid/>
+        </field>
+        <field name="loadAverage">
+            <constraint annotation="javax.validation.constraints.Min">
+                <message>Load average may not be less than 0</message>
+                <element name="value">0</element>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.Max">
+                <message>Load average may not be greater than 1</message>
+                <element name="value">1</element>
+            </constraint>
+        </field>
+        <field name="memoryInfo">
+            <valid/>
+        </field>
+        <field name="networksInfo">
+            <valid/>
+        </field>
+    </bean>
+</constraint-mappings>

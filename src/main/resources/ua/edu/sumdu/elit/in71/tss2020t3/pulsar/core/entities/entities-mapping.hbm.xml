@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping xmlns="http://www.hibernate.org/xsd/hibernate-mapping">
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User" table="pu_users">
+
+        <id name="email" column="email"/>
+
+        <property name="firstName" column="first_name"/>
+        <property name="lastName" column="last_name"/>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost" table="pu_clients_hosts">
+
+        <id name="publicKey" column="public_key"/>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic" table="pu_clients_hosts_statistic">
+
+        <composite-id name="ID" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic$ClientHostStatisticID">
+
+            <key-many-to-one name="clientHost">
+
+                <column name="public_key"/>
+            </key-many-to-one>
+            <key-property name="clientLocalTime" type="java.sql.Date" column="client_local_time"/>
+        </composite-id>
+
+        <one-to-one
+                name="memoryInfo"
+                class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo"
+                cascade="all"
+        />
+
+        <set name="loadAverage" table="pu_clients_load_average" cascade="all" fetch="join">
+            <key>
+                <column name="public_key"/>
+                <column name="client_local_time"/>
+            </key>
+            <one-to-many class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.LoadAverage"/>
+        </set>
+        <set name="CPUInfoList" table="pu_clients_cpu_info" cascade="all" fetch="join">
+            <key>
+                <column name="public_key"/>
+                <column name="client_local_time"/>
+            </key>
+            <one-to-many class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo"/>
+        </set>
+        <set name="networksInfo" table="pu_clients_network_info" cascade="all" fetch="join">
+            <key>
+                <column name="public_key"/>
+                <column name="client_local_time"/>
+            </key>
+            <one-to-many class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo"/>
+        </set>
+        <property name="host" column="host"/>
+        <property name="bootTime" column="client_boot_time"/>
+        <property name="agentVersion" column="agent_version"/>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo" table="pu_clients_cpu_info">
+
+        <composite-id>
+
+            <key-many-to-one name="clientHostStatistic">
+
+                <column name="public_key"/>
+                <column name="client_local_time"/>
+            </key-many-to-one>
+        </composite-id>
+
+        <property name="num" column="num" not-null="true"/>
+        <property name="user" column='"user"' not-null="true"/>
+        <property name="system" column="system" not-null="true"/>
+        <property name="idle" column="idle" not-null="true"/>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo" table="pu_clients_disk_info">
+
+        <composite-id>
+
+            <key-many-to-one name="clientHostStatistic">
+
+                <column name="public_key"/>
+                <column name="client_local_time"/>
+            </key-many-to-one>
+        </composite-id>
+
+        <property name="origin" column="origin"/>
+        <property name="free" column="free"/>
+        <property name="total" column="total"/>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.LoadAverage" table="pu_clients_load_average">
+
+        <composite-id>
+
+            <key-many-to-one name="clientHostStatistic">
+
+                <column name="public_key"/>
+                <column name="client_local_time"/>
+            </key-many-to-one>
+            <key-property name="order" column='"order"'/>
+        </composite-id>
+
+        <property name="loadAverage" column="load_average"/>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo" table="pu_clients_memory_info">
+
+        <composite-id>
+
+            <key-many-to-one name="clientHostStatistic">
+
+                <column name="public_key"/>
+                <column name="client_local_time"/>
+            </key-many-to-one>
+        </composite-id>
+
+        <property name="wired" column="wired"/>
+        <property name="free" column="free"/>
+        <property name="active" column="active"/>
+        <property name="inactive" column="inactive"/>
+        <property name="total" column="total"/>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo" table="pu_clients_network_info">
+
+        <composite-id>
+
+            <key-many-to-one name="clientHostStatistic">
+
+                <column name="public_key"/>
+                <column name="client_local_time"/>
+            </key-many-to-one>
+            <key-property name="name"/>
+        </composite-id>
+
+        <property name="out" column="out"/>
+        <property name="in" column='"in"'/>
+    </class>
+</hibernate-mapping>

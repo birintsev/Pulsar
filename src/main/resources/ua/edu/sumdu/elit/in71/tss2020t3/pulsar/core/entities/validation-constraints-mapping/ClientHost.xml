@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<constraint-mappings
+        xmlns="http://xmlns.jcp.org/xml/ns/validation/mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/validation/mapping
+            http://xmlns.jcp.org/xml/ns/validation/mapping/validation-mapping-2.0.xsd"
+        version="2.0">
+
+    <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost">
+
+        <field name="publicKey">
+
+            <constraint annotation="javax.validation.constraints.NotBlank">
+
+                <message>Email must be valid</message>
+            </constraint>
+        </field>
+    </bean>
+</constraint-mappings>

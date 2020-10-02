@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<hibernate-configuration xmlns="http://www.hibernate.org/xsd/orm/cfg">
+
+    <session-factory>
+        <property name="show_sql">true</property>
+        <property name="hbm2ddl.auto">create-drop</property>
+        <mapping resource="ua/edu/sumdu/elit/in71/tss2020t3/pulsar/core/entities/entities-mapping.hbm.xml"/>
+    </session-factory>
+</hibernate-configuration>

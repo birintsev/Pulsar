@@ -10,7 +10,7 @@ public class PropertyBasedAppConfig implements ApplicationConfiguration {
 
 	@Override
 	public String getDialect() {
-		return applicationConfig.getProperty("database.dialect");
+		return applicationConfig.getProperty("pulsar.database.dialect");
 	}
 
 	private static final Logger LOGGER = Logger.getLogger(PropertyBasedAppConfig.class);
@@ -41,11 +41,11 @@ public class PropertyBasedAppConfig implements ApplicationConfiguration {
 				return false;
 			}
 		}
-		if (!isValidPortNumber(properties.getProperty("server.port"))) {
+		if (!isValidPortNumber(properties.getProperty("pulsar.server.port"))) {
 			return false;
 		}
 		try {
-			Class.forName(properties.getProperty("database.dialect"));
+			Class.forName(properties.getProperty("pulsar.database.dialect"));
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
@@ -64,17 +64,17 @@ public class PropertyBasedAppConfig implements ApplicationConfiguration {
 
 	private static String[] getRequiredPropertiesKeys() {
 		return new String[] {
-			"database.connection.url",
-			"database.connection.user",
-			"database.connection.driver_class",
-			"server.port",
-			"database.dialect"
+			"pulsar.database.connection.url",
+			"pulsar.database.connection.user",
+			"pulsar.database.connection.driver_class",
+			"pulsar.server.port",
+			"pulsar.database.dialect"
 		};
 	}
 
 	@Override
 	public int getPort() {
-		return Integer.parseInt(applicationConfig.getProperty("server.port"));
+		return Integer.parseInt(applicationConfig.getProperty("pulsar.server.port"));
 	}
 
 	@Override
@@ -86,21 +86,21 @@ public class PropertyBasedAppConfig implements ApplicationConfiguration {
 
 	@Override
 	public String getDatabaseConnectionURL() {
-		return applicationConfig.getProperty("database.connection.url");
+		return applicationConfig.getProperty("pulsar.database.connection.url");
 	}
 
 	@Override
 	public String getDatabaseUser() {
-		return applicationConfig.getProperty("database.connection.user");
+		return applicationConfig.getProperty("pulsar.database.connection.user");
 	}
 
 	@Override
 	public String getDatabasePassword() {
-		return applicationConfig.getProperty("database.connection.password");
+		return applicationConfig.getProperty("pulsar.database.connection.password");
 	}
 
 	@Override
 	public String getDatabaseConnectionDriver() {
-		return applicationConfig.getProperty("database.connection.driver_class");
+		return applicationConfig.getProperty("pulsar.database.connection.driver_class");
 	}
 }

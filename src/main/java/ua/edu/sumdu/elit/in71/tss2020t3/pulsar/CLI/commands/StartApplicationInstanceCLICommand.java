@@ -34,7 +34,7 @@ import java.util.Objects;
 @CommandLine.Command(name = "start", description = "Command for starting application instance")
 public class StartApplicationInstanceCLICommand implements CLICommand<Application> {
 
-	@CommandLine.Option(names = {"-f", "-file"})
+	@CommandLine.Option(names = {"-f", "-file"}, required = true)
 	private File customApplicationPropertiesFile;
 
 	private final ApplicationConfigurationService appConfigService;
@@ -58,6 +58,8 @@ public class StartApplicationInstanceCLICommand implements CLICommand<Applicatio
 	 * @throws			Exception If some error occurred during application starting
 	 *
 	 * @exception		FileNotFoundException If specified config file was not found
+	 * @exception 		IllegalStateException If command can not be executed. This exception can be caused by different
+	 * 					reasons (e.g. if config file is not specified)
 	 *
 	 * @see				Application
 	 * */
@@ -69,27 +71,35 @@ public class StartApplicationInstanceCLICommand implements CLICommand<Applicatio
 				System.lineSeparator() + Arrays.toString(args)
 			);
 		}
-		ApplicationConfiguration appConfig;
-		if (customApplicationPropertiesFile != null) {
-			if (customApplicationPropertiesFile.isFile()) {
-				appConfig = appConfigService.parse(
-					new FileInputStream(customApplicationPropertiesFile),
-					getClass().getResourceAsStream("/application.properties")
-				);
-			} else {
-				throw new FileNotFoundException(
-					"Can not find server configurations file " + customApplicationPropertiesFile.getAbsolutePath()
-				);
-			}
-		} else {
-			appConfig = appConfigService.parse(
-				getClass().getResourceAsStream("/application.properties")
+		if (customApplicationPropertiesFile == null) {
+			throw new IllegalStateException("Application configuration file is not specified");
+		}
+		if (!customApplicationPropertiesFile.isFile()) {
+			throw new FileNotFoundException(
+				"Can not find server configurations file " + customApplicationPropertiesFile.getAbsolutePath()
 			);
 		}
+		ApplicationConfiguration appConfig = appConfigService.parse(
+			new FileInputStream(customApplicationPropertiesFile),
+			getClass().getResourceAsStream("/pulsar.properties")
+		);
 		Application application = new JavalinApplication(appConfig);
-		LOGGER.info("Application instantiated, startup config below" + System.lineSeparator() + appConfig);
+		LOGGER.info("Application instantiated, startup config is below" + System.lineSeparator() + appConfig);
 		application.start();
 		return () -> application;
+	}
+
+	/**
+	 * @return			a {@link File} instance that represents the parent directory of this jar file
+	 * */
+	private static File getRunningDirectory() throws Exception {
+		return new File(
+			new File(StartApplicationInstanceCLICommand.class
+				.getProtectionDomain()
+				.getCodeSource()
+				.getLocation()
+				.toURI()).getParent()
+		);
 	}
 
 	/**

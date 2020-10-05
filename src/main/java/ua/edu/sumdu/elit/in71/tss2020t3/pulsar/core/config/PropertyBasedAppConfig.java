@@ -4,17 +4,34 @@ import org.apache.log4j.Logger;
 
 import java.util.Properties;
 
+/**
+ * This class is a default implementation of {@link ApplicationConfiguration}
+ * Provides a possibility to configure application using the popular configuration format
+ *
+ * @see			Properties
+ * @see			ApplicationConfiguration
+ * */
 public class PropertyBasedAppConfig implements ApplicationConfiguration {
 
 	private final Properties applicationConfig;
 
 	@Override
+	@Deprecated
 	public String getDialect() {
 		return applicationConfig.getProperty("pulsar.database.dialect");
 	}
 
 	private static final Logger LOGGER = Logger.getLogger(PropertyBasedAppConfig.class);
 
+	/**
+	 * Creates an instance of {@link PropertyBasedAppConfig} based on {@link Properties}.
+	 *
+	 *
+	 * @param		applicationConfig	Is a set of application properties that will be used. <strong>Note</strong>,
+	 *                                 	that properties are copied.
+	 *
+	 * @see			PropertyBasedAppConfig#copy(Properties)
+	 * */
 	public PropertyBasedAppConfig(Properties applicationConfig) {
 		if (!arePropertiesValid(applicationConfig)) {
 			throw new IllegalArgumentException(
@@ -73,6 +90,7 @@ public class PropertyBasedAppConfig implements ApplicationConfiguration {
 	}
 
 	@Override
+	@Deprecated
 	public int getPort() {
 		return Integer.parseInt(applicationConfig.getProperty("pulsar.server.port"));
 	}
@@ -85,22 +103,31 @@ public class PropertyBasedAppConfig implements ApplicationConfiguration {
 	}
 
 	@Override
+	@Deprecated
 	public String getDatabaseConnectionURL() {
 		return applicationConfig.getProperty("pulsar.database.connection.url");
 	}
 
 	@Override
+	@Deprecated
 	public String getDatabaseUser() {
 		return applicationConfig.getProperty("pulsar.database.connection.user");
 	}
 
 	@Override
+	@Deprecated
 	public String getDatabasePassword() {
 		return applicationConfig.getProperty("pulsar.database.connection.password");
 	}
 
 	@Override
+	@Deprecated
 	public String getDatabaseConnectionDriver() {
 		return applicationConfig.getProperty("pulsar.database.connection.driver_class");
+	}
+
+	@Override
+	public String get(ConfigurationItem configurationItem) {
+		return applicationConfig.getProperty(configurationItem.getPropertyName());
 	}
 }

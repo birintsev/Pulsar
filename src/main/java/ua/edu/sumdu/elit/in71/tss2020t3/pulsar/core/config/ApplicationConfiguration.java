@@ -12,36 +12,62 @@ public interface ApplicationConfiguration {
 
 	/**
 	 * @return			An integer between 0 and 65535, representing port number that application will use.
+	 *
+	 * @deprecated		use {@link ApplicationConfiguration#get(ConfigurationItem)} instead.
 	 * */
+	@Deprecated
 	int getPort();
 
 	/**
 	 * @return			A database connection URL set in configuration.
 	 * 					For properties-based configuration is a value of <i>database.connection.url</i> key.
+	 *
+	 * @deprecated		use {@link ApplicationConfiguration#get(ConfigurationItem)} instead.
 	 * */
+	@Deprecated
 	String getDatabaseConnectionURL();
 
 	/**
 	 * @return			A database username set in configuration.
 	 * 					For properties-based configuration is a value of <i>database.connection.user</i> key.
+	 *
+	 * @deprecated		use {@link ApplicationConfiguration#get(ConfigurationItem)} instead.
 	 * */
+	@Deprecated
 	String getDatabaseUser();
 
 	/**
 	 * @return			A database user profile password set in configuration.
 	 * 					For properties-based configuration is a value of <i>database.connection.password</i> key.
+	 *
+	 * @deprecated		use {@link ApplicationConfiguration#get(ConfigurationItem)} instead.
 	 * */
+	@Deprecated
 	String getDatabasePassword();
 
 	/**
 	 * @return			A driver class name set in configuration.
 	 * 					For properties-based configuration is a value of <i>database.connection.driver_class</i> key.
+	 *
+	 * @deprecated		use {@link ApplicationConfiguration#get(ConfigurationItem)} instead.
 	 * */
+	@Deprecated
 	String getDatabaseConnectionDriver();
 
 	/**
 	 * @return			A dialect class name set in configuration.
 	 * 					For properties-based configuration is a value of <i>database.dialect</i> key.
+	 *
+	 * @deprecated		use {@link ApplicationConfiguration#get(ConfigurationItem)} instead.
 	 * */
+	@Deprecated
 	String getDialect();
+
+	/**
+	 * Designed to replace a plenty of existing methods and prevent creating new ones. Once the application gets
+	 * a customizable item, it should be represented by an instance of {@link ConfigurationItem}
+	 *
+	 * @see			ConfigurationItem
+	 * */
+	String get(ConfigurationItem configurationItem);
 }

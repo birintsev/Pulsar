@@ -30,8 +30,8 @@ public interface CLICommand<T> {
 	/**
 	 * Common method to start command execution.
 	 *
-	 * Implementations of this method should not return {@code null} values. If it's really necessary to do so,
-	 * an instance of {@link CLICommandExecutionResult} should wrap it.
+	 * <p>Implementations of this method should not return {@code null} values. If it's really necessary to do so,
+	 * an instance of {@link CLICommandExecutionResult} should wrap it.</p>
 	 *
 	 * @param			args	A set of command line parameters.
 	 *
@@ -40,5 +40,21 @@ public interface CLICommand<T> {
 	 * @throws			Exception in case of any error. Preferably, should be over-declared in implementations
 	 * 					with more specific {@link Exception} inheritors.
 	 * */
-	CLICommandExecutionResult<T> execute(String [] args) throws Exception;
+	CLICommandExecutionResult<T> execute(String[] args) throws Exception;
+
+	/**
+	 * A method that provides a way to preset command arguments without execution
+	 *
+	 * @param			args	A set of command line parameters.
+	 *
+	 * @return			This object ({@code this})
+	 * */
+	CLICommand<T> setArgs(String[] args);
+
+	/**
+	 * An alternative way to execute a command.
+	 *
+	 * @see			CLICommand#execute(String[] args)
+	 * */
+	CLICommandExecutionResult<T> execute() throws Exception;
 }

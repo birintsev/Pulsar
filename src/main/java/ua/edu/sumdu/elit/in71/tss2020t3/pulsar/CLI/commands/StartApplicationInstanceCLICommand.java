@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 
 /**
  * This class is a common way to start an application instance from command line
@@ -32,8 +33,9 @@ import java.util.Objects;
  * @see			CLICommand
  * @see			ApplicationConfiguration
  * */
-@CommandLine.Command(name = "start", description = "Command for starting application instance")
-public class StartApplicationInstanceCLICommand implements CLICommand<Application> {
+@CommandLine.Command(name = "start", description = "Command for starting an application instance")
+public class StartApplicationInstanceCLICommand
+	implements CLICommand<Application>, Callable<CLICommandExecutionResult<Application>> {
 
 	@CommandLine.Option(names = {"-f", "-file"}, required = true)
 	private File customApplicationPropertiesFile;
@@ -90,16 +92,15 @@ public class StartApplicationInstanceCLICommand implements CLICommand<Applicatio
 	 *
 	 *	<p>Examples of valid sets of startup arguments are below:</p>
 	 *     <ul>
-	 *         <li>{@code start -f /path/to/application/config/file}</li>
-	 *         <li>{@code start -file /path/to/application/config/file}</li>
+	 *         <li>{@code -f /path/to/application/config/file}</li>
+	 *         <li>{@code -file /path/to/application/config/file}</li>
 	 *     </ul>
 	 *
 	 *
 	 * */
 	@Override
 	public boolean canHandle(String[] args) {
-		return args != null && args.length != 0 && Arrays.stream(args).noneMatch(Objects::isNull) &&
-			"start".equals(args[0]);
+		return new CommandLine(new StartApplicationInstanceCLICommand()).parseArgs(args).errors().size() == 0;
 	}
 
 	/**
@@ -160,5 +161,10 @@ public class StartApplicationInstanceCLICommand implements CLICommand<Applicatio
 		LOGGER.info("Application instantiated, startup config is below" + System.lineSeparator() + appConfig);
 		application.start();
 		return () -> application;
+	}
+
+	@Override
+	public CLICommandExecutionResult<Application> call() throws Exception {
+		return execute();
 	}
 }

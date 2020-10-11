@@ -26,11 +26,20 @@
         <javaex.el-api.version>3.0.0</javaex.el-api.version>
         <javax.validation-api.version>2.0.0.Final</javax.validation-api.version>
         <postgresql-jdbc.version>9.4-1200-jdbc41</postgresql-jdbc.version>
+        <checkstyle-plugin.version>3.1.1</checkstyle-plugin.version>
     </properties>
 
     <packaging>jar</packaging>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>checkstyle-config.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -54,12 +63,34 @@
                             <goal>single</goal>
                         </goals>
                     </execution>
+
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.2.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>${project.basedir}/src/main/resources/checkstyle-config.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

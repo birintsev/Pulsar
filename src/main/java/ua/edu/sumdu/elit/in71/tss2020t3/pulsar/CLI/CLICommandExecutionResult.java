@@ -1,22 +1,36 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI;
 
-import picocli.CommandLine;
-
 /**
- * Interface-container for a {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand} execution result
+ * Interface-container for a
+ * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand}
+ * execution result
+ * <p>
+ * Implementations should be immutable.
+ * That is, once an instance of {@link CLICommandExecutionResult} is returned,
+ * its {@link #getResult()} method should always return the same object
+ * or {@code null}.
+ *
+ * @param   <T> is a type of execution result
+ * @see     ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand
+ * @author  Mykhailo Birintsev
  * */
 public interface CLICommandExecutionResult<T> {
 
-	/**
-	 * Constant that indicates that something went wrong during
-	 * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand} execution
-	 *
-	 * @see            CommandLine#execute(String...)
-	 * */
-	int UNKNOWN_ERROR_EXECUTION_RESULT_CODE = -1;
+    /**
+     * A Constant that indicates that something went wrong during
+     * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand}
+     * execution
+     *
+     * @see picocli.CommandLine#execute(String...)
+     * */
+    int UNKNOWN_ERROR_EXECUTION_RESULT_CODE = -1;
 
-	/**
-	 * @return			a command execution result
-	 * */
-	T getResult();
+    /**
+     * A common way to extract the result
+     * <p>
+     * This method should always return the same object or {@code null}
+     *
+     * @return a command execution result
+     * */
+    T getResult();
 }

@@ -1,9 +1,15 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
 
 /**
- * This interface was designed as a high-level abstraction of an application instance.
+ * This interface was designed as a high-level abstraction
+ * of an application instance
+ *
+ * @author Mykhailo Birintsev
  * */
 public interface Application {
 
-	void start() throws Exception;
+    /**
+     * This method should be a common way to launch an application instance
+     * */
+    void start() throws Exception;
 }

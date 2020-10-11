@@ -1,5 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client;
 
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,85 +12,95 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 /**
- * This class represents an entity, that is a container of information portion received from an agent.
+ * This class represents an entity, that is a container of information portion
+ * received from an agent
  * */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class ClientHostStatistic implements Serializable {
 
-	private static final Logger LOGGER = Logger.getLogger(ClientHostStatistic.class);
+    private static final Logger LOGGER = Logger.getLogger(
+        ClientHostStatistic.class
+    );
 
-	private ClientHostStatisticID ID;
+    private ClientHostStatisticID id;
 
-	private URI host;
+    private URI host;
 
-	private Timestamp bootTime;
+    private Timestamp bootTime;
 
-	private String agentVersion;
+    private String agentVersion;
 
-	private Set<LoadAverage> loadAverage;
+    private Set<LoadAverage> loadAverage;
 
-	private Set<CPUInfo> CPUInfoList;
+    private Set<CPUInfo> cpuInfoList;
 
-	private Set<DiskInfo> disksInfo;
+    private Set<DiskInfo> disksInfo;
 
-	private MemoryInfo memoryInfo;
+    private MemoryInfo memoryInfo;
 
-	private Set<NetworkInfo> networksInfo;
+    private Set<NetworkInfo> networksInfo;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-		ClientHostStatistic that = (ClientHostStatistic) o;
+        ClientHostStatistic that = (ClientHostStatistic) o;
 
-		return ID != null ? ID.equals(that.ID) : that.ID == null;
-	}
+        return Objects.equals(id, that.id);
+    }
 
-	@Override
-	public int hashCode() {
-		return ID != null ? ID.hashCode() : 0;
-	}
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class ClientHostStatisticID implements Serializable {
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ClientHostStatisticID implements Serializable {
 
-		private ClientHost clientHost;
+        private ClientHost clientHost;
 
-		private Timestamp clientLocalTime;
+        private Timestamp clientLocalTime;
 
-		@Override
-		public String toString() {
-			return "ClientHostStatisticID{" +
-				"clientHost=" + clientHost.getPublicKey() +
-				", clientLocalTime=" + clientLocalTime +
-				'}';
-		}
+        @Override
+        public String toString() {
+            return "ClientHostStatisticID{"
+                + "clientHost=" + clientHost.getPublicKey()
+                + ", clientLocalTime=" + clientLocalTime
+                + '}';
+        }
 
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
-			ClientHostStatisticID that = (ClientHostStatisticID) o;
+            ClientHostStatisticID that = (ClientHostStatisticID) o;
 
-			if (clientHost != null ? !clientHost.equals(that.clientHost) : that.clientHost != null) {
-				return false;
-			}
-			return clientLocalTime != null ?
-				clientLocalTime.equals(that.clientLocalTime) : that.clientLocalTime == null;
-		}
+            if (!Objects.equals(clientHost, that.clientHost)) {
+                return false;
+            }
+            return Objects.equals(clientLocalTime, that.clientLocalTime);
+        }
 
-		@Override
-		public int hashCode() {
-			int result = clientHost != null ? clientHost.hashCode() : 0;
-			result = 31 * result + (clientLocalTime != null ? clientLocalTime.hashCode() : 0);
-			return result;
-		}
-	}
-
+        @Override
+        public int hashCode() {
+            int result = clientHost != null ? clientHost.hashCode() : 0;
+            result = 31 * result
+                + (clientLocalTime != null ? clientLocalTime.hashCode() : 0);
+            return result;
+        }
+    }
 }

@@ -7,16 +7,16 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 	This class represents a user entity
+ * This class represents a user entity
  * */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements Serializable {
 
-	private String firstName;
+    private String firstName;
 
-	private String lastName;
+    private String lastName;
 
-	private String email;
+    private String email;
 }

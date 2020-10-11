@@ -5,42 +5,54 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * <p>This class provides implementation for {@link ApplicationConfigurationService} methods working with properties</p>
+ * This class provides a default implementation
+ * for {@link ApplicationConfigurationService}
+ * working with {@code .property} files
+ *
+ * @author Mykhailo Birintsev
  * */
-public class PropertiesAppConfigService implements ApplicationConfigurationService {
-	/**
-	 * <p>This method parses server configuration in properties format (expected by {@link Properties#load})</p>
-	 *
-	 * @return			an instance of {@link PropertyBasedAppConfig} that represents properties parsed
-	 *
-	 * @see			Properties
-	 * @see			PropertyBasedAppConfig
-	 * */
-	@Override
-	public ApplicationConfiguration parse(InputStream is) throws IOException {
-		return new PropertyBasedAppConfig(parseProperties(is));
-	}
+public class PropertiesAppConfigService
+    implements ApplicationConfigurationService {
 
-	/**
-	 * <p>Serves as an aggregation method for two bunches of properties overridden one by another</p>
-	 *
-	 * @param			defaultConfig	a source for default property values
-	 * @param			customConfig	a source for custom property values
-	 * */
-	@Override
-	public ApplicationConfiguration parse(InputStream customConfig, InputStream defaultConfig)
-		throws IOException {
-		Properties effectiveProperties = new Properties(parseProperties(defaultConfig));
-		Properties customProperties = parseProperties(customConfig);
-		for (String key : customProperties.stringPropertyNames()) {
-			effectiveProperties.setProperty(key, customProperties.getProperty(key));
-		}
-		return new PropertyBasedAppConfig(effectiveProperties);
-	}
+    /**
+     * Parses {@code .property} formatted application configuration
+     *
+     * @return  an instance of {@link PropertyBasedAppConfig}
+     *          that represents parsed properties
+     * @see     Properties
+     * @see     PropertyBasedAppConfig
+     * */
+    @Override
+    public ApplicationConfiguration parse(InputStream is) throws IOException {
+        return new PropertyBasedAppConfig(parseProperties(is));
+    }
 
-	private Properties parseProperties(InputStream is) throws IOException {
-		Properties properties = new Properties();
-		properties.load(is);
-		return properties;
-	}
+    /**
+     * Serves as an aggregation method for two bunches of properties
+     * overridden one by another
+     *
+     * @param defaultConfig a source for default property values
+     * @param customConfig  a source for custom property values
+     * */
+    @Override
+    public ApplicationConfiguration parse(
+        InputStream customConfig, InputStream defaultConfig
+    ) throws IOException {
+        Properties effectiveProperties = new Properties(
+            parseProperties(defaultConfig)
+        );
+        Properties customProperties = parseProperties(customConfig);
+        for (String key : customProperties.stringPropertyNames()) {
+            effectiveProperties.setProperty(
+                key, customProperties.getProperty(key)
+            );
+        }
+        return new PropertyBasedAppConfig(effectiveProperties);
+    }
+
+    private Properties parseProperties(InputStream is) throws IOException {
+        Properties properties = new Properties();
+        properties.load(is);
+        return properties;
+    }
 }

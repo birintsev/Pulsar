@@ -23,76 +23,97 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This class represents a controller for inputs (statistic to save) from client hosts agents.
+ * This class represents a controller for inputs
+ * (i.e portions of statistic to save) from client hosts agents
  *
- * @see			JavalinApplication
- * @see			ClientHostStatistic
+ * @see JavalinApplication
+ * @see ClientHostStatistic
  * */
 public class NewClientHostStatisticHandler implements Handler {
 
-	private final Converter<String, ClientHostStatisticDTO> deserealizator;
+    private final Converter<String, ClientHostStatisticDTO> deserializer;
 
-	private final Validator validator;
+    private final Validator validator;
 
-	private final ClientHostStatisticService clientHostStatisticService;
+    private final ClientHostStatisticService clientHostStatisticService;
 
-	private final Converter<ClientHostStatisticDTO, ClientHostStatistic> DTOConverter;
+    private final Converter<ClientHostStatisticDTO, ClientHostStatistic>
+        dtoConverter;
 
-	private static final Logger LOGGER = Logger.getLogger(NewClientHostStatisticHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(
+        NewClientHostStatisticHandler.class
+    );
 
-	/**
-	 * @param			sessionFactory	A session facotry that will be used during input handling to persist statistic
-	 * */
-	public NewClientHostStatisticHandler(SessionFactory sessionFactory) {
-		this.deserealizator = new String2ServerStatisticDTOConverter();
-		this.validator = Validation.buildDefaultValidatorFactory().getValidator();
-		this.clientHostStatisticService = new ClientHostStatisticServiceImpl(sessionFactory);
-		this.DTOConverter = new ClientHostStatisticFromDTOConverter();
-	}
+    /**
+     * @param sessionFactory A session factory that will be used
+     *                       during input handling to persist statistic
+     * */
+    public NewClientHostStatisticHandler(SessionFactory sessionFactory) {
+        this.deserializer = new String2ServerStatisticDTOConverter();
+        this.validator =
+            Validation.buildDefaultValidatorFactory().getValidator();
+        this.clientHostStatisticService = new ClientHostStatisticServiceImpl(
+            sessionFactory
+        );
+        this.dtoConverter = new ClientHostStatisticFromDTOConverter();
+    }
 
-	@Override
-	public void handle(@NotNull Context ctx) {
-		try {
-			ClientHostStatisticDTO DTO = deserealizator.convert(ctx.body());
-			Set<ConstraintViolation<ClientHostStatisticDTO>> violations = validator.validate(DTO);
-			if (!violations.isEmpty()) {
-				LOGGER.error(
-					"Invalid request. The context is below: " +
-						System.lineSeparator() +
-						ctx +
-						"Constraints violations are below:" +
-						System.lineSeparator() +
-						violations
-				);
-				ctx.status(HttpURLConnection.HTTP_BAD_REQUEST);
-				ctx.result(createBadResponse(violations));
-			} else {
-				clientHostStatisticService.save(DTOConverter.convert(DTO));
-				LOGGER.trace("Incoming client host statistic has been successfully saved");
-			}
-		} catch (Throwable t) {
-			LOGGER.error(t);
-			ctx.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
-		}
-	}
+    /**
+     * Saves passed statistic to the database
+     *
+     * @param ctx an input {@link Context} from a client host agent
+     * */
+    @Override
+    public void handle(@NotNull Context ctx) {
+        try {
+            ClientHostStatisticDTO dto = deserializer.convert(ctx.body());
+            Set<ConstraintViolation<ClientHostStatisticDTO>> violations =
+                validator.validate(dto);
+            if (!violations.isEmpty()) {
+                LOGGER.error(
+                    "Invalid request. The context is below: "
+                        + System.lineSeparator()
+                        + ctx
+                        + "Constraints violations are below:"
+                        + System.lineSeparator()
+                        + violations
+                );
+                ctx.status(HttpURLConnection.HTTP_BAD_REQUEST);
+                ctx.result(createBadResponse(violations));
+            } else {
+                clientHostStatisticService.save(dtoConverter.convert(dto));
+                LOGGER.trace(
+                    "Incoming client host statistic has been successfully saved"
+                );
+            }
+        } catch (Throwable t) {
+            LOGGER.error(t);
+            ctx.status(HttpURLConnection.HTTP_INTERNAL_ERROR);
+        }
+    }
 
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	private static class BadResponseTemplate {
-		private Set<String> errors;
-	}
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class BadResponseTemplate {
+        private Set<String> errors;
+    }
 
-	private String createBadResponse(Set<ConstraintViolation<ClientHostStatisticDTO>> violations) {
-		BadResponseTemplate badResponseTemplate = new BadResponseTemplate(
-			violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toSet())
-		);
-		try {
-			return new ObjectMapper().writeValueAsString(badResponseTemplate);
-		} catch (JsonProcessingException e) {
-			String errMsg = "Unchecked exception during marshalling " + badResponseTemplate + " to JSON";
-			LOGGER.error(errMsg);
-			throw new RuntimeException(errMsg, e);
-		}
-	}
+    private String createBadResponse(
+        Set<ConstraintViolation<ClientHostStatisticDTO>> violations
+    ) {
+        BadResponseTemplate badResponseTemplate = new BadResponseTemplate(
+            violations.stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toSet())
+        );
+        try {
+            return new ObjectMapper().writeValueAsString(badResponseTemplate);
+        } catch (JsonProcessingException e) {
+            String errMsg = "Unchecked exception during marshalling "
+                + badResponseTemplate + " to JSON";
+            LOGGER.error(errMsg);
+            throw new RuntimeException(errMsg, e);
+        }
+    }
 }

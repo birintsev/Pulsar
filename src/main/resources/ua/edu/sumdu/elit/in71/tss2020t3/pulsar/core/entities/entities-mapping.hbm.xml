@@ -20,7 +20,7 @@
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic" table="pu_clients_hosts_statistic">
 
-        <composite-id name="ID" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic$ClientHostStatisticID">
+        <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic$ClientHostStatisticID">
 
             <key-many-to-one name="clientHost">
 
@@ -42,7 +42,7 @@
             </key>
             <one-to-many class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.LoadAverage"/>
         </set>
-        <set name="CPUInfoList" table="pu_clients_cpu_info" cascade="all" fetch="join">
+        <set name="cpuInfoList" table="pu_clients_cpu_info" cascade="all" fetch="join">
             <key>
                 <column name="public_key"/>
                 <column name="client_local_time"/>

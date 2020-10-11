@@ -11,125 +11,160 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.BigInteger2String
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2BigIntegerConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2TimestampConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.Timestamp2StringConverter;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
-
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * This class represents input statistic information from client hosts agents.
+ * This class represents input statistic information from client hosts agents
  *
- * @see			ClientHostStatistic
- * @see			ClientHostStatisticService
- * @see			ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter
+ * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic
+ * @see ClientHostStatisticService
+ * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter
  * */
 @NoArgsConstructor
 @Data
 public class ClientHostStatisticDTO {
 
-	private static final Logger LOGGER = Logger.getLogger(ClientHostStatisticDTO.class);
+    private static final Logger LOGGER = Logger.getLogger(
+        ClientHostStatisticDTO.class
+    );
 
-	@JsonProperty
-	private String host;
+    @JsonProperty
+    private String host;
 
-	@JsonProperty("at")
-	@JsonSerialize(converter = Timestamp2StringConverter.class)
-	@JsonDeserialize(converter = String2TimestampConverter.class)
-	private Timestamp clientLocalTime;
+    @JsonProperty("at")
+    @JsonSerialize(converter = Timestamp2StringConverter.class)
+    @JsonDeserialize(converter = String2TimestampConverter.class)
+    private Timestamp clientLocalTime;
 
-	@JsonProperty("boot_time")
-	@JsonSerialize(converter = Timestamp2StringConverter.class)
-	@JsonDeserialize(converter = String2TimestampConverter.class)
-	private Timestamp bootTime;
+    @JsonProperty("boot_time")
+    @JsonSerialize(converter = Timestamp2StringConverter.class)
+    @JsonDeserialize(converter = String2TimestampConverter.class)
+    private Timestamp bootTime;
 
-	@JsonProperty("public_key")
-	private String publicKey;
+    @JsonProperty("public_key")
+    private String publicKey;
 
-	@JsonProperty("agent_version")
-	private String agentVersion;
+    @JsonProperty("agent_version")
+    private String agentVersion;
 
-	@JsonProperty("cpu")
-	private List<CPUInfoDTO> CPUInfoList;
+    @JsonProperty("cpu")
+    private List<CPUInfoDTO> cpuInfoList;
 
-	@JsonProperty("disks")
-	private List<DiskInfoDTO> disksInfo;
+    @JsonProperty("disks")
+    private List<DiskInfoDTO> disksInfo;
 
-	@JsonProperty("load")
-	private List<Double> loadAverage;
+    @JsonProperty("load")
+    private List<Double> loadAverage;
 
-	@JsonProperty("memory")
-	private MemoryInfoDTO memoryInfo;
+    @JsonProperty("memory")
+    private MemoryInfoDTO memoryInfo;
 
-	@JsonProperty("network")
-	private List<NetworkInfoDTO> networksInfo;
+    @JsonProperty("network")
+    private List<NetworkInfoDTO> networksInfo;
 
-	@NoArgsConstructor
-	@Data
-	public static class CPUInfoDTO {
 
-		private double num;
+    /**
+     * A CPU-specific information container of {@link ClientHostStatisticDTO}
+     *
+     * @see ClientHostStatisticDTO
+     * @see NetworkInfoDTO
+     * @see MemoryInfoDTO
+     * @see DiskInfoDTO
+     * */
+    @NoArgsConstructor
+    @Data
+    public static class CPUInfoDTO {
 
-		private double user;
+        private double num;
 
-		private double system;
+        private double user;
 
-		private double idle;
-	}
+        private double system;
 
-	@NoArgsConstructor
-	@Data
-	public static class DiskInfoDTO {
+        private double idle;
+    }
 
-		private String origin;
+    /**
+     * A disk-specific information container of {@link ClientHostStatisticDTO}
+     *
+     * @see ClientHostStatisticDTO
+     * @see NetworkInfoDTO
+     * @see MemoryInfoDTO
+     * @see CPUInfoDTO
+     * */
+    @NoArgsConstructor
+    @Data
+    public static class DiskInfoDTO {
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger free;
+        private String origin;
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger total;
-	}
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger free;
 
-	@NoArgsConstructor
-	@Data
-	public static class MemoryInfoDTO {
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger total;
+    }
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger wired;
+    /**
+     * A memory-specific information container
+     * of {@link ClientHostStatisticDTO}
+     *
+     * @see ClientHostStatisticDTO
+     * @see NetworkInfoDTO
+     * @see DiskInfoDTO
+     * @see CPUInfoDTO
+     * */
+    @NoArgsConstructor
+    @Data
+    public static class MemoryInfoDTO {
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger free;
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger wired;
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger active;
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger free;
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger inactive;
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger active;
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger total;
-	}
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger inactive;
 
-	@NoArgsConstructor
-	@AllArgsConstructor
-	@Data
-	public static class NetworkInfoDTO {
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger total;
+    }
 
-		private String name;
+    /**
+     * A network-specific information container
+     * of {@link ClientHostStatisticDTO}
+     *
+     * @see ClientHostStatisticDTO
+     * @see MemoryInfoDTO
+     * @see DiskInfoDTO
+     * @see CPUInfoDTO
+     * */
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Data
+    public static class NetworkInfoDTO {
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger in;
+        private String name;
 
-		@JsonSerialize(converter = BigInteger2StringConverter.class)
-		@JsonDeserialize(converter = String2BigIntegerConverter.class)
-		private BigInteger out;
-	}
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger in;
+
+        @JsonSerialize(converter = BigInteger2StringConverter.class)
+        @JsonDeserialize(converter = String2BigIntegerConverter.class)
+        private BigInteger out;
+    }
 }

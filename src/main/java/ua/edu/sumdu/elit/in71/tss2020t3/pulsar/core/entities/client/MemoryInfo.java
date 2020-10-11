@@ -8,34 +8,35 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 /**
- *	 This class represents a container entity of memory-specific pieces of information received from an agent
+ * This class represents a container entity
+ * of memory-specific pieces of information received from an agent
  * */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class MemoryInfo implements Serializable {
 
-	private ClientHostStatistic clientHostStatistic;
+    private ClientHostStatistic clientHostStatistic;
 
-	private BigInteger wired;
+    private BigInteger wired;
 
-	private BigInteger free;
+    private BigInteger free;
 
-	private BigInteger active;
+    private BigInteger active;
 
-	private BigInteger inactive;
+    private BigInteger inactive;
 
-	private BigInteger total;
+    private BigInteger total;
 
-	@Override
-	public String toString() {
-		return "MemoryInfo{" +
-			"clientHostStatistic=" + clientHostStatistic.getID() +
-			", wired=" + wired +
-			", free=" + free +
-			", active=" + active +
-			", inactive=" + inactive +
-			", total=" + total +
-			'}';
-	}
+    @Override
+    public String toString() {
+        return "MemoryInfo{"
+            + "clientHostStatistic=" + clientHostStatistic.getId()
+            + ", wired=" + wired
+            + ", free=" + free
+            + ", active=" + active
+            + ", inactive=" + inactive
+            + ", total=" + total
+            + '}';
+    }
 }

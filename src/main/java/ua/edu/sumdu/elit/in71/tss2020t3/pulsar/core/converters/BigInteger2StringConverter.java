@@ -4,10 +4,14 @@ import com.fasterxml.jackson.databind.util.StdConverter;
 
 import java.math.BigInteger;
 
-public class BigInteger2StringConverter extends StdConverter<BigInteger, String> {
+/**
+ * Converts {@link BigInteger} to {@link String}
+ * */
+public class BigInteger2StringConverter
+    extends StdConverter<BigInteger, String> {
 
-	@Override
-	public String convert(BigInteger value) {
-		return value.toString();
-	}
+    @Override
+    public String convert(BigInteger value) {
+        return value.toString();
+    }
 }

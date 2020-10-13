@@ -4,14 +4,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 import picocli.CommandLine;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.CLICommandExecutionResult;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.Application;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.JavalinApplication;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfigurationService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.PropertiesAppConfigService;
 
 /**
@@ -28,6 +33,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.PropertiesAppConfigSe
  *     (see {@link ApplicationConfiguration})
  * </li>
  * </ul>
+ *
  * @see     CLICommand
  * @see     ApplicationConfiguration
  * @author  Mykhailo Birnintsev
@@ -78,20 +84,6 @@ public class StartApplicationInstanceCLICommand
     public CLICommandExecutionResult<Application> execute(String[] args)
         throws Exception {
         return setArgs(args).execute();
-    }
-
-    /**
-     * @return  a {@link File} instance that represents the parent directory
-     *          of this jar file
-     * */
-    private static File getRunningDirectory() throws Exception {
-        return new File(
-            new File(StartApplicationInstanceCLICommand.class
-                .getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .toURI()).getParent()
-        );
     }
 
     /**
@@ -174,15 +166,48 @@ public class StartApplicationInstanceCLICommand
             );
         }
         ApplicationConfiguration appConfig = appConfigService.parse(
-            new FileInputStream(customApplicationPropertiesFile),
-            getClass().getResourceAsStream("/pulsar.properties")
+            new FileInputStream(customApplicationPropertiesFile)
         );
+        // The block of code below is command-specific. It provides
+        // a possibility to forward logs into another directory during runtime
+        if (appConfig.contains(ConfigurationItem.LOG_DIRECTORY)) {
+            mergeToSystemProperties(
+                appConfig,
+                Collections.singleton(ConfigurationItem.LOG_DIRECTORY)
+            );
+            Main.reconfigureLoggers();
+        }
         Application application = new JavalinApplication(appConfig);
         LOGGER.info("Application instantiated, startup config is below"
             + System.lineSeparator() + appConfig
         );
         application.start();
         return () -> application;
+    }
+
+    /**
+     * Merges passed set of application configuration to the
+     * {@link System} properties
+     *
+     * @exception java.util.NoSuchElementException  if {@code appCfg}
+     *                                              does not contain
+     *                                              all the elements
+     *                                              from {@code cfgItems}
+     * */
+    private static void mergeToSystemProperties(
+        ApplicationConfiguration appCfg, Set<ConfigurationItem> cfgItems
+    ) {
+        for (ConfigurationItem cfgItem : cfgItems) {
+            String value = appCfg.get(cfgItem);
+            if (value == null) {
+                throw new NoSuchElementException(cfgItem + " value is null."
+                    + " Please, consider to check the configuration.");
+            }
+            System.setProperty(
+                cfgItem.getPropertyName(),
+                value
+            );
+        }
     }
 
     @Override

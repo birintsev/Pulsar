@@ -1,8 +1,18 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 
 import java.util.Properties;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This is a default implementation of {@link ApplicationConfiguration}
@@ -97,8 +107,13 @@ public class PropertyBasedAppConfig implements ApplicationConfiguration {
 
     @Override
     public String get(ConfigurationItem configurationItem) {
-        return applicationConfig.getProperty(
-            configurationItem.getPropertyName()
+        return Optional.ofNullable(
+            applicationConfig.getProperty(configurationItem.getPropertyName())
+        ).orElseThrow(
+            () -> new NoSuchElementException(
+                "This container does not have configured value for "
+                    + configurationItem
+            )
         );
     }
 
@@ -148,5 +163,40 @@ public class PropertyBasedAppConfig implements ApplicationConfiguration {
         }
         return serverPort >= MIN_TCP_PORT_NUMBER
             && serverPort <= MAX_TCP_PORT_NUMBER;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<ConfigurationItem> iterator() {
+        return applicationConfig
+            .stringPropertyNames().stream()
+            .map(
+                propertyName -> {
+                    try {
+                        return ConfigurationItem.valueOfProperty(propertyName);
+                    } catch (NoSuchElementException e) {
+                        return null;
+                    }
+                }
+            )
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet())
+            .iterator();
+    }
+
+    @Override
+    public boolean contains(ConfigurationItem configurationItem) {
+        return applicationConfig
+            .stringPropertyNames()
+            .contains(configurationItem.getPropertyName());
+    }
+
+    @Override
+    public Set<ConfigurationItem> items() {
+        Set<ConfigurationItem> configurationItems = new HashSet<>();
+        for (ConfigurationItem configurationItem : this) {
+            configurationItems.add(configurationItem);
+        }
+        return configurationItems;
     }
 }

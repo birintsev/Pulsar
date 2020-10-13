@@ -1,5 +1,9 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config;
 
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+import java.util.function.Supplier;
+
 /**
  * This is an enum that represents a configurable item
  * for an application instance
@@ -45,6 +49,30 @@ public enum ConfigurationItem {
      * Represents a root directory for file-based log files
      * */
     LOG_DIRECTORY("pulsar.log.directory");
+
+    /**
+     * Returns a {@link ConfigurationItem} that represents passed property
+     *
+     * @param       property                a property name
+     * @return                              an instance of
+     *                                      {@link ConfigurationItem}
+     *                                      that stands for passed property
+     * @exception   NullPointerException    if passed {@code property}
+     *                                      is {@code null}
+     * @exception   NoSuchElementException  if there is not any
+     *                                      {@link ConfigurationItem}
+     *                                      representing passed property
+     * */
+    public static ConfigurationItem valueOfProperty(String property) {
+        return Arrays.stream(values())
+            .filter(ci -> property.equals(ci.propertyName))
+            .findFirst()
+            .orElseThrow(
+                () -> new NoSuchElementException(
+                    "There is not any ConfigurationItem for" + property
+                )
+            );
+    }
 
     /**
      * A name of this configuration item

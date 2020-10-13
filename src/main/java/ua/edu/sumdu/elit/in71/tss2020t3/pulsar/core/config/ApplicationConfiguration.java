@@ -1,5 +1,7 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config;
 
+import java.util.Set;
+
 /**
  * This interface is designed to be a container of server configuration
  * which (probably) would be provided/represented in different ways
@@ -13,7 +15,7 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config;
  * @see     ConfigurationItem
  * @author  Mykhailo Birintsev
  * */
-public interface ApplicationConfiguration {
+public interface ApplicationConfiguration extends Iterable<ConfigurationItem> {
 
     /**
      * @return      an integer between 0 and 65535, representing port number
@@ -93,12 +95,41 @@ public interface ApplicationConfiguration {
      * and/or other representation-specific points,
      * should be encapsulated in instances of {@link ConfigurationItem}.
      *
-     * @param   configurationItem   a key for the parameter value
-     *                              you want to extract from this
-     *                              {@link ApplicationConfiguration}
-     * @return                      a value stored by passed key
-     *                              in a {@link String} representation
-     * @see                         ConfigurationItem
+     * @param     configurationItem                a key for the parameter
+     *                                             value you want
+     *                                             to extract from this
+     *                                             container
+     * @return                                     a value
+     *                                             stored by passed key
+     *                                             in a {@link String}
+     *                                             representation
+     * @exception java.util.NoSuchElementException if this container
+     *                                             does not have configured
+     *                                             value for the passed
+     *                                             {@code configurationItem}
+     * @exception NullPointerException             if passed
+     *                                             {@code configurationItem}
+     *                                             is {@code null}
+     * @see       ConfigurationItem
      * */
     String get(ConfigurationItem configurationItem);
+
+    /**
+     * Informs if this container has value for the {@code configurationItem}
+     *
+     * @return                              {@code true} if this container
+     *                                      contains value for
+     *                                      {@code configurationItem},
+     *                                      {@code false} otherwise
+     * @exception   NullPointerException    if passed {@code configurationItem}
+     *                                      is {@code null}
+     * */
+    boolean contains(ConfigurationItem configurationItem);
+
+    /**
+     * Returns all the configuration items for which this container has values
+     *
+     * @return a {@link Set} of configured {@link ConfigurationItem}s
+     * */
+    Set<ConfigurationItem> items();
 }

@@ -34,21 +34,36 @@
 
 ##Project configuration
 
- Currently, '.properties' file-based configuration is supported only.
+ Currently, '.properties'-formatted file-based configuration supported only.
  Below is a list of supported application properties:
- * `database.connection.url`             -   database connection url (required)
- * `database.connection.user`            -   database user that will be used
-                                             when interacting
-                                             with a DB (required)
- * `database.connection.password`        -   database user profile password
- * `database.connection.driver_class`    -   JDBC dirver class (required)
- * `database.connection.dialect`         -   Hibernate dialect (represents 
-                                             a type of database used in
-                                             to generate SQL statements 
-                                             for a particular relational DB)
- * `server.port`                         -   a port number that application will 
-                                             listen to (default value is 19991)
-
+ * `pulsar.database.connection.url`             -   database connection url 
+                                                    (required)
+ * `pulsar.database.connection.user`            -   database user that will be 
+                                                    used when interacting with 
+                                                    a DB (required)
+ * `pulsar.database.connection.password`        -   database user profile
+                                                    password
+ * `pulsar.database.connection.driver_class`    -   JDBC dirver class (required)
+ * `pulsar.database.dialect`                    -   Hibernate dialect 
+                                                    (represents a type of
+                                                    database used in Hibernate
+                                                    to generate SQL statements 
+                                                    for a particular
+                                                    relational DB)
+ * `server.port`                                -   a port number that an 
+                                                    application instance 
+                                                    will listen to 
+                                                    (default value is 19991)
+ * `pulsar.log.directory`                       -   a folder, where log files
+                                                    will be stored 
+                                                    (default value is 
+                                                    a parent folder
+                                                    for the running JAR)
+                                                    
+ **Note**, that properties above will take effect on application startup only.
+ That is, if you use *another* command but `start`, *that command* set of 
+ configurations (or a default one) considered as effective.
+ 
 ##Used software
 
  Here is a list of programms/3d parties libraries that were used:

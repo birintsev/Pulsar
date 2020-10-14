@@ -7,10 +7,14 @@
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User" table="pu_users">
 
-        <id name="email" column="email"/>
+        <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User$UserID">
+            <key-property name="email" column="email"/>
+        </composite-id>
 
         <property name="firstName" column="first_name"/>
         <property name="lastName" column="last_name"/>
+        <property name="age" column="age"/>
+        <property name="phoneNumber" column="phone_number" not-null="false"/>
     </class>
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost" table="pu_clients_hosts">

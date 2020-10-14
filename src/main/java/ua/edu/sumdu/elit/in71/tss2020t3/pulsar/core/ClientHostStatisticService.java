@@ -5,7 +5,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostSt
 /**
  * This service-layer interface was designed to represent basic operations
  * on {@link ClientHostStatistic} instances.
- * Is expected to be a common way to perform manipulations on the objects.
+ * It is expected to be a common way to perform manipulations on the objects.
  *
  * @see ClientHostStatistic
  * */

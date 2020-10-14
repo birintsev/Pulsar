@@ -27,13 +27,14 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo;
 public class ClientHostStatisticFromDTOConverter
     extends StdConverter<ClientHostStatisticDTO, ClientHostStatistic> {
 
-    private static final Logger LOGGER = Logger.getLogger(
-        ClientHostStatisticFromDTOConverter.class
-    );
 
     private final StdConverter<ZonedDateTime, java.sql.Date> zdt2DateConverter;
 
     private final Validator validator;
+
+    private static final Logger LOGGER = Logger.getLogger(
+        ClientHostStatisticFromDTOConverter.class
+    );
 
     /**
      * A default constructor

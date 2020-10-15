@@ -9,9 +9,16 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ClientHostStatisticDTO;
 /**
  * Converts {@link String} to {@link ClientHostStatisticDTO}
  * */
-public class String2ServerStatisticDTOConverter
+public class JSONString2ServerStatisticDTOConverter
     extends StdConverter<String, ClientHostStatisticDTO> {
 
+    /**
+     * Unmarshalls a {@link ClientHostStatisticDTO} from its JSON representation
+     *
+     * @param   value   a JSON representation of {@link ClientHostStatisticDTO}
+     * @return          unmarshalled {@link ClientHostStatisticDTO}
+     *                  from passed {@link String}
+     * */
     @Override
     public ClientHostStatisticDTO convert(String value) {
         try {

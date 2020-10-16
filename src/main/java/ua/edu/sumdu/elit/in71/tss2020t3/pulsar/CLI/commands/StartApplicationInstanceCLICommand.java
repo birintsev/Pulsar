@@ -189,10 +189,13 @@ public class StartApplicationInstanceCLICommand
      * Merges passed set of application configuration to the
      * {@link System} properties
      *
-     * @exception java.util.NoSuchElementException  if {@code appCfg}
-     *                                              does not contain
-     *                                              all the elements
-     *                                              from {@code cfgItems}
+     * @param    appCfg                            properties values
+     *                                             to be merged
+     * @param    cfgItems                          property keys to be merged
+     * @exception java.util.NoSuchElementException if {@code appCfg}
+     *                                             does not contain
+     *                                             all the elements
+     *                                             from {@code cfgItems}
      * */
     private static void mergeToSystemProperties(
         ApplicationConfiguration appCfg, Set<ConfigurationItem> cfgItems

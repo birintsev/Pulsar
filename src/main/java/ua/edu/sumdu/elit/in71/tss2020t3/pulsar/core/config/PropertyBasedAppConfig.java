@@ -5,13 +5,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
-
-import java.util.Properties;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -6,24 +6,30 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.CLIFrontController;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.StartApplicationInstanceCLICommand;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem;
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem.LOG_DIRECTORY;
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem.RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI;
 
 public class Main {
 
-    private static final Logger LOGGER;
+    private static final Logger LOGGER = Logger.getLogger(Main.class);
+
+    private static final String JAVA_PROTOCOL_HANDLERS_PKGS_PROPERTY =
+        "java.protocol.handler.pkgs";
 
     static {
-        LOGGER = Logger.getLogger(Main.class);
-        try {
-            System.setProperty(
-                ConfigurationItem.LOG_DIRECTORY.getPropertyName(),
-                getRunningDirectory().getAbsolutePath()
-            );
-            reconfigureLoggers();
-        } catch (Exception e) {
-            LOGGER.error(e);
-            throw new RuntimeException(e);
-        }
+        System.setProperty(
+            LOG_DIRECTORY.getPropertyName(),
+            LOG_DIRECTORY.getDefaultValue()
+        );
+        reconfigureLoggers();
+        System.setProperty(
+            RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI.getPropertyName(),
+            RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI.getDefaultValue()
+        );
+        System.setProperty(
+            JAVA_PROTOCOL_HANDLERS_PKGS_PROPERTY,
+            "ua.edu.sumdu.elit.in71.tss2020t3.pulsar.protocolhandlers"
+        );
     }
 
     public static void main(String[] args) {
@@ -31,17 +37,27 @@ public class Main {
     }
 
     /**
-     * @return  a {@link File} instance that represents the parent directory
-     *          of this jar file
+     * @return                          a {@link File} instance that represents
+     *                                  the parent directory of this jar file
+     * @exception   RuntimeException    if an exception occurs
+     *                                  when identifying parent folder
+     *                                  for a jar in runtime
      * */
-    public static File getRunningDirectory() throws Exception {
-        return new File(
-            new File(StartApplicationInstanceCLICommand.class
-                .getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .toURI()).getParent()
-        );
+    public static File getRunningDirectory() {
+        try {
+            return new File(
+                new File(StartApplicationInstanceCLICommand.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI()).getParent()
+            );
+        } catch (Exception e) {
+            LOGGER.error(
+                "Can not identify parent folder for the running jar file", e
+            );
+            throw new RuntimeException(e);
+        }
     }
 
     /**

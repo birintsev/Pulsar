@@ -83,6 +83,7 @@
         <!-- See https://checkstyle.org/config_javadoc.html -->
         <module name="InvalidJavadocPosition"/>
         <module name="JavadocMethod">
+            <property name="excludeScope" value="private"/>
             <property name="allowedAnnotations" value="Override"/>
         </module>
         <module name="JavadocType"/>

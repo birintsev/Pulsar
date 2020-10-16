@@ -117,6 +117,7 @@ public interface ApplicationConfiguration extends Iterable<ConfigurationItem> {
     /**
      * Informs if this container has value for the {@code configurationItem}
      *
+     * @param       configurationItem       a key of checked property
      * @return                              {@code true} if this container
      *                                      contains value for
      *                                      {@code configurationItem},

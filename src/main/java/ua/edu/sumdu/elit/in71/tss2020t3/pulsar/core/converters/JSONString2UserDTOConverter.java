@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.StdConverter;
 import java.io.UncheckedIOException;
 import org.apache.log4j.Logger;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.UserRegistrationDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
 
 /**
  * Converts {@link String} to {@link UserRegistrationDTO}

@@ -6,7 +6,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import org.apache.log4j.Logger;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.UserRegistrationDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 
 /**

@@ -13,6 +13,7 @@ import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2ServerStatisticDTOConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 
 import javax.validation.ConstraintViolation;

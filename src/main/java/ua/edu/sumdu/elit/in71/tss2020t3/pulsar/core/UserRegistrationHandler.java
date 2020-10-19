@@ -28,6 +28,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfigurat
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2UserDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.UserRegistrationDTOConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 
 /**

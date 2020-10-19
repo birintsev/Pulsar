@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.log4j.Logger;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ClientHostStatisticService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.BigInteger2StringConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2BigIntegerConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2TimestampConverter;

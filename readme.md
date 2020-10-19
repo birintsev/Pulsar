@@ -62,7 +62,29 @@
                                                     
  **Note**, that properties above will take effect on application startup only.
  That is, if you use *another* command but `start`, *that command* set of 
- configurations (or a default one) considered as effective.
+ configurations (or a default one) considered as effective. Below is a list of 
+ general properties to be used in the application:
+ 
+ * `pulsar.user.phone_number.regexp`    -   a regular expression for
+                                            a user phone number validation
+ * `pulsar.user.password.regexp`        -   a regular expression for
+                                            a user password validation
+ * `pulsar.user.firstname.length.max`   -   a first name maximum length
+                                            (a positive integer)
+ * `pulsar.user.lastname.length.max`    -   a last name maximum length 
+                                            (a positive integer)
+ * `pulsar.user.username.regexp`        -   a regular expression for
+                                            a username validation
+ * `pulsar.email.regexp`                -   a regular expression 
+                                            that will be used
+                                            for email validation
+ 
+ The properties above are easily configured. If you really need this,
+ the only right place to implement changes is the 
+ *${project.basedir}/src/main/resources/pulsar.properties* file.
+ Put your values in that file prior building an artifact 
+ (see the **Building/running the application in dev mode** section), 
+ and they will take effect.
  
 ##Used software
 

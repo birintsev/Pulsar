@@ -78,7 +78,6 @@
                 <column name="client_local_time"/>
             </key-many-to-one>
         </composite-id>
-
         <property name="origin" column="origin"/>
         <property name="free" column="free"/>
         <property name="total" column="total"/>
@@ -92,7 +91,6 @@
             </key-many-to-one>
             <key-property name="order" column='"order"'/>
         </composite-id>
-
         <property name="loadAverage" column="load_average"/>
     </class>
 

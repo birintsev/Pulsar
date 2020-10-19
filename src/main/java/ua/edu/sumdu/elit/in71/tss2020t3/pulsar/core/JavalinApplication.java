@@ -55,6 +55,9 @@ public class JavalinApplication implements Application {
             .post(
                 "/api/endpoint",
                 new NewClientHostStatisticHandler(sesFact)
+            ).post(
+                "/registration",
+                new UserRegistrationHandler(appCfg, sesFact)
             );
         return javalin;
     }

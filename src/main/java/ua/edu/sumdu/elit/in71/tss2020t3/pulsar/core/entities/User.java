@@ -75,15 +75,15 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
-            "id=" + id +
-            ", username='" + username + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", age=" + age +
-            ", phoneNumber='" + phoneNumber + '\'' +
-            ", password='" + "********" + '\'' +
-            '}';
+        return "User{"
+            + "id=" + id
+            + ", username='" + username + '\''
+            + ", firstName='" + firstName + '\''
+            + ", lastName='" + lastName + '\''
+            + ", age=" + age
+            + ", phoneNumber='" + phoneNumber + '\''
+            + ", password='" + "********" + '\''
+            + '}';
     }
 
     @Data

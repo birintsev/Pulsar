@@ -5,18 +5,45 @@
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/validation/mapping
             http://xmlns.jcp.org/xml/ns/validation/mapping/validation-mapping-2.0.xsd"
         version="2.0">
-
     <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User">
-
-        <field name="email">
-
-            <constraint annotation="javax.validation.constraints.Email">
-
-                <message>Email must be valid</message>
-                <element name="regexp">
-                    <![CDATA[(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])]]>
-                </element>
+        <field name="age">
+            <constraint annotation="javax.validation.constraints.Min">
+                <message>A user must be at least ${pulsar.user.age.min} years old</message>
+                <element name="value">${pulsar.user.age.min}</element>
             </constraint>
+        </field>
+        <field name="phoneNumber">
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Phone number must be in a format of +380XXXXXXXXX</message>
+                <element name="regexp"><![CDATA[${pulsar.user.phone_number.regexp}]]></element>
+            </constraint>
+        </field>
+        <field name="password">
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Password must fit all the requirements</message>
+                <element name="regexp"><![CDATA[${pulsar.user.password.regexp}]]></element>
+            </constraint>
+        </field>
+        <field name="firstName">
+            <constraint annotation="javax.validation.constraints.Size">
+                <message>First name length must be less than or equal to ${pulsar.user.firstname.length.max} characters</message>
+                <element name="max">${pulsar.user.firstname.length.max}</element>
+            </constraint>
+        </field>
+        <field name="lastName">
+            <constraint annotation="javax.validation.constraints.Size">
+                <message>Last name length must be less than or equal to ${pulsar.user.lastname.length.max} characters</message>
+                <element name="max">${pulsar.user.firstname.length.max}</element>
+            </constraint>
+        </field>
+        <field name="username">
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Username does not fit all the requirements</message>
+                <element name="regexp"><![CDATA[${pulsar.user.username.regexp}]]></element>
+            </constraint>
+        </field>
+        <field name="id">
+            <valid/>
         </field>
     </bean>
 </constraint-mappings>

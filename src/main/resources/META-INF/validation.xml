@@ -7,21 +7,21 @@ validation-configuration-1.1.xsd"
         version="1.1">
 
     <constraint-mapping>
-        ua/edu/sumdu/elit/in71/tss2020t3/pulsar/core/entities/validation-constraints-mapping/User.xml
+        META-INF/validation-constraints-mapping/User.xml
     </constraint-mapping>
     <constraint-mapping>
-        ua/edu/sumdu/elit/in71/tss2020t3/pulsar/core/entities/validation-constraints-mapping/UserID.xml
+        META-INF/validation-constraints-mapping/UserID.xml
     </constraint-mapping>
     <constraint-mapping>
-        ua/edu/sumdu/elit/in71/tss2020t3/pulsar/core/entities/validation-constraints-mapping/ClientHostStatisticID.xml
+        META-INF/validation-constraints-mapping/ClientHostStatisticID.xml
     </constraint-mapping>
     <constraint-mapping>
-        ua/edu/sumdu/elit/in71/tss2020t3/pulsar/core/entities/validation-constraints-mapping/ClientHostStatistic.xml
+        META-INF/validation-constraints-mapping/ClientHostStatistic.xml
     </constraint-mapping>
     <constraint-mapping>
-        ua/edu/sumdu/elit/in71/tss2020t3/pulsar/core/entities/validation-constraints-mapping/ClientHost.xml
+        META-INF/validation-constraints-mapping/ClientHost.xml
     </constraint-mapping>
     <constraint-mapping>
-        ua/edu/sumdu/elit/in71/tss2020t3/pulsar/core/entities/validation-constraints-mapping/UserRegistrationDTO.xml
+        META-INF/validation-constraints-mapping/UserRegistrationDTO.xml
     </constraint-mapping>
 </validation-config>

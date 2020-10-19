@@ -1,11 +1,10 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities;
 
+import java.io.Serializable;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 /**
  * This class represents a user entity
@@ -17,6 +16,8 @@ public class User implements Serializable {
 
     private UserID id;
 
+    private String username;
+
     private String firstName;
 
     private String lastName;
@@ -24,6 +25,8 @@ public class User implements Serializable {
     private int age;
 
     private String phoneNumber;
+
+    private String password;
 
     @Override
     public boolean equals(Object o) {
@@ -42,24 +45,45 @@ public class User implements Serializable {
         if (!id.equals(user.id)) {
             return false;
         }
-        if (!firstName.equals(user.firstName)) {
+        if (!username.equals(user.username)) {
             return false;
         }
-        if (!lastName.equals(user.lastName)) {
+        if (!Objects.equals(firstName, user.firstName)) {
             return false;
         }
-        return Objects.equals(phoneNumber, user.phoneNumber);
+        if (!Objects.equals(lastName, user.lastName)) {
+            return false;
+        }
+        if (!Objects.equals(phoneNumber, user.phoneNumber)) {
+            return false;
+        }
+        return password.equals(user.password);
     }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + firstName.hashCode();
-        result = 31 * result + lastName.hashCode();
+        result = 31 * result + username.hashCode();
+        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + age;
-        result = 31 * result
-            + (phoneNumber != null ? phoneNumber.hashCode() : 0);
+        result =
+            31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
+        result = 31 * result + password.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+            "id=" + id +
+            ", username='" + username + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", age=" + age +
+            ", phoneNumber='" + phoneNumber + '\'' +
+            ", password='" + "********" + '\'' +
+            '}';
     }
 
     @Data

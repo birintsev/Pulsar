@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem.RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI;
 
@@ -24,6 +24,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.DatabaseUserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.UserService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2UserDTOConverter;

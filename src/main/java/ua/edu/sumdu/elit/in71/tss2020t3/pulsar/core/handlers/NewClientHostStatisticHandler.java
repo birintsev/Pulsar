@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ClientHostStatisticService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ClientHostStatisticServiceImpl;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.JavalinApplication;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2ServerStatisticDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;

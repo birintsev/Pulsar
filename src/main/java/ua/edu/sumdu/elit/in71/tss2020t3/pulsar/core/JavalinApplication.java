@@ -7,6 +7,8 @@ import org.hibernate.cfg.Configuration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config
     .ApplicationConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
 
 /**
  * A default {@link Application} implementation based on

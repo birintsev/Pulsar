@@ -5,14 +5,10 @@
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/validation/mapping
             http://xmlns.jcp.org/xml/ns/validation/mapping/validation-mapping-2.0.xsd"
         version="2.0">
-
     <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost">
-
         <field name="publicKey">
-
             <constraint annotation="javax.validation.constraints.NotBlank">
-
-                <message>Email must be valid</message>
+                <message>Public key must not be blank</message>
             </constraint>
         </field>
     </bean>

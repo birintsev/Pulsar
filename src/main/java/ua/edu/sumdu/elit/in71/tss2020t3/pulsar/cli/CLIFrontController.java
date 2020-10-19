@@ -124,7 +124,7 @@ public class CLIFrontController {
         }
         return commandLineInput
             .substring(
-                commandLineInput.lastIndexOf(commandName) + commandName.length()
+                commandLineInput.indexOf(commandName) + commandName.length()
             )
             .trim()
             .split(PROGRAM_ARGUMENTS_SEPARATOR);

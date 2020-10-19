@@ -1,8 +1,8 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli;
 
 /**
  * Interface-container for a
- * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand}
+ * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.CLICommand}
  * execution result
  * <p>
  * Implementations should be immutable.
@@ -11,14 +11,14 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI;
  * or {@code null}.
  *
  * @param   <T> is a type of execution result
- * @see     ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand
+ * @see     ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.CLICommand
  * @author  Mykhailo Birintsev
  * */
 public interface CLICommandExecutionResult<T> {
 
     /**
      * A Constant that indicates that something went wrong during
-     * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand}
+     * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.CLICommand}
      * execution
      *
      * @see picocli.CommandLine#execute(String...)

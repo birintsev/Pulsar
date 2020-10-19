@@ -1,9 +1,9 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli;
 
 import org.apache.log4j.Logger;
 import picocli.CommandLine;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.CLICommand;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.StartApplicationInstanceCLICommand;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.CLICommand;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.StartApplicationInstanceCLICommand;
 
 import java.util.ArrayList;
 import java.util.Arrays;

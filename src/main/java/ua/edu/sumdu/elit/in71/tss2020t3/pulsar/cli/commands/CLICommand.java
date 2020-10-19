@@ -1,6 +1,6 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands;
 
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.CLICommandExecutionResult;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLICommandExecutionResult;
 
 /**
  * This is an interface-decorator, that is designed mostly for classes

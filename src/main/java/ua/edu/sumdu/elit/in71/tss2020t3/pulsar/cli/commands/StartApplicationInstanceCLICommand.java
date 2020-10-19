@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 import picocli.CommandLine;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.CLICommandExecutionResult;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLICommandExecutionResult;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.Application;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.JavalinApplication;

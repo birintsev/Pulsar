@@ -4,8 +4,8 @@ import java.io.File;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.CLIFrontController;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.CLI.commands.StartApplicationInstanceCLICommand;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLIFrontController;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.StartApplicationInstanceCLICommand;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem.LOG_DIRECTORY;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem.RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI;
 

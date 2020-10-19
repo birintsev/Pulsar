@@ -3,6 +3,6 @@
   "last_name": "Doe",
   "age": 30,
   "email": "JohnDoe@pulsar.com",
-  "phone_number": "0123456789",
+  "phone_number": "+380123456789",
   "password": "password"
 }

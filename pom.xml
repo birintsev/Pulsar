@@ -32,9 +32,15 @@
     <packaging>jar</packaging>
 
     <build>
+        <filters>
+            <filter>
+                ${project.basedir}/src/main/resources/pulsar.properties
+            </filter>
+        </filters>
         <resources>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
                 <excludes>
                     <exclude>checkstyle-config.xml</exclude>
                 </excludes>
@@ -63,7 +69,6 @@
                             <goal>single</goal>
                         </goals>
                     </execution>
-
                 </executions>
             </plugin>
             <plugin>

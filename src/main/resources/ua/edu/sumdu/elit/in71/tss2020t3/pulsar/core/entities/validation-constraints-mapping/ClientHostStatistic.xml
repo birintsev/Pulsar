@@ -5,24 +5,13 @@
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/validation/mapping
             http://xmlns.jcp.org/xml/ns/validation/mapping/validation-mapping-2.0.xsd"
         version="2.0">
-
     <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic">
-        <field name="host">
+        <field name="id">
             <valid/>
-        </field>
-        <field name="clientLocalTime">
-            <constraint annotation="javax.validation.constraints.NotNull">
-                <message>Client local time must be set</message>
-            </constraint>
         </field>
         <field name="bootTime">
             <constraint annotation="javax.validation.constraints.NotNull">
                 <message>Client boot time must be set</message>
-            </constraint>
-        </field>
-        <field name="clientHost">
-            <constraint annotation="javax.validation.constraints.NotNull">
-                <message>Client host must be set</message>
             </constraint>
         </field>
         <field name="agentVersion">

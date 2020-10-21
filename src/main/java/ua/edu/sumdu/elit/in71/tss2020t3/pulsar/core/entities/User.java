@@ -2,9 +2,11 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * This class represents a user entity
@@ -27,6 +29,8 @@ public class User implements Serializable {
     private String phoneNumber;
 
     private String password;
+
+    private Set<UserStatus> userStatuses;
 
     @Override
     public boolean equals(Object o) {
@@ -114,9 +118,7 @@ public class User implements Serializable {
 
         @Override
         public String toString() {
-            return "UserID{" +
-                "email='" + email + '\'' +
-                '}';
+            return "UserID{" + "email='" + email + '\'' + '}';
         }
     }
 }

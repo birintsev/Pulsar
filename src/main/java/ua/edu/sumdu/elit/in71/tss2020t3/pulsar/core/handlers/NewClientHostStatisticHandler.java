@@ -13,7 +13,6 @@ import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ClientHostStatisticService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ClientHostStatisticServiceImpl;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.JavalinApplication;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2ServerStatisticDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
  * This class represents a controller for inputs
  * (i.e portions of statistic to save) from client hosts agents
  *
- * @see JavalinApplication
+ * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.JavalinApplication
  * @see ClientHostStatistic
  * */
 public class NewClientHostStatisticHandler implements Handler {

@@ -1,6 +1,7 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
+import java.util.HashSet;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -40,7 +41,8 @@ public class UserRegistrationDTOConverter
             dto.getLastName(),
             dto.getAge(),
             dto.getPhoneNumber(),
-            dto.getPassword()
+            dto.getPassword(),
+            new HashSet<>()
         );
     }
 

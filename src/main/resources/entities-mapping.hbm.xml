@@ -9,6 +9,10 @@
         <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User$UserID">
             <key-property name="email" column="email"/>
         </composite-id>
+        <set name="userStatuses" table="pu_user_statuses_assignment" fetch="join" cascade="save-update">
+            <key column="email"/>
+            <many-to-many entity-name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus" column="status"/>
+        </set>
         <property name="firstName" column="first_name" not-null="false"/>
         <property name="lastName" column="last_name" not-null="false"/>
         <property name="age" column="age"/>
@@ -118,6 +122,10 @@
         </composite-id>
         <property name="out" column="out"/>
         <property name="in" column='"in"'/>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus" table="pu_user_statuses">
+        <id name="status"/>
     </class>
 
     <database-object>

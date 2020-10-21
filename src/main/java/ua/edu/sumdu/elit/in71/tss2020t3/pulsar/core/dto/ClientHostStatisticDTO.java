@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.log4j.Logger;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ClientHostStatisticService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.BigInteger2StringConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2BigIntegerConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2TimestampConverter;
@@ -20,7 +19,7 @@ import java.util.List;
  * This class represents input statistic information from client hosts agents
  *
  * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic
- * @see ClientHostStatisticService
+ * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ClientHostStatisticService
  * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter
  * */
 @NoArgsConstructor

@@ -14,6 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserStatus implements Serializable {
 
+    public static final String REGISTRATION_CONFIRMATION_PENDING =
+        System.getProperty(
+            "pulsar.user.status.registration_confirmation_pending"
+        );
+
+    public static final String REGISTRATION_CONFIRMED =
+        System.getProperty("pulsar.user.status.registration_confirmed");
+
     /**
      * A string representation of a status
      * */

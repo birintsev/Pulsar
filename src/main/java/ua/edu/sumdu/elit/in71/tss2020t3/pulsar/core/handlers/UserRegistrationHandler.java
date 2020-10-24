@@ -101,9 +101,17 @@ public class UserRegistrationHandler implements Handler {
             ctx.result(buildErrorResponseOnInvalidRequest(dto));
             return;
         }
-        user = userService.registerUser(
-            dtoConverter.convert(dto)
-        );
+        try {
+            user = userService.registerUser(
+                dtoConverter.convert(dto)
+            );
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new BadRequestResponse(
+                "Can not register user."
+                    + " Kindly, contact administrator for more details"
+            );
+        }
         ctx.status(HttpStatus.Code.OK.getCode());
         LOGGER.trace(
             "User (email=" + user.getId().getEmail()

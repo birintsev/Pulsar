@@ -105,7 +105,10 @@ public class UserRegistrationHandler implements Handler {
             dtoConverter.convert(dto)
         );
         ctx.status(HttpStatus.Code.OK.getCode());
-        LOGGER.trace("New user registered: " + user);
+        LOGGER.trace(
+            "User (email=" + user.getId().getEmail()
+                + ") has been registered registered"
+        );
     }
 
     /**

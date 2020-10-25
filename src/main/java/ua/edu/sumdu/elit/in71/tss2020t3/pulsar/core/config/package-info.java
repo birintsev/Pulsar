@@ -12,5 +12,4 @@
  * @see        java.lang.System#setProperty
  * @see        java.lang.System#getProperty
  * */
-@Deprecated
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config;

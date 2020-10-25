@@ -35,56 +35,10 @@
 ##Project configuration
 
  Currently, '.properties'-formatted file-based configuration supported only.
- Below is a list of supported application properties:
- * `pulsar.database.connection.url`             -   database connection url 
-                                                    (required)
- * `pulsar.database.connection.user`            -   database user that will be 
-                                                    used when interacting with 
-                                                    a DB (required)
- * `pulsar.database.connection.password`        -   database user profile
-                                                    password
- * `pulsar.database.connection.driver_class`    -   JDBC dirver class (required)
- * `pulsar.database.dialect`                    -   Hibernate dialect 
-                                                    (represents a type of
-                                                    database used in Hibernate
-                                                    to generate SQL statements 
-                                                    for a particular
-                                                    relational DB)
- * `server.port`                                -   a port number that an 
-                                                    application instance 
-                                                    will listen to 
-                                                    (default value is 19991)
- * `pulsar.log.directory`                       -   a folder, where log files
-                                                    will be stored 
-                                                    (default value is 
-                                                    a parent folder
-                                                    for the running JAR)
-                                                    
- **Note**, that properties above will take effect on application startup only.
- That is, if you use *another* command but `start`, *that command* set of 
- configurations (or a default one) considered as effective. Below is a list of 
- general properties to be used in the application:
- 
- * `pulsar.user.phone_number.regexp`    -   a regular expression for
-                                            a user phone number validation
- * `pulsar.user.password.regexp`        -   a regular expression for
-                                            a user password validation
- * `pulsar.user.firstname.length.max`   -   a first name maximum length
-                                            (a positive integer)
- * `pulsar.user.lastname.length.max`    -   a last name maximum length 
-                                            (a positive integer)
- * `pulsar.user.username.regexp`        -   a regular expression for
-                                            a username validation
- * `pulsar.email.regexp`                -   a regular expression 
-                                            that will be used
-                                            for email validation
- 
- The properties above are easily configured. If you really need this,
- the only right place to implement changes is the 
- *${project.basedir}/src/main/resources/pulsar.properties* file.
- Put your values in that file prior building an artifact 
- (see the **Building/running the application in dev mode** section), 
- and they will take effect.
+ A default properties file (*pulsar.properties*) is located 
+ in the resources root folder. You can see a complete list of 
+ application properties names with theirs description in 
+ `ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames`. 
  
 ##Used software
 

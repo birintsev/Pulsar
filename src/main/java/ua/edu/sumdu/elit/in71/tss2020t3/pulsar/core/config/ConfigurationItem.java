@@ -9,7 +9,9 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
  * for an application instance
  *
  * @author Mykhailo Birintsev
+ * @deprecated see details on package-level documentation
  * */
+@Deprecated
 public enum ConfigurationItem {
 
     /**

@@ -14,7 +14,9 @@ import java.util.Set;
  *
  * @see     ConfigurationItem
  * @author  Mykhailo Birintsev
+ * @deprecated see details on package-level documentation
  * */
+@Deprecated
 public interface ApplicationConfiguration extends Iterable<ConfigurationItem> {
 
     /**

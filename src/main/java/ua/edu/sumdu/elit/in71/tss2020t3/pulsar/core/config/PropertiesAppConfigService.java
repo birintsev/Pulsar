@@ -10,6 +10,7 @@ import java.util.Properties;
  * working with {@code .property} files
  *
  * @author Mykhailo Birintsev
+ * @deprecated see details on package-level documentation
  * */
 public class PropertiesAppConfigService
     implements ApplicationConfigurationService {

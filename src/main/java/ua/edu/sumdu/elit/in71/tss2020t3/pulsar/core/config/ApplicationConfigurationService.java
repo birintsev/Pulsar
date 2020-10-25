@@ -8,7 +8,9 @@ import java.io.InputStream;
  * {@link ApplicationConfiguration}
  *
  * @author Mykhailo Birintsev
+ * @deprecated see details on package-level documentation
  * */
+@Deprecated
 public interface ApplicationConfigurationService {
 
     /**

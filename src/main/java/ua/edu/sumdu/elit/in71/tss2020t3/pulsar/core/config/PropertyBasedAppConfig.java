@@ -20,7 +20,9 @@ import org.jetbrains.annotations.NotNull;
  * @see     Properties
  * @see     ApplicationConfiguration
  * @author  Mykhailo Birintsev
+ * @deprecated see details on package-level documentation
  * */
+@Deprecated
 public class PropertyBasedAppConfig implements ApplicationConfiguration {
 
     private static final int MIN_TCP_PORT_NUMBER = 0x1;

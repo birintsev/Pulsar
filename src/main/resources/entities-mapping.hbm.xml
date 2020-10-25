@@ -128,6 +128,17 @@
         <id name="status"/>
     </class>
 
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation" table="pu_registration_confirmation">
+        <id name="key">
+            <generator class="org.hibernate.id.UUIDGenerator"/>
+        </id>
+        <property name="registrationDate" column="registration_date" not-null="true"/>
+        <property name="confirmationDate">
+            <column name="confirmation_date" check="confirmation_date is null or registration_date &lt; confirmation_date"/>
+        </property>
+        <many-to-one name="user" unique="true" column="email" lazy="false"/>
+    </class>
+
     <database-object>
         <create><![CDATA[alter table pu_users add constraint email_check check (email ~ $$${pulsar.email.regexp}$$)]]></create>
         <drop><![CDATA[alter table pu_users drop constraint email_check]]></drop>

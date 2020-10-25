@@ -53,7 +53,9 @@ public class JavalinApplication implements Application {
     private Javalin createApp(
         ApplicationConfiguration appCfg, SessionFactory sesFact
     ) {
-        Javalin javalin = Javalin.create()
+        Javalin javalin = Javalin.create(config -> {
+            config.addStaticFiles("/static");
+        })
             .post(
                 "/api/endpoint",
                 new NewClientHostStatisticHandler(sesFact)

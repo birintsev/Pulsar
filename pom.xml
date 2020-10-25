@@ -27,6 +27,7 @@
         <javax.validation-api.version>2.0.0.Final</javax.validation-api.version>
         <postgresql-jdbc.version>9.4-1200-jdbc41</postgresql-jdbc.version>
         <checkstyle-plugin.version>3.1.1</checkstyle-plugin.version>
+        <javax.mail.version>1.5.0-b01</javax.mail.version>
     </properties>
 
     <packaging>jar</packaging>
@@ -176,6 +177,11 @@
             <groupId>org.glassfish.web</groupId>
             <artifactId>javax.el</artifactId>
             <version>${glassfish.javaex-el.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
         </dependency>
     </dependencies>
 </project>

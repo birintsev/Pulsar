@@ -28,6 +28,7 @@
         <postgresql-jdbc.version>9.4-1200-jdbc41</postgresql-jdbc.version>
         <checkstyle-plugin.version>3.1.1</checkstyle-plugin.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
+        <commons-text.version>1.9</commons-text.version>
     </properties>
 
     <packaging>jar</packaging>
@@ -182,6 +183,11 @@
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>${javax.mail.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
         </dependency>
     </dependencies>
 </project>

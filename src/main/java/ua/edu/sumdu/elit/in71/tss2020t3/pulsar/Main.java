@@ -26,9 +26,17 @@ public class Main {
             RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI.getPropertyName(),
             RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI.getDefaultValue()
         );
+
+        String newProtocolHandlersPackage =
+            "ua.edu.sumdu.elit.in71.tss2020t3.pulsar.protocolhandlers";
+        String oldProtocolHandlersPackages = System.getProperty(
+            JAVA_PROTOCOL_HANDLERS_PKGS_PROPERTY
+        );
         System.setProperty(
             JAVA_PROTOCOL_HANDLERS_PKGS_PROPERTY,
-            "ua.edu.sumdu.elit.in71.tss2020t3.pulsar.protocolhandlers"
+            oldProtocolHandlersPackages == null
+                ? newProtocolHandlersPackage
+                : newProtocolHandlersPackage + "|" + oldProtocolHandlersPackages
         );
     }
 

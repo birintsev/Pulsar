@@ -51,6 +51,7 @@ public class JavalinApplication implements Application {
                 System.getProperty(ApplicationPropertiesNames.SERVER_PORT)
             )
         );
+        LOGGER.info("The application is started");
     }
 
     private Javalin createApp(SessionFactory sesFact) {

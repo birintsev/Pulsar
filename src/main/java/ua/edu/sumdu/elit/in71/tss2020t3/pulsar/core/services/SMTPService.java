@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.CHARSET_NAME;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.FRONTEND_URL;

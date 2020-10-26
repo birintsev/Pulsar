@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;

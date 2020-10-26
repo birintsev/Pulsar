@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.DatabaseUserService;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.UserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 
 /**

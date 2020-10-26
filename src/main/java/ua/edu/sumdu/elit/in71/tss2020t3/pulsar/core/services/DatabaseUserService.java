@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMATION_PENDING;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;

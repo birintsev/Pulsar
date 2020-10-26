@@ -80,7 +80,7 @@ public class DatabaseUserService implements UserService {
             session.flush();
             transaction.commit();
             LOGGER.trace(
-                "The user has been registered:" + System.lineSeparator() + user
+                "The user (" + user.getUsername() + ") has been registered"
             );
         }
         return user;

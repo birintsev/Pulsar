@@ -3,6 +3,7 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
 
 /**
  * This class provides a default implementation
@@ -12,6 +13,7 @@ import java.util.Properties;
  * @author Mykhailo Birintsev
  * @deprecated see details on package-level documentation
  * */
+@Deprecated
 public class PropertiesAppConfigService
     implements ApplicationConfigurationService {
 
@@ -25,7 +27,9 @@ public class PropertiesAppConfigService
      * */
     @Override
     public ApplicationConfiguration parse(InputStream is) throws IOException {
-        return new PropertyBasedAppConfig(parseProperties(is));
+        Properties properties = parseProperties(is);
+        Main.updateSystemProperties(properties);
+        return new PropertyBasedAppConfig(properties);
     }
 
     /**
@@ -48,6 +52,7 @@ public class PropertiesAppConfigService
                 key, customProperties.getProperty(key)
             );
         }
+        Main.updateSystemProperties(effectiveProperties);
         return new PropertyBasedAppConfig(effectiveProperties);
     }
 

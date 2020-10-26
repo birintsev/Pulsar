@@ -14,13 +14,12 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.Timestamp2StringC
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.List;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticService;
 
 /**
  * This class represents input statistic information from client hosts agents
  *
  * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic
- * @see ClientHostStatisticService
+ * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticService
  * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter
  * */
 @NoArgsConstructor

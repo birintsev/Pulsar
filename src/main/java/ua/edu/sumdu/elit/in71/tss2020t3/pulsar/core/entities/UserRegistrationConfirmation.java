@@ -8,14 +8,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
-
 
 /**
  * A Hibernate POJO for a DB record that represents a {@link User} activation
  * (by default via email)
  *
- * @see MailService
+ * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService
  * @see User
  * */
 @Data

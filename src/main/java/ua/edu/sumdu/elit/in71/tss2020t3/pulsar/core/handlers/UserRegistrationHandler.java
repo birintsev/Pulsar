@@ -14,7 +14,6 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.DatabaseUserService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.MailService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.SMTPService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.UserService;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2UserDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.UserRegistrationDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
@@ -32,8 +31,6 @@ public class UserRegistrationHandler implements Handler {
 
     private final Validator validator;
 
-    private final ApplicationConfiguration applicationConfiguration;
-
     private final Converter<UserRegistrationDTO, User> dtoConverter;
 
     private final Converter<String, UserRegistrationDTO> deserializer;
@@ -45,18 +42,14 @@ public class UserRegistrationHandler implements Handler {
     /**
      * A default constructor
      *
-     * @param   appConfig       a configuration for an application instance
      * @param   sessionFactory  a session factory that will be used
      *                          during input handling to persist statistic
      * */
-    public UserRegistrationHandler(
-        ApplicationConfiguration appConfig, SessionFactory sessionFactory
-    ) {
+    public UserRegistrationHandler(SessionFactory sessionFactory) {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
         dtoConverter = new UserRegistrationDTOConverter();
         userService = new DatabaseUserService(sessionFactory);
         deserializer = new JSONString2UserDTOConverter();
-        this.applicationConfiguration = appConfig;
         this.mailService = new SMTPService();
     }
 

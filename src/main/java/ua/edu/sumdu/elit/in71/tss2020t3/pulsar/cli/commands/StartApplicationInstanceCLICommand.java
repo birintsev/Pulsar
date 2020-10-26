@@ -1,23 +1,20 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands;
 
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.LOG_DIRECTORY;
+
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 import picocli.CommandLine;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLICommandExecutionResult;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLICommandExecutionResult;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.Application;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.JavalinApplication;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfiguration;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfigurationService;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.PropertiesAppConfigService;
 
 /**
  * This class is a common way to start an application instance
@@ -30,12 +27,10 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.PropertiesAppConfigSe
  * <ul>
  * <li>
  *     {@code -f, -file} - a configuration file path
- *     (see {@link ApplicationConfiguration})
  * </li>
  * </ul>
  *
  * @see     CLICommand
- * @see     ApplicationConfiguration
  * @author  Mykhailo Birnintsev
  * */
 @CommandLine.Command(
@@ -49,8 +44,6 @@ public class StartApplicationInstanceCLICommand
     @CommandLine.Option(names = {"-f", "-file"}, required = true)
     private File customApplicationPropertiesFile;
 
-    private final ApplicationConfigurationService appConfigService;
-
     private static final Logger LOGGER = Logger.getLogger(
         StartApplicationInstanceCLICommand.class
     );
@@ -61,7 +54,7 @@ public class StartApplicationInstanceCLICommand
      * A default constructor
      * */
     public StartApplicationInstanceCLICommand() {
-        appConfigService = new PropertiesAppConfigService();
+        //appConfigService = new PropertiesAppConfigService();
     }
 
     /**
@@ -165,16 +158,12 @@ public class StartApplicationInstanceCLICommand
                     + customApplicationPropertiesFile.getAbsolutePath()
             );
         }
-        ApplicationConfiguration appConfig = appConfigService.parse(
-            new FileInputStream(customApplicationPropertiesFile)
-        );
+        Properties appConfig = new Properties();
+        appConfig.load(new FileInputStream(customApplicationPropertiesFile));
+        Main.updateSystemProperties(appConfig);
         // The block of code below is command-specific. It provides
         // a possibility to forward logs into another directory during runtime
-        if (appConfig.contains(ConfigurationItem.LOG_DIRECTORY)) {
-            mergeToSystemProperties(
-                appConfig,
-                Collections.singleton(ConfigurationItem.LOG_DIRECTORY)
-            );
+        if (appConfig.stringPropertyNames().contains(LOG_DIRECTORY)) {
             Main.reconfigureLoggers();
         }
         Application application = new JavalinApplication(appConfig);
@@ -183,34 +172,6 @@ public class StartApplicationInstanceCLICommand
         );
         application.start();
         return () -> application;
-    }
-
-    /**
-     * Merges passed set of application configuration to the
-     * {@link System} properties
-     *
-     * @param    appCfg                            properties values
-     *                                             to be merged
-     * @param    cfgItems                          property keys to be merged
-     * @exception java.util.NoSuchElementException if {@code appCfg}
-     *                                             does not contain
-     *                                             all the elements
-     *                                             from {@code cfgItems}
-     * */
-    private static void mergeToSystemProperties(
-        ApplicationConfiguration appCfg, Set<ConfigurationItem> cfgItems
-    ) {
-        for (ConfigurationItem cfgItem : cfgItems) {
-            String value = appCfg.get(cfgItem);
-            if (value == null) {
-                throw new NoSuchElementException(cfgItem + " value is null."
-                    + " Please, consider to check the configuration.");
-            }
-            System.setProperty(
-                cfgItem.getPropertyName(),
-                value
-            );
-        }
     }
 
     @Override

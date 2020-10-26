@@ -1,11 +1,11 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
 
 import io.javalin.Javalin;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfiguration;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
@@ -15,14 +15,11 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHan
  * <a href="https://javalin.io/">Javalin</a> framework
  *
  * @see     Application
- * @see     ApplicationConfiguration
  * @author  Mykhailo Birintsev
  * */
 public class JavalinApplication implements Application {
 
     private final Javalin app;
-
-    private final ApplicationConfiguration appConfig;
 
     private final SessionFactory sessionFactory;
 
@@ -31,13 +28,17 @@ public class JavalinApplication implements Application {
     );
 
     /**
-     * @param appCfg a set of effective application properties
-     *                  that will be used during startup and in runtime
+     * A default constructor
+     *
+     * @param properties a set of application properties that will be used
+     *                   during startup and in runtime
+     *                   (will be propagated to System-level, i.e.
+     *                   {@link System#setProperty(String, String)})
      * */
-    public JavalinApplication(ApplicationConfiguration appCfg) {
-        this.appConfig = appCfg;
-        sessionFactory = createSessionFactory(appCfg);
-        app = createApp(appCfg, sessionFactory);
+    public JavalinApplication(Properties properties) {
+        Main.updateSystemProperties(properties);
+        sessionFactory = createSessionFactory();
+        app = createApp(sessionFactory);
     }
 
     /**
@@ -46,20 +47,22 @@ public class JavalinApplication implements Application {
     @Override
     public void start() {
         app.start(
-            Integer.parseInt(appConfig.get(ConfigurationItem.SERVER_PORT))
+            Integer.parseInt(
+                System.getProperty(ApplicationPropertiesNames.SERVER_PORT)
+            )
         );
     }
 
-    private Javalin createApp(
-        ApplicationConfiguration appCfg, SessionFactory sesFact
-    ) {
-        Javalin javalin = Javalin.create(config -> config.addStaticFiles("/static"))
+    private Javalin createApp(SessionFactory sesFact) {
+        Javalin javalin = Javalin.create(
+            config -> config.addStaticFiles("/static")
+        )
             .post(
                 "/api/endpoint",
                 new NewClientHostStatisticHandler(sesFact)
             ).post(
                 "/registration",
-                new UserRegistrationHandler(appCfg, sesFact)
+                new UserRegistrationHandler(sesFact)
             ).get(
                 "/registration-confirmation",
                 new RegistrationConfirmationHandler(sesFact)
@@ -67,30 +70,38 @@ public class JavalinApplication implements Application {
         return javalin;
     }
 
-    private SessionFactory createSessionFactory(
-        ApplicationConfiguration appCfg
-    ) {
+    private SessionFactory createSessionFactory() {
         Configuration hibernateConfig = new Configuration();
         hibernateConfig.configure()
             .setProperty(
                 "hibernate.connection.driver_class",
-                appCfg.get(ConfigurationItem.DATABASE_DRIVER_CLASS)
+                System.getProperty(
+                    ApplicationPropertiesNames.DATABASE_DRIVER_CLASS
+                )
             )
             .setProperty(
                 "hibernate.dialect",
-                appCfg.get(ConfigurationItem.DATABASE_DIALECT)
+                System.getProperty(
+                    ApplicationPropertiesNames.DATABASE_DIALECT
+                )
             )
             .setProperty(
                 "hibernate.connection.password",
-                appCfg.get(ConfigurationItem.DATABASE_PASSWORD)
+                System.getProperty(
+                    ApplicationPropertiesNames.DATABASE_PASSWORD
+                )
             )
             .setProperty(
                 "hibernate.connection.username",
-                appCfg.get(ConfigurationItem.DATABASE_USER)
+                System.getProperty(
+                    ApplicationPropertiesNames.DATABASE_USER
+                )
             )
             .setProperty(
                 "hibernate.connection.url",
-                appCfg.get(ConfigurationItem.DATABASE_URL)
+                System.getProperty(
+                    ApplicationPropertiesNames.DATABASE_URL
+                )
             );
         return hibernateConfig.buildSessionFactory();
     }

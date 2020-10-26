@@ -167,9 +167,6 @@ public class StartApplicationInstanceCLICommand
             Main.reconfigureLoggers();
         }
         Application application = new JavalinApplication(appConfig);
-        LOGGER.info("Application instantiated, startup config is below"
-            + System.lineSeparator() + appConfig
-        );
         application.start();
         return () -> application;
     }

@@ -35,7 +35,7 @@
 ##Project configuration
 
  Currently, '.properties'-formatted file-based configuration supported only.
- A default properties file (*pulsar.properties*) is located 
+ A default properties file (*default.properties*) is located 
  in the resources root folder. You can see a complete list of 
  application properties names with theirs description in 
  `ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames`. 

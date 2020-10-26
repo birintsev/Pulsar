@@ -39,7 +39,7 @@ public class Main {
         Properties pulsarProperties = new Properties();
         try {
             pulsarProperties.load(
-                Main.class.getResourceAsStream("/pulsar.properties")
+                Main.class.getResourceAsStream("/default.properties")
             );
         } catch (IOException e) {
             LOGGER.error("Error during default properties loading", e);

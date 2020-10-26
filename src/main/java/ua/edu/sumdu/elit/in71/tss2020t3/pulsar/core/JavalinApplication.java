@@ -4,10 +4,10 @@ import io.javalin.Javalin;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config
-    .ApplicationConfiguration;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
 
 /**
@@ -53,15 +53,16 @@ public class JavalinApplication implements Application {
     private Javalin createApp(
         ApplicationConfiguration appCfg, SessionFactory sesFact
     ) {
-        Javalin javalin = Javalin.create(config -> {
-            config.addStaticFiles("/static");
-        })
+        Javalin javalin = Javalin.create(config -> config.addStaticFiles("/static"))
             .post(
                 "/api/endpoint",
                 new NewClientHostStatisticHandler(sesFact)
             ).post(
                 "/registration",
                 new UserRegistrationHandler(appCfg, sesFact)
+            ).get(
+                "/registration-confirmation",
+                new RegistrationConfirmationHandler(sesFact)
             );
         return javalin;
     }

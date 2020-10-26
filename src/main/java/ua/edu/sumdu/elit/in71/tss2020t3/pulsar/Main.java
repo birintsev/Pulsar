@@ -1,13 +1,15 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Properties;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLIFrontController;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.StartApplicationInstanceCLICommand;
-import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem.LOG_DIRECTORY;
-import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ConfigurationItem.RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
 
 public class Main {
 
@@ -18,13 +20,8 @@ public class Main {
 
     static {
         System.setProperty(
-            LOG_DIRECTORY.getPropertyName(),
-            LOG_DIRECTORY.getDefaultValue()
-        );
-        reconfigureLoggers();
-        System.setProperty(
-            RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI.getPropertyName(),
-            RESPONSE_ON_UNKNOWN_ERROR_RESOURCE_URI.getDefaultValue()
+            ApplicationPropertiesNames.LOG_DIRECTORY,
+            getRunningDirectory().getAbsolutePath()
         );
 
         String newProtocolHandlersPackage =
@@ -38,6 +35,19 @@ public class Main {
                 ? newProtocolHandlersPackage
                 : newProtocolHandlersPackage + "|" + oldProtocolHandlersPackages
         );
+
+        Properties pulsarProperties = new Properties();
+        try {
+            pulsarProperties.load(
+                Main.class.getResourceAsStream("/pulsar.properties")
+            );
+        } catch (IOException e) {
+            LOGGER.error("Error during default properties loading", e);
+            throw new UncheckedIOException(e);
+        }
+        updateSystemProperties(pulsarProperties);
+
+        reconfigureLoggers();
     }
 
     public static void main(String[] args) {
@@ -76,5 +86,19 @@ public class Main {
         PropertyConfigurator.configure(
             Main.class.getResourceAsStream("/log4j.properties")
         );
+    }
+
+    /**
+     * Updates the {@link System} properties with values from {@code properties}
+     *
+     * @param properties a set of properties to be added/updated
+     *                   in the {@link System}
+     * */
+    public static void updateSystemProperties(Properties properties) {
+        Properties newSystemProperties = new Properties(System.getProperties());
+        for (String key : properties.stringPropertyNames()) {
+            newSystemProperties.setProperty(key, properties.getProperty(key));
+        }
+        System.setProperties(newSystemProperties);
     }
 }

@@ -40,6 +40,12 @@
  application properties names with theirs description in 
  `ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames`. 
  
+ For now, the application configured to use PostgreSQL database. 
+ Before launching the application, make sure you have created an extension
+ `uuid-ossp` by  running the following statement:
+ `create extension if not exists "uuid-ossp"`. If the extension is not
+ available on the DB schema validation, an exception will be thrown.
+ 
 ##Used software
 
  Here is a list of programms/3d parties libraries that were used:

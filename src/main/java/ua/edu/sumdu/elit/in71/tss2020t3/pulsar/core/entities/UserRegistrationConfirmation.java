@@ -16,7 +16,6 @@ import lombok.ToString;
  *
  * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.MailService
  * @see User
- * @see UserStatus#REGISTRATION_CONFIRMED
  * */
 @Data
 @NoArgsConstructor
@@ -25,11 +24,20 @@ import lombok.ToString;
 @ToString
 public class UserRegistrationConfirmation implements Serializable {
 
-    private UUID key;
+    private ID id;
 
     private Timestamp registrationDate;
 
     private Timestamp confirmationDate;
 
-    private User user;
+    private UUID key;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    @ToString
+    public static class ID implements Serializable {
+        private User user;
+    }
 }

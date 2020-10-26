@@ -128,15 +128,18 @@
         <id name="status"/>
     </class>
 
+    <!--<generator class="org.hibernate.id.UUIDGenerator"/>-->
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation" table="pu_registration_confirmation">
-        <id name="key">
-            <generator class="org.hibernate.id.UUIDGenerator"/>
-        </id>
+        <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation$ID">
+            <key-many-to-one name="user" column="email"/>
+        </composite-id>
         <property name="registrationDate" column="registration_date" not-null="true"/>
         <property name="confirmationDate">
             <column name="confirmation_date" check="confirmation_date is null or registration_date &lt; confirmation_date"/>
         </property>
-        <many-to-one name="user" unique="true" column="email" lazy="false"/>
+        <property name="key" unique="true" not-null="true" generated="insert">
+            <column name="key" default="uuid_generate_v4()"/>
+        </property>
     </class>
 
     <database-object>

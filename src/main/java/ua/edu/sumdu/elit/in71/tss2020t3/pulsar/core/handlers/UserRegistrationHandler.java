@@ -11,6 +11,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.DatabaseUserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.MailService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.SMTPService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.UserService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.config.ApplicationConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2UserDTOConverter;
@@ -38,6 +40,8 @@ public class UserRegistrationHandler implements Handler {
 
     private final UserService userService;
 
+    private final MailService mailService;
+
     /**
      * A default constructor
      *
@@ -53,6 +57,7 @@ public class UserRegistrationHandler implements Handler {
         userService = new DatabaseUserService(sessionFactory);
         deserializer = new JSONString2UserDTOConverter();
         this.applicationConfiguration = appConfig;
+        this.mailService = new SMTPService();
     }
 
     @Override
@@ -90,6 +95,9 @@ public class UserRegistrationHandler implements Handler {
         try {
             user = userService.registerUser(
                 dtoConverter.convert(dto)
+            );
+            mailService.sendRegistrationConfirmationEmail(
+                userService.getRegistrationConfirmationFor(user)
             );
         } catch (Exception e) {
             LOGGER.error(e);

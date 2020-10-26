@@ -114,7 +114,7 @@ public class SMTPService implements MailService {
         message.setRecipient(
             Message.RecipientType.TO,
             new InternetAddress(
-                confirmation.getUser().getId().getEmail()
+                confirmation.getId().getUser().getId().getEmail()
             )
         );
         message.setSubject(

@@ -1,14 +1,25 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
 
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
+
+
 import io.javalin.Javalin;
+import io.javalin.core.security.AccessManager;
+import io.javalin.core.security.Role;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.access.BasicAuthAccessManager;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
 
 /**
  * A default {@link Application} implementation based on
@@ -22,6 +33,8 @@ public class JavalinApplication implements Application {
     private final Javalin app;
 
     private final SessionFactory sessionFactory;
+
+    private final AccessManager accessManager;
 
     private static final Logger LOGGER = Logger.getLogger(
         JavalinApplication.class
@@ -38,6 +51,9 @@ public class JavalinApplication implements Application {
     public JavalinApplication(Properties properties) {
         Main.updateSystemProperties(properties);
         sessionFactory = createSessionFactory();
+        this.accessManager = new BasicAuthAccessManager(
+            new DatabaseUserService(sessionFactory)
+        );
         app = createApp(sessionFactory);
     }
 
@@ -55,8 +71,21 @@ public class JavalinApplication implements Application {
     }
 
     private Javalin createApp(SessionFactory sesFact) {
+        Set<Role> permittedRoles = new HashSet<>(
+            Arrays.asList(
+                new UserStatus(
+                    System.getProperty(
+                        USER_STATUS_REGISTRATION_CONFIRMED
+                    )
+                )
+            )
+        );
         Javalin javalin = Javalin.create(
-            config -> config.addStaticFiles("/static")
+            config -> {
+                config
+                    .accessManager(accessManager)
+                    .addStaticFiles("/static");
+            }
         )
             .post(
                 "/api/endpoint",
@@ -67,6 +96,10 @@ public class JavalinApplication implements Application {
             ).get(
                 "/registration-confirmation",
                 new RegistrationConfirmationHandler(sesFact)
+            ).get(
+                "/test",
+                ctx -> ctx.result(System.getProperties().toString()),
+                permittedRoles
             );
         return javalin;
     }

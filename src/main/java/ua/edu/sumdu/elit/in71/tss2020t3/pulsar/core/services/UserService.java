@@ -111,4 +111,13 @@ public interface UserService {
      * @exception IllegalStateException if the {@code confirmation} is not valid
      * */
     void confirmUserRegistration(UserRegistrationConfirmation confirmation);
+
+    /**
+     * Finds a user by an email
+     *
+     * @param  email a user mail address
+     * @return       a user specified by passed {@code email}
+     *               or {@code null} if such user does not exist
+     * */
+    User findByEmail(String email);
 }

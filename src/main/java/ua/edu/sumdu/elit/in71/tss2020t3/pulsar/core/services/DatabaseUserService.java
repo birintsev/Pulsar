@@ -183,7 +183,7 @@ public class DatabaseUserService implements UserService {
                         "from UserRegistrationConfirmation urc"
                             + " where urc.key = :key"
                     )
-                    .setString("key", key.toString())
+                    .setParameter("key", key)
                     .uniqueResult()
             ).orElseThrow(
                 () -> new NoSuchElementException(
@@ -222,6 +222,16 @@ public class DatabaseUserService implements UserService {
         LOGGER.trace(
             "The user registration has been confirmed: " + confirmation
         );
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        try (Session session = sessionFactory.openSession()) {
+            return (User) session
+                .createQuery("from User u where u.id.email = :email")
+                .setString("email", email)
+                .uniqueResult();
+        }
     }
 
     private boolean isUserValid(User user) {

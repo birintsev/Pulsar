@@ -96,10 +96,6 @@ public class JavalinApplication implements Application {
             ).get(
                 "/registration-confirmation",
                 new RegistrationConfirmationHandler(sesFact)
-            ).get(
-                "/test",
-                ctx -> ctx.result(System.getProperties().toString()),
-                permittedRoles
             );
         return javalin;
     }

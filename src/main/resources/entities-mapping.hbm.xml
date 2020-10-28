@@ -18,6 +18,7 @@
         <property name="age" column="age"/>
         <property name="phoneNumber" not-null="false"/>
         <property name="username" not-null="true" unique="true"/>
+        <property name="password" not-null="true"/>
     </class>
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost" table="pu_clients_hosts">
@@ -150,5 +151,10 @@
     <database-object>
         <create><![CDATA[alter table pu_users add constraint phone_number_check check (phone_number ~ $$${pulsar.user.phone_number.regexp}$$)]]></create>
         <drop><![CDATA[alter table pu_users drop constraint phone_number_check]]></drop>
+    </database-object>
+
+    <database-object>
+        <create><![CDATA[alter table pu_users add constraint password_check check (password ~ $$${pulsar.user.password.regexp}$$)]]></create>
+        <drop><![CDATA[alter table pu_users drop constraint password_check]]></drop>
     </database-object>
 </hibernate-mapping>

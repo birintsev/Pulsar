@@ -65,7 +65,7 @@
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo" table="pu_clients_cpu_info">
         <composite-id>
-            <key-many-to-one name="clientHostStatistic">
+            <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
                 <column name="client_local_time"/>
             </key-many-to-one>
@@ -78,7 +78,7 @@
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo" table="pu_clients_disk_info">
         <composite-id>
-            <key-many-to-one name="clientHostStatistic">
+            <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
                 <column name="client_local_time"/>
             </key-many-to-one>
@@ -90,7 +90,7 @@
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.LoadAverage" table="pu_clients_load_average">
         <composite-id>
-            <key-many-to-one name="clientHostStatistic">
+            <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
                 <column name="client_local_time"/>
             </key-many-to-one>
@@ -101,7 +101,7 @@
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo" table="pu_clients_memory_info">
         <composite-id>
-            <key-many-to-one name="clientHostStatistic">
+            <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
                 <column name="client_local_time"/>
             </key-many-to-one>
@@ -115,7 +115,7 @@
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo" table="pu_clients_network_info">
         <composite-id>
-            <key-many-to-one name="clientHostStatistic">
+            <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
                 <column name="client_local_time"/>
             </key-many-to-one>
@@ -132,7 +132,7 @@
     <!--<generator class="org.hibernate.id.UUIDGenerator"/>-->
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation" table="pu_registration_confirmation">
         <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation$ID">
-            <key-many-to-one name="user" column="email"/>
+            <key-many-to-one name="user" column="email" lazy="false"/>
         </composite-id>
         <property name="registrationDate" column="registration_date" not-null="true"/>
         <property name="confirmationDate">

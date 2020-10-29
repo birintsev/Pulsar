@@ -19,7 +19,7 @@
         https://checkstyle.org/config.html#Checker
         <property name="basedir" value="${basedir}"/>
     -->
-    <property name="severity" value="WARNING"/>
+    <property name="severity" value="ERROR"/>
 
     <property name="fileExtensions" value="java, properties, xml"/>
 
@@ -54,7 +54,7 @@
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
         <property name="max" value="80"/>
-        <property name="ignorePattern" value="^( )+\* (@see [\$_\w\.]+)|(\{@link [\w#\.]+\})$"/>
+        <property name="ignorePattern" value="^( )+\* (@see [\$_\w\.#(,)$]+)|(\{@link [\w#\.(,)$]+\})|(@((exception)|(throws)) [\$_\w\.#$]+)$"/>
     </module>
 
     <!-- Checks for whitespace                               -->

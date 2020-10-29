@@ -12,7 +12,7 @@ validation-configuration-1.1.xsd"
         META-INF/validation-constraints-mapping/UserID.xml
     </constraint-mapping>
     <constraint-mapping>
-        META-INF/validation-constraints-mapping/ClientHostStatisticID.xml
+        META-INF/validation-constraints-mapping/CreateClientHostDTO.xml
     </constraint-mapping>
     <constraint-mapping>
         META-INF/validation-constraints-mapping/ClientHostStatistic.xml

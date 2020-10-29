@@ -13,13 +13,12 @@ import javax.validation.Validator;
 import org.apache.log4j.Logger;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client
-    .ClientHostStatistic;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.LoadAverage;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 
 /**
  * Converts {@link ClientHostStatisticDTO} to {@link ClientHostStatistic}
@@ -32,16 +31,24 @@ public class ClientHostStatisticFromDTOConverter
 
     private final Validator validator;
 
+    private final ClientHostService clientHostService;
+
     private static final Logger LOGGER = Logger.getLogger(
         ClientHostStatisticFromDTOConverter.class
     );
 
     /**
      * A default constructor
+     *
+     * @param clientHostService a service that will be used for determination
+     *                          a host to which passed dto relates
      * */
-    public ClientHostStatisticFromDTOConverter() {
+    public ClientHostStatisticFromDTOConverter(
+        ClientHostService clientHostService
+    ) {
         zdt2DateConverter = new ZDT2DateConverter();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
+        this.clientHostService = clientHostService;
     }
 
     @Override
@@ -99,7 +106,8 @@ public class ClientHostStatisticFromDTOConverter
         }
         clientHostStatistic.setId(
             new ClientHostStatistic.ClientHostStatisticID(
-                new ClientHost(dto.getPublicKey()), dto.getClientLocalTime()
+                clientHostService.getByPublicKey(dto.getPublicKey()),
+                dto.getClientLocalTime()
             )
         );
         Set<LoadAverage> loadAverages = new HashSet<>();

@@ -5,10 +5,7 @@
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/validation/mapping
             http://xmlns.jcp.org/xml/ns/validation/mapping/validation-mapping-2.0.xsd"
         version="2.0">
-    <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost">
-        <field name="id">
-            <valid/>
-        </field>
+    <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO">
         <field name="publicKey">
             <constraint annotation="javax.validation.constraints.NotNull">
                 <message>Public key must be set</message>
@@ -18,6 +15,11 @@
                 <element name="regexp"><![CDATA[${pulsar.client_host.public_key.regexp}]]></element>
             </constraint>
         </field>
+        <field name="privateKey">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Private key must be set</message>
+            </constraint>
+        </field>
         <field name="name">
             <constraint annotation="javax.validation.constraints.NotNull">
                 <message>Name key must be set</message>
@@ -25,13 +27,6 @@
             <constraint annotation="javax.validation.constraints.Pattern">
                 <message>Name must only contain English letters, numbers and be of 6—60 characters in length</message>
                 <element name="regexp"><![CDATA[${pulsar.client_host.name.regexp}]]></element>
-            </constraint>
-        </field>
-    </bean>
-    <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost$ID">
-        <field name="privateKey">
-            <constraint annotation="javax.validation.constraints.NotNull">
-                <message>Private key must be set</message>
             </constraint>
         </field>
     </bean>

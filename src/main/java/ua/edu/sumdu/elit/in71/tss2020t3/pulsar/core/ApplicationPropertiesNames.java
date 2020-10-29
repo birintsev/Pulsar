@@ -195,6 +195,23 @@ public final class ApplicationPropertiesNames {
     public static final String REGISTRATION_CONFIRMATION_MAIL_BODY_LOCATION   =
         "pulsar.user.registration.confirmation.mail.htmlbody.location";
 
+    // ClientHost properties
+    /**
+     * Represents a regular expression each
+     * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost#getPublicKey()}
+     * must fit to
+     * */
+    public static final String CLIENT_HOST_PUBLIC_KEY_REGEXP                  =
+        "pulsar.client_host.public_key.regexp";
+
+    /**
+     * Represents a regular expression each
+     * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost#getName()}
+     * must fit to
+     * */
+    public static final String CLIENT_HOST_NAME_REGEXP                        =
+        "pulsar.client_host.name.regexp";
+
 
     private ApplicationPropertiesNames() {
 

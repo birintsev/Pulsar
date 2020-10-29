@@ -22,7 +22,14 @@
     </class>
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost" table="pu_clients_hosts">
-        <id name="publicKey" column="public_key"/>
+        <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost$ID">
+            <key-property name="privateKey" column="private_key"/>
+        </composite-id>
+        <many-to-one name="owner" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User" fetch="select" lazy="false">
+            <column name="owner" not-null="true"/>
+        </many-to-one>
+        <property name="name" not-null="true"/>
+        <property name="publicKey" column="public_key" unique="true"/>
     </class>
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic" table="pu_clients_hosts_statistic">
@@ -156,5 +163,15 @@
     <database-object>
         <create><![CDATA[alter table pu_users add constraint password_check check (password ~ $$${pulsar.user.password.regexp}$$)]]></create>
         <drop><![CDATA[alter table pu_users drop constraint password_check]]></drop>
+    </database-object>
+
+    <database-object>
+        <create><![CDATA[alter table pu_clients_hosts add constraint client_host_name_check check (name ~ $$${pulsar.client_host.name.regexp}$$)]]></create>
+        <drop><![CDATA[alter table pu_clients_hosts drop constraint client_host_name_check]]></drop>
+    </database-object>
+
+    <database-object>
+        <create><![CDATA[alter table pu_clients_hosts add constraint client_host_public_key_check check (name ~ $$${pulsar.client_host.public_key.regexp}$$)]]></create>
+        <drop><![CDATA[alter table pu_clients_hosts drop constraint client_host_public_key_check]]></drop>
     </database-object>
 </hibernate-mapping>

@@ -2,7 +2,7 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core;
 
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
 
-
+import com.fasterxml.jackson.databind.util.Converter;
 import io.javalin.Javalin;
 import io.javalin.core.security.AccessManager;
 import io.javalin.core.security.Role;
@@ -10,16 +10,27 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2CreateClientHostConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateClientHostHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.access.BasicAuthAccessManager;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
 /**
  * A default {@link Application} implementation based on
@@ -71,6 +82,22 @@ public class JavalinApplication implements Application {
     }
 
     private Javalin createApp(SessionFactory sesFact) {
+        Validator validator =
+            Validation.buildDefaultValidatorFactory().getValidator();
+        UserService userService = new DatabaseUserService(sesFact);
+        ClientHostService clientHostService =
+            new ClientHostServiceImpl(
+                userService,
+                sesFact,
+                validator
+            );
+        Converter<ClientHostStatisticDTO, ClientHostStatistic>
+            clientHostStatisticConverter =
+            new ClientHostStatisticFromDTOConverter(
+                clientHostService
+            );
+        Converter<String, CreateClientHostDTO> createClientHostDTOConverter =
+            new JSONString2CreateClientHostConverter();
         Set<Role> permittedRoles = new HashSet<>(
             Arrays.asList(
                 new UserStatus(
@@ -89,13 +116,23 @@ public class JavalinApplication implements Application {
         )
             .post(
                 "/api/endpoint",
-                new NewClientHostStatisticHandler(sesFact)
+                new NewClientHostStatisticHandler(
+                    sesFact, clientHostStatisticConverter
+                )
             ).post(
                 "/registration",
                 new UserRegistrationHandler(sesFact)
             ).get(
                 "/registration-confirmation",
                 new RegistrationConfirmationHandler(sesFact)
+            ).post(
+                "/client-host/create",
+                new CreateClientHostHandler(
+                    userService,
+                    clientHostService,
+                    createClientHostDTOConverter
+                ),
+                permittedRoles
             );
         return javalin;
     }

@@ -42,4 +42,14 @@
             <valid/>
         </field>
     </bean>
+    <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic$ClientHostStatisticID">
+        <field name="clientLocalTime">
+            <constraint annotation="javax.validation.constraints.NotNull">
+                <message>Client local time must be set</message>
+            </constraint>
+        </field>
+        <field name="clientHost">
+            <valid/>
+        </field>
+    </bean>
 </constraint-mappings>

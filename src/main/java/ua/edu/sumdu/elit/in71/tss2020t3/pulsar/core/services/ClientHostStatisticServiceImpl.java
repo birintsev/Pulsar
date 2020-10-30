@@ -1,5 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -37,14 +38,26 @@ public class ClientHostStatisticServiceImpl
     public void save(ClientHostStatistic clientHostStatistic) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.saveOrUpdate(clientHostStatistic.getId().getClientHost());
-            session.saveOrUpdate(clientHostStatistic);
+            session.save(clientHostStatistic);
             session.flush();
             transaction.commit();
             LOGGER.trace(
                 "Transaction committed for saving passed clientHostStatistic: "
                     + System.lineSeparator() + clientHostStatistic
             );
+        }
+    }
+
+    @Override
+    public List<ClientHostStatistic> getByPublicKey(String publicKey) {
+        try (Session session = sessionFactory.openSession()) {
+            return (List<ClientHostStatistic>)
+                session
+                    .createQuery(
+                        "from ClientHostStatistic s where"
+                            + " s.id.clientHost.publicKey = :publicKey")
+                    .setString("publicKey", publicKey)
+                    .list();
         }
     }
 }

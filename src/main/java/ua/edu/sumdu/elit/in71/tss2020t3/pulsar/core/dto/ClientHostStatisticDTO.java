@@ -3,17 +3,19 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.math.BigInteger;
+import java.net.URL;
+import java.time.ZonedDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.log4j.Logger;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.BigInteger2StringConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2BigIntegerConverter;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2TimestampConverter;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.Timestamp2StringConverter;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.List;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2ZDTConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ZDT2DateConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ZDT2StringConverter;
 
 /**
  * This class represents input statistic information from client hosts agents
@@ -31,17 +33,17 @@ public class ClientHostStatisticDTO {
     );
 
     @JsonProperty
-    private String host;
+    private URL host;
 
     @JsonProperty("at")
-    @JsonSerialize(converter = Timestamp2StringConverter.class)
-    @JsonDeserialize(converter = String2TimestampConverter.class)
-    private Timestamp clientLocalTime;
+    @JsonSerialize(converter = ZDT2StringConverter.class)
+    @JsonDeserialize(converter = String2ZDTConverter.class)
+    private ZonedDateTime clientLocalTime;
 
     @JsonProperty("boot_time")
-    @JsonSerialize(converter = Timestamp2StringConverter.class)
-    @JsonDeserialize(converter = String2TimestampConverter.class)
-    private Timestamp bootTime;
+    @JsonSerialize(converter = ZDT2DateConverter.class)
+    @JsonDeserialize(converter = String2ZDTConverter.class)
+    private ZonedDateTime bootTime;
 
     @JsonProperty("public_key")
     private String publicKey;

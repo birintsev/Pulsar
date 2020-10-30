@@ -37,7 +37,9 @@
             <key-many-to-one name="clientHost">
                 <column name="public_key"/>
             </key-many-to-one>
-            <key-property name="clientLocalTime" type="java.sql.Date" column="client_local_time"/>
+            <key-property name="clientLocalTime">
+                <column name="client_local_time" sql-type="timestamptz"/>
+            </key-property>
         </composite-id>
         <one-to-one
                 name="memoryInfo"
@@ -54,19 +56,28 @@
         <set name="cpuInfoList" table="pu_clients_cpu_info" cascade="all" fetch="join" lazy="false">
             <key>
                 <column name="public_key"/>
-                <column name="client_local_time"/>
+                <column name="client_local_time" sql-type="timestamptz"/>
             </key>
             <one-to-many class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo"/>
         </set>
         <set name="networksInfo" table="pu_clients_network_info" cascade="all" fetch="join" lazy="false">
             <key>
                 <column name="public_key"/>
-                <column name="client_local_time"/>
+                <column name="client_local_time" sql-type="timestamptz"/>
             </key>
             <one-to-many class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo"/>
         </set>
+        <set name="disksInfo" table="pu_clients_disk_info" cascade="all" fetch="join" lazy="false">
+            <key>
+                <column name="public_key"/>
+                <column name="client_local_time" sql-type="timestamptz"/>
+            </key>
+            <one-to-many class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo"/>
+        </set>
         <property name="host" column="host"/>
-        <property name="bootTime" column="client_boot_time"/>
+        <property name="bootTime">
+            <column name="client_boot_time" sql-type="timestamptz"/>
+        </property>
         <property name="agentVersion" column="agent_version"/>
     </class>
 
@@ -74,7 +85,7 @@
         <composite-id>
             <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
-                <column name="client_local_time"/>
+                <column name="client_local_time" sql-type="timestamptz"/>
             </key-many-to-one>
         </composite-id>
         <property name="num" column="num" not-null="true"/>
@@ -87,7 +98,7 @@
         <composite-id>
             <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
-                <column name="client_local_time"/>
+                <column name="client_local_time" sql-type="timestamptz"/>
             </key-many-to-one>
         </composite-id>
         <property name="origin" column="origin"/>
@@ -99,7 +110,7 @@
         <composite-id>
             <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
-                <column name="client_local_time"/>
+                <column name="client_local_time" sql-type="timestamptz"/>
             </key-many-to-one>
             <key-property name="order" column='"order"'/>
         </composite-id>
@@ -110,7 +121,7 @@
         <composite-id>
             <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
-                <column name="client_local_time"/>
+                <column name="client_local_time" sql-type="timestamptz"/>
             </key-many-to-one>
         </composite-id>
         <property name="wired" column="wired"/>
@@ -124,7 +135,7 @@
         <composite-id>
             <key-many-to-one name="clientHostStatistic" lazy="false">
                 <column name="public_key"/>
-                <column name="client_local_time"/>
+                <column name="client_local_time" sql-type="timestamptz"/>
             </key-many-to-one>
             <key-property name="name"/>
         </composite-id>
@@ -141,9 +152,11 @@
         <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation$ID">
             <key-many-to-one name="user" column="email" lazy="false"/>
         </composite-id>
-        <property name="registrationDate" column="registration_date" not-null="true"/>
+        <property name="registrationDate" not-null="true">
+            <column name="registration_date" sql-type="timestamptz"/>
+        </property>
         <property name="confirmationDate">
-            <column name="confirmation_date" check="confirmation_date is null or registration_date &lt; confirmation_date"/>
+            <column name="confirmation_date" sql-type="timestamptz" check="confirmation_date is null or registration_date &lt; confirmation_date"/>
         </property>
         <property name="key" unique="true" not-null="true" generated="insert">
             <column name="key" default="uuid_generate_v4()"/>

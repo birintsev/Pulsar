@@ -1,5 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import java.util.List;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 
 /**
@@ -21,4 +22,18 @@ public interface ClientHostStatisticService {
      *                              to be persist
      * */
     void save(ClientHostStatistic clientHostStatistic);
+
+    /**
+     * Searches for all the {@link ClientHostStatistic} inputs of a
+     * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost}
+     * that is associated with passed {@code publicKey}.
+     * <p>
+     * Note, that there could be too much stored statistic,
+     * so use this method when it's really necessary.
+     *
+     * @param  publicKey a client's host public key
+     * @return all the stored client's host statistic
+     *         or an empty list if the client's host doesn't exist
+     * */
+    List<ClientHostStatistic> getByPublicKey(String publicKey);
 }

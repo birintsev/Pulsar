@@ -1,9 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,9 +23,6 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 public class ClientHostStatisticFromDTOConverter
     extends StdConverter<ClientHostStatisticDTO, ClientHostStatistic> {
 
-
-    private final StdConverter<ZonedDateTime, java.sql.Date> zdt2DateConverter;
-
     private final Validator validator;
 
     private final ClientHostService clientHostService;
@@ -46,7 +40,6 @@ public class ClientHostStatisticFromDTOConverter
     public ClientHostStatisticFromDTOConverter(
         ClientHostService clientHostService
     ) {
-        zdt2DateConverter = new ZDT2DateConverter();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
         this.clientHostService = clientHostService;
     }
@@ -95,15 +88,7 @@ public class ClientHostStatisticFromDTOConverter
                 return diskInfo;
             }
         ).collect(Collectors.toSet()));
-        try {
-            clientHostStatistic.setHost(new URI(dto.getHost()));
-        } catch (URISyntaxException e) {
-            String errMsg =
-                "Error during host converting from String to URI:"
-                    + System.lineSeparator() + e;
-            LOGGER.error(errMsg, e);
-            throw new RuntimeException(errMsg, e);
-        }
+        clientHostStatistic.setHost(dto.getHost());
         clientHostStatistic.setId(
             new ClientHostStatistic.ClientHostStatisticID(
                 clientHostService.getByPublicKey(dto.getPublicKey()),

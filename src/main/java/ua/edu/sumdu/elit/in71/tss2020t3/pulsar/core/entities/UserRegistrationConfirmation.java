@@ -1,7 +1,7 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,9 +25,9 @@ public class UserRegistrationConfirmation implements Serializable {
 
     private ID id;
 
-    private Timestamp registrationDate;
+    private ZonedDateTime registrationDate;
 
-    private Timestamp confirmationDate;
+    private ZonedDateTime confirmationDate;
 
     private UUID key;
 

@@ -3,16 +3,16 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 
 /**
  * A handler that provides support for
@@ -69,7 +69,7 @@ public class RegistrationConfirmationHandler implements Handler {
             throw new BadRequestResponse("Passed key not found");
         }
         userRegConf.setConfirmationDate(
-            new Timestamp(System.currentTimeMillis())
+            ZonedDateTime.now()
         );
         userService.confirmUserRegistration(userRegConf);
         ctx.status(HttpStatus.Code.OK.getCode());

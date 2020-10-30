@@ -1,15 +1,14 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client;
 
+import java.io.Serializable;
+import java.net.URL;
+import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.log4j.Logger;
-
-import java.io.Serializable;
-import java.net.URI;
-import java.sql.Timestamp;
-import java.util.Set;
 
 /**
  * This class represents an entity, that is a container of information portion
@@ -26,9 +25,9 @@ public class ClientHostStatistic implements Serializable {
 
     private ClientHostStatisticID id;
 
-    private URI host;
+    private URL host;
 
-    private Timestamp bootTime;
+    private ZonedDateTime bootTime;
 
     private String agentVersion;
 
@@ -68,7 +67,7 @@ public class ClientHostStatistic implements Serializable {
 
         private ClientHost clientHost;
 
-        private Timestamp clientLocalTime;
+        private ZonedDateTime clientLocalTime;
 
         @Override
         public String toString() {

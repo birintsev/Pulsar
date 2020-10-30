@@ -3,7 +3,7 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMATION_PENDING;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -69,7 +69,7 @@ public class DatabaseUserService implements UserService {
         );
         userRegistrationConfirmation = new UserRegistrationConfirmation(
             new UserRegistrationConfirmation.ID(user),
-            new Timestamp(System.currentTimeMillis()),
+            ZonedDateTime.now(),
             null,
             null
         );

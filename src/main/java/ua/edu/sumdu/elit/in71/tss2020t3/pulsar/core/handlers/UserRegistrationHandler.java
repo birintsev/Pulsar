@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.SMTPService;
@@ -92,11 +94,11 @@ public class UserRegistrationHandler implements Handler {
             mailService.sendRegistrationConfirmationEmail(
                 userService.getRegistrationConfirmationFor(user)
             );
-        } catch (Exception e) {
+        } catch (AlreadyExistsException e) {
             LOGGER.error(e);
-            throw new BadRequestResponse(
-                "Can not register user."
-                    + " Kindly, contact administrator for more details"
+            throw new JsonHttpResponseException(HttpStatus.Code.BAD_REQUEST
+                .getCode(),
+                "A user with such mail or username already registered"
             );
         }
         ctx.status(HttpStatus.Code.OK.getCode());

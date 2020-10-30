@@ -26,14 +26,7 @@
             <valid/>
         </field>
         <field name="loadAverage">
-            <constraint annotation="javax.validation.constraints.Min">
-                <message>Load average may not be less than 0</message>
-                <element name="value">0</element>
-            </constraint>
-            <constraint annotation="javax.validation.constraints.Max">
-                <message>Load average may not be greater than 1</message>
-                <element name="value">1</element>
-            </constraint>
+            <valid/>
         </field>
         <field name="memoryInfo">
             <valid/>

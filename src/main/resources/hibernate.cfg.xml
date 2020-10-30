@@ -4,6 +4,8 @@
     <session-factory>
         <property name="show_sql">true</property>
         <property name="hbm2ddl.auto">validate</property>
+        <property name="hibernate.default_schema">public</property>
+        <property name="hibernate.jdbc.time_zone" ><![CDATA[${pulsar.database.timezone}]]></property>
         <mapping resource="/entities-mapping.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

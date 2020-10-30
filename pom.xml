@@ -20,7 +20,7 @@
         <slf4j-api.version>1.8.0-beta4</slf4j-api.version>
         <slf4j-simple.version>1.7.30</slf4j-simple.version>
         <commons-io.version>2.8.0</commons-io.version>
-        <hibernate-core.version>5.1.0.Final</hibernate-core.version>
+        <hibernate-core.version>5.4.22.Final</hibernate-core.version>
         <hibernate-validator.version>6.0.2.Final</hibernate-validator.version>
         <hibernate-validator-annotation-processor.version>6.0.2.Final</hibernate-validator-annotation-processor.version>
         <glassfish.javaex-el.version>2.2.6</glassfish.javaex-el.version>

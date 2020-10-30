@@ -19,6 +19,12 @@ public final class ApplicationPropertiesNames {
         "pulsar.server.port";
 
     /**
+     * Represents a timezone set on the database side by default
+     * */
+    public static final String DATABASE_TIMEZONE                              =
+        "pulsar.database.timezone";
+
+    /**
      * Represents a database connection URL
      * */
     public static final String DATABASE_URL                                   =

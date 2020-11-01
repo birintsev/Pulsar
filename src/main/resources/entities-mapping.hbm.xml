@@ -187,4 +187,9 @@
         <create><![CDATA[alter table pu_clients_hosts add constraint client_host_public_key_check check (name ~ $$${pulsar.client_host.public_key.regexp}$$)]]></create>
         <drop><![CDATA[alter table pu_clients_hosts drop constraint client_host_public_key_check]]></drop>
     </database-object>
+    
+    <database-object>
+        <create>create extension if not exists "uuid-ossp"</create>
+        <drop>drop extension if exists "uuid-ossp"</drop>
+    </database-object>
 </hibernate-mapping>

@@ -30,6 +30,7 @@
         <checkstyle-plugin.version>3.1.1</checkstyle-plugin.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
         <commons-text.version>1.9</commons-text.version>
+        <guice.version>4.2.3</guice.version>
     </properties>
 
     <packaging>jar</packaging>
@@ -190,6 +191,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${commons-text.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
         </dependency>
     </dependencies>
 </project>

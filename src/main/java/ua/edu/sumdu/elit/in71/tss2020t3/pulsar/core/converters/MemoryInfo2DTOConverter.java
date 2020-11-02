@@ -1,6 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
-import com.fasterxml.jackson.databind.util.StdConverter;
+import java.util.function.Function;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo;
 
@@ -9,11 +9,11 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo;
  * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo}
  * to its representation-level POJO
  * */
-public class MemoryInfo2DTOConverter extends
-    StdConverter<MemoryInfo, ClientHostStatisticDTO.MemoryInfoDTO> {
+public class MemoryInfo2DTOConverter implements
+    Function<MemoryInfo, ClientHostStatisticDTO.MemoryInfoDTO> {
 
     @Override
-    public ClientHostStatisticDTO.MemoryInfoDTO convert(MemoryInfo value) {
+    public ClientHostStatisticDTO.MemoryInfoDTO apply(MemoryInfo value) {
         ClientHostStatisticDTO.MemoryInfoDTO dto =
             new ClientHostStatisticDTO.MemoryInfoDTO();
         dto.setActive(value.getActive());

@@ -9,12 +9,12 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 import org.apache.log4j.Logger;
 import picocli.CommandLine;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLICommandExecutionResult;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.Application;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.JavalinApplication;
 
 /**
  * This class is a common way to start an application instance
@@ -50,11 +50,18 @@ public class StartApplicationInstanceCLICommand
 
     private String[] arguments;
 
+    private Supplier<Application> applicationProvider;
+
     /**
-     * A default constructor
+     * A constructor with provided {@link Application} instance
+     *
+     * @param applicationProvider a Guice provider for an {@link Application}
+     *                            instance to start
      * */
-    public StartApplicationInstanceCLICommand() {
-        //appConfigService = new PropertiesAppConfigService();
+    public StartApplicationInstanceCLICommand(
+        Supplier<Application> applicationProvider
+    ) {
+        this.applicationProvider = applicationProvider;
     }
 
     /**
@@ -94,7 +101,7 @@ public class StartApplicationInstanceCLICommand
      * */
     @Override
     public boolean canHandle(String[] args) {
-        return new CommandLine(new StartApplicationInstanceCLICommand())
+        return new CommandLine(this)
             .parseArgs(args).errors().size() == 0;
     }
 
@@ -166,7 +173,7 @@ public class StartApplicationInstanceCLICommand
         if (appConfig.stringPropertyNames().contains(LOG_DIRECTORY)) {
             Main.reconfigureLoggers();
         }
-        Application application = new JavalinApplication(appConfig);
+        Application application = applicationProvider.get();
         application.start();
         return () -> application;
     }

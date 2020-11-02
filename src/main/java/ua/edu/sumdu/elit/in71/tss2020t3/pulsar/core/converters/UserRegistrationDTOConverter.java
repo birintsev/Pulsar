@@ -1,8 +1,8 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
-import com.fasterxml.jackson.databind.util.StdConverter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -16,7 +16,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
  * Designed for use in registration request handling
  * */
 public class UserRegistrationDTOConverter
-    extends StdConverter<UserRegistrationDTO, User> {
+    implements Function<UserRegistrationDTO, User> {
 
     private static final Logger LOGGER = Logger.getLogger(
         UserRegistrationDTOConverter.class
@@ -32,7 +32,7 @@ public class UserRegistrationDTOConverter
     }
 
     @Override
-    public User convert(UserRegistrationDTO dto) {
+    public User apply(UserRegistrationDTO dto) {
         validate(dto);
         return new User(
             new User.UserID(dto.getEmail()),
@@ -49,7 +49,7 @@ public class UserRegistrationDTOConverter
     /**
      * This method is aimed only to encapsulate validation logic
      * and to reduce code
-     * in the main ({@link #convert(UserRegistrationDTO)}) method
+     * in the main ({@link #apply(UserRegistrationDTO)}) method
      * */
     private void validate(UserRegistrationDTO dto) {
         Set<ConstraintViolation<UserRegistrationDTO>> constraintViolations =

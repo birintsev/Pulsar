@@ -1,13 +1,10 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli;
 
+import java.util.Arrays;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import picocli.CommandLine;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.CLICommand;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.StartApplicationInstanceCLICommand;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * This class represents an implementation of Front Controller pattern
@@ -19,7 +16,7 @@ import java.util.Collection;
  * */
 public class CLIFrontController {
 
-    private final Collection<CLICommand<?>> supportedCLICommands;
+    private final Set<CLICommand<?>> supportedCLICommands;
 
     private static final Logger LOGGER = Logger.getLogger(
         CLIFrontController.class
@@ -34,11 +31,14 @@ public class CLIFrontController {
     );
 
     /**
-     * A default constructor
+     * A default dependency injection constructor
+     *
+     * @param supportedCLICommands a set of CLI-commands
+     *                             among which this controller
+     *                             will look for a requested command
      * */
-    public CLIFrontController() {
-        supportedCLICommands = new ArrayList<>();
-        supportedCLICommands.add(new StartApplicationInstanceCLICommand());
+    public CLIFrontController(Set<CLICommand<?>> supportedCLICommands) {
+        this.supportedCLICommands = supportedCLICommands;
     }
 
     /**

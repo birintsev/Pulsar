@@ -1,10 +1,10 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
-import com.fasterxml.jackson.databind.util.Converter;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import java.util.Set;
+import java.util.function.Function;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -26,13 +26,13 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatistic
  * */
 public class NewClientHostStatisticHandler implements Handler {
 
-    private final Converter<String, ClientHostStatisticDTO> deserializer;
+    private final Function<String, ClientHostStatisticDTO> deserializer;
 
     private final Validator validator;
 
     private final ClientHostStatisticService clientHostStatisticService;
 
-    private final Converter<ClientHostStatisticDTO, ClientHostStatistic>
+    private final Function<ClientHostStatisticDTO, ClientHostStatistic>
         dtoConverter;
 
     private static final Logger LOGGER = Logger.getLogger(
@@ -48,7 +48,7 @@ public class NewClientHostStatisticHandler implements Handler {
      * */
     public NewClientHostStatisticHandler(
         SessionFactory sessionFactory,
-        Converter<ClientHostStatisticDTO, ClientHostStatistic> dtoConverter
+        Function<ClientHostStatisticDTO, ClientHostStatistic> dtoConverter
     ) {
         this.deserializer = new JSONString2ServerStatisticDTOConverter();
         this.validator =
@@ -68,8 +68,8 @@ public class NewClientHostStatisticHandler implements Handler {
     public void handle(@NotNull Context ctx) {
         validate(ctx);
         clientHostStatisticService.save(
-            dtoConverter.convert(
-                deserializer.convert(ctx.body())
+            dtoConverter.apply(
+                deserializer.apply(ctx.body())
             )
         );
         LOGGER.trace(
@@ -90,7 +90,7 @@ public class NewClientHostStatisticHandler implements Handler {
         BadRequestResponse badResponse;
         ClientHostStatisticDTO dto;
         try {
-            dto = deserializer.convert(ctx.body());
+            dto = deserializer.apply(ctx.body());
         } catch (Exception e) {
             LOGGER.error(
                 "Error during unmarshalling request body: " + ctx.body()

@@ -9,8 +9,5 @@
  * <b>2</b>
  * ${<b>result class name</b>}
  * <b>Converter</b>
- *
- * @see com.fasterxml.jackson.databind.util.StdConverter
- * @see com.fasterxml.jackson.databind.util.Converter
  * */
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;

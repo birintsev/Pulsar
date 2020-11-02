@@ -1,6 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
-import com.fasterxml.jackson.databind.util.StdConverter;
+import java.util.function.Function;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
 
@@ -10,9 +10,9 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
  * to its representation-level POJO
  * */
 public class CPUInfo2DTOConverter
-    extends StdConverter<CPUInfo, ClientHostStatisticDTO.CPUInfoDTO> {
+    implements Function<CPUInfo, ClientHostStatisticDTO.CPUInfoDTO> {
     @Override
-    public ClientHostStatisticDTO.CPUInfoDTO convert(CPUInfo value) {
+    public ClientHostStatisticDTO.CPUInfoDTO apply(CPUInfo value) {
         ClientHostStatisticDTO.CPUInfoDTO dto =
             new ClientHostStatisticDTO.CPUInfoDTO();
         dto.setIdle(value.getIdle());

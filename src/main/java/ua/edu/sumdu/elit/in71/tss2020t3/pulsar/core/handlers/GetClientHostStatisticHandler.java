@@ -3,13 +3,13 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.util.Converter;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import org.apache.log4j.Logger;
@@ -48,7 +48,7 @@ public class GetClientHostStatisticHandler implements Handler {
 
     private final Validator validator;
 
-    private final Converter<ClientHostStatistic, ClientHostStatisticDTO>
+    private final Function<ClientHostStatistic, ClientHostStatisticDTO>
         responseConverter;
 
     /**
@@ -70,7 +70,7 @@ public class GetClientHostStatisticHandler implements Handler {
         ClientHostService clientHostService,
         ClientHostStatisticService clientHostStatisticService,
         Validator validator,
-        Converter<ClientHostStatistic, ClientHostStatisticDTO> responseConverter
+        Function<ClientHostStatistic, ClientHostStatisticDTO> responseConverter
     ) {
         this.userService = userService;
         this.clientHostService = clientHostService;
@@ -102,7 +102,7 @@ public class GetClientHostStatisticHandler implements Handler {
     ) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         List<ClientHostStatisticDTO> dtos = new ArrayList<>(statistics.size());
-        statistics.stream().map(responseConverter::convert).forEach(dtos::add);
+        statistics.stream().map(responseConverter).forEach(dtos::add);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         return mapper.writeValueAsString(dtos);
     }

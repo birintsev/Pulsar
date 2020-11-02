@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.BigInteger2StringConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2BigIntegerConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.String2ZDTConverter;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ZDT2DateConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ZDT2StringConverter;
 
 /**
@@ -41,7 +40,7 @@ public class ClientHostStatisticDTO {
     private ZonedDateTime clientLocalTime;
 
     @JsonProperty("boot_time")
-    @JsonSerialize(converter = ZDT2DateConverter.class)
+    @JsonSerialize(converter = ZDT2StringConverter.class)
     @JsonDeserialize(converter = String2ZDTConverter.class)
     private ZonedDateTime bootTime;
 

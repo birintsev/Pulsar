@@ -1,11 +1,10 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
-import com.fasterxml.jackson.databind.util.StdConverter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
 import org.apache.log4j.Logger;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
@@ -21,7 +20,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
  * Converts {@link ClientHostStatisticDTO} to {@link ClientHostStatistic}
  * */
 public class ClientHostStatisticFromDTOConverter
-    extends StdConverter<ClientHostStatisticDTO, ClientHostStatistic> {
+    implements Function<ClientHostStatisticDTO, ClientHostStatistic> {
 
     private final Validator validator;
 
@@ -32,20 +31,22 @@ public class ClientHostStatisticFromDTOConverter
     );
 
     /**
-     * A default constructor
+     * A default dependency injection constructor
      *
+     * @param validator         a javax validator
      * @param clientHostService a service that will be used for determination
      *                          a host to which passed dto relates
      * */
     public ClientHostStatisticFromDTOConverter(
-        ClientHostService clientHostService
+        ClientHostService clientHostService,
+        Validator validator
     ) {
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
+        this.validator = validator;
         this.clientHostService = clientHostService;
     }
 
     @Override
-    public ClientHostStatistic convert(ClientHostStatisticDTO dto) {
+    public ClientHostStatistic apply(ClientHostStatisticDTO dto) {
         Set<ConstraintViolation<ClientHostStatisticDTO>> constraintViolations =
             validator.validate(dto);
         if (!constraintViolations.isEmpty()) {

@@ -2,14 +2,14 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.StdConverter;
 import java.io.UncheckedIOException;
+import java.util.function.Function;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 
 public class JSONString2CreateClientHostConverter
-    extends StdConverter<String, CreateClientHostDTO> {
+    implements Function<String, CreateClientHostDTO> {
     @Override
-    public CreateClientHostDTO convert(String value) {
+    public CreateClientHostDTO apply(String value) {
         try {
             return new ObjectMapper().readValue(
                 value,

@@ -1,5 +1,7 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -10,6 +12,8 @@ import org.apache.log4j.PropertyConfigurator;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLIFrontController;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.StartApplicationInstanceCLICommand;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.CLIModule;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.JavalinApplicationModule;
 
 public class Main {
 
@@ -51,15 +55,22 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        new CLIFrontController().handle(args);
+        Injector injector = Guice.createInjector(
+            new CLIModule(),
+            new JavalinApplicationModule()
+        );
+        CLIFrontController cliFrontController = injector.getInstance(
+            CLIFrontController.class
+        );
+        cliFrontController.handle(args);
     }
 
     /**
-     * @return                          a {@link File} instance that represents
-     *                                  the parent directory of this jar file
-     * @exception   RuntimeException    if an exception occurs
-     *                                  when identifying parent folder
-     *                                  for a jar in runtime
+     * @return                     a {@link File} instance that represents
+     *                             the parent directory of this jar file
+     * @exception RuntimeException if an exception occurs
+     *                             when identifying parent folder
+     *                             for a jar in runtime
      * */
     public static File getRunningDirectory() {
         try {

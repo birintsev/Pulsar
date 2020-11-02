@@ -2,15 +2,15 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.StdConverter;
 import java.io.UncheckedIOException;
+import java.util.function.Function;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 
 /**
  * Converts {@link String} to {@link ClientHostStatisticDTO}
  * */
 public class JSONString2ServerStatisticDTOConverter
-    extends StdConverter<String, ClientHostStatisticDTO> {
+    implements Function<String, ClientHostStatisticDTO> {
 
     /**
      * Unmarshalls a {@link ClientHostStatisticDTO} from its JSON representation
@@ -20,7 +20,7 @@ public class JSONString2ServerStatisticDTOConverter
      *                  from passed {@link String}
      * */
     @Override
-    public ClientHostStatisticDTO convert(String value) {
+    public ClientHostStatisticDTO apply(String value) {
         try {
             return new ObjectMapper().readValue(
                 value, ClientHostStatisticDTO.class

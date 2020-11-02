@@ -1,12 +1,12 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.Converter;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import javax.validation.ConstraintViolationException;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
@@ -28,7 +28,7 @@ public class CreateClientHostHandler implements Handler {
 
     private final ClientHostService clientHostService;
 
-    private final Converter<String, CreateClientHostDTO> bodyConverter;
+    private final Function<String, CreateClientHostDTO> bodyConverter;
 
     /**
      * A default constructor
@@ -40,7 +40,7 @@ public class CreateClientHostHandler implements Handler {
     public CreateClientHostHandler(
         UserService userService,
         ClientHostService clientHostService,
-        Converter<String, CreateClientHostDTO> bodyConverter
+        Function<String, CreateClientHostDTO> bodyConverter
     ) {
         this.userService = userService;
         this.clientHostService = clientHostService;
@@ -55,7 +55,7 @@ public class CreateClientHostHandler implements Handler {
         CreateClientHostDTO dto;
         ClientHost newClientHost;
         try {
-            dto = bodyConverter.convert(ctx.body());
+            dto = bodyConverter.apply(ctx.body());
         } catch (Exception e) {
             LOGGER.error(
                 "Invalid request body for creating new client host: "

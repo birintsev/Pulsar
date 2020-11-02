@@ -2,8 +2,8 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.StdConverter;
 import java.io.UncheckedIOException;
+import java.util.function.Function;
 import org.apache.log4j.Logger;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
 
@@ -11,7 +11,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
  * Converts {@link String} to {@link UserRegistrationDTO}
  * */
 public class JSONString2UserDTOConverter
-    extends StdConverter<String, UserRegistrationDTO> {
+    implements Function<String, UserRegistrationDTO> {
 
     private static final Logger LOGGER = Logger.getLogger(
         JSONString2UserDTOConverter.class
@@ -25,7 +25,7 @@ public class JSONString2UserDTOConverter
      *                  from passed {@link String}
      * */
     @Override
-    public UserRegistrationDTO convert(String value) {
+    public UserRegistrationDTO apply(String value) {
         try {
             return new ObjectMapper().readValue(
                 value,

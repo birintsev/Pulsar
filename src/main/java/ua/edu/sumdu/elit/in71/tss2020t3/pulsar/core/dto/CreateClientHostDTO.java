@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateClientHostDTO {
 
-    @JsonProperty
+    @JsonProperty(required = true)
     private String publicKey;
 
-    @JsonProperty
+    @JsonProperty(required = true)
     private UUID privateKey;
 
-    @JsonProperty
+    @JsonProperty(required = true)
     private String name;
 }

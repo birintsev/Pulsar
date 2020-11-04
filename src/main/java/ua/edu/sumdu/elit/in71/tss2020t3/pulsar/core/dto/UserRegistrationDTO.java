@@ -14,16 +14,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserRegistrationDTO {
 
-    @JsonProperty
+    @JsonProperty(required = true)
     private String email;
 
-    @JsonProperty
+    @JsonProperty(required = true)
     private int age;
 
     @JsonProperty("phone_number")
     private String phoneNumber;
 
-    @JsonProperty
+    @JsonProperty(required = true)
     private String password;
 
     @JsonProperty("first_name")
@@ -32,6 +32,6 @@ public class UserRegistrationDTO {
     @JsonProperty("last_name")
     private String lastName;
 
-    @JsonProperty
+    @JsonProperty(required = true)
     private String username;
 }

@@ -218,6 +218,12 @@ public final class ApplicationPropertiesNames {
     public static final String CLIENT_HOST_NAME_REGEXP                        =
         "pulsar.client_host.name.regexp";
 
+    public static final String KEYSTORE_PATH                                  =
+        "pulsar.keystore.path";
+
+    public static final String KEYSTORE_PASSWORD                              =
+        "pulsar.keystore.password";
+
 
     private ApplicationPropertiesNames() {
 

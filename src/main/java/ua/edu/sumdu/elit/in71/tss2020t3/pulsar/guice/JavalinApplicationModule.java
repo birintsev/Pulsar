@@ -19,6 +19,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.modelmapper.ModelMapper;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.CPUInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatistic2DTOConverter;
@@ -27,16 +28,20 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.DiskInfo2DTOConve
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2CreateClientHostConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.MemoryInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.AuthenticationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateClientHostHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.ExceptionHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
@@ -252,7 +257,11 @@ public class JavalinApplicationModule extends AbstractModule {
         @Named("GetClientHostStatisticHandler")
             Handler getClientHostStatisticHandler,
         @Named("ExceptionHandler")
-            ExceptionHandler exceptionHandler
+            ExceptionHandler exceptionHandler,
+        @Named("AuthenticationHandler")
+            Handler authenticationHandler,
+        @Named("GetAllClientHostsHandler")
+            Handler getAllClientHostsHandler
     ) {
         Set<Role> permittedRoles = new HashSet<>(
             Arrays.asList(
@@ -264,9 +273,13 @@ public class JavalinApplicationModule extends AbstractModule {
             )
         );
         return Javalin.create(
-            config -> config
-                .accessManager(accessManager)
-                .addStaticFiles("/static")
+            config -> {
+
+                config
+                    .accessManager(accessManager)
+                    .addStaticFiles("/static").enableCorsForAllOrigins();
+                /*config.enforceSsl = true;*/
+            }
         )
             .post(
                 "/api/endpoint",
@@ -285,7 +298,15 @@ public class JavalinApplicationModule extends AbstractModule {
                 "/client-host-statistic",
                 getClientHostStatisticHandler,
                 permittedRoles
-            ).exception(
+            ).get(
+                "/authentication",
+                authenticationHandler
+            ).get(
+                "/client-hosts",
+                getAllClientHostsHandler,
+                permittedRoles
+            )
+            .exception(
                 Exception.class,
                 exceptionHandler
             );
@@ -294,5 +315,33 @@ public class JavalinApplicationModule extends AbstractModule {
     @Provides
     Validator validator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
+    }
+
+    @Provides
+    ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.typeMap(ClientHost.class, ClientHostDTO.class).addMapping(
+            source -> source.getId().getPrivateKey(),
+            ClientHostDTO::setPrivateKey
+        );
+        return modelMapper;
+    }
+
+    @Provides @Named(value = "GetAllClientHostsHandler")
+    Handler getAllClientHostsHandler(
+        UserService userService,
+        ClientHostService clientHostService,
+        ModelMapper modelMapper
+    ) {
+        return new GetAllClientHostsHandler(
+            userService,
+            clientHostService,
+            modelMapper
+        );
+    }
+
+    @Provides @Named(value = "AuthenticationHandler")
+    Handler authenticationHandler(UserService userService) {
+        return new AuthenticationHandler(userService);
     }
 }

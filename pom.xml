@@ -31,6 +31,7 @@
         <javax.mail.version>1.5.0-b01</javax.mail.version>
         <commons-text.version>1.9</commons-text.version>
         <guice.version>4.2.3</guice.version>
+        <modelmapper.version>2.3.0</modelmapper.version>
     </properties>
 
     <packaging>jar</packaging>
@@ -199,6 +200,11 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>${guice.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>${modelmapper.version}</version>
         </dependency>
     </dependencies>
 </project>

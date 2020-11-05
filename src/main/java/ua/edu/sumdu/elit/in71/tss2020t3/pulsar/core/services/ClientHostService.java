@@ -1,5 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import java.util.Set;
 import java.util.UUID;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
@@ -47,4 +48,14 @@ public interface ClientHostService {
      *                    does not exist
      * */
     ClientHost getByPrivateKey(UUID privateKey);
+
+    /**
+     * Searches all the {@link ClientHost} owned by passed {@link User}
+     * <p>
+     * If passed {@code owner} does not exist, this method returns an empty set
+     *
+     * @param  owner an owner of {@link ClientHost}s
+     * @return       a set of {@link ClientHost}s owned by passed {@link User}
+     * */
+    Set<ClientHost> getByOwner(User owner);
 }

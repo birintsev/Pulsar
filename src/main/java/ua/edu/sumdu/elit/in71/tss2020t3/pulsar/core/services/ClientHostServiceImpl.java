@@ -1,5 +1,7 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import javax.validation.ConstraintViolation;
@@ -101,6 +103,20 @@ public class ClientHostServiceImpl implements ClientHostService {
                 )
                 .setParameter("privateKey", privateKey)
                 .uniqueResult();
+        }
+    }
+
+    @Override
+    public Set<ClientHost> getByOwner(User owner) {
+        try (Session session = sessionFactory.openSession()) {
+            return new HashSet<>(
+                (List<ClientHost>)
+                    session
+                        .createQuery(
+                            "from ClientHost c where c.owner = :owner"
+                        ).setParameter("owner", owner)
+                        .list()
+            );
         }
     }
 

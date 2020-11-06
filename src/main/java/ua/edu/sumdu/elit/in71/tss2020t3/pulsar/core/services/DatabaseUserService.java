@@ -18,6 +18,7 @@ import org.hibernate.Transaction;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException;
 
 /**
  * A default implementation of {@link UserService} that works with users stored
@@ -58,7 +59,7 @@ public class DatabaseUserService implements UserService {
             throw new IllegalArgumentException("The user in not valid");
         }
         if (exists(user.getId())) {
-            throw new IllegalArgumentException("The user already exists");
+            throw new AlreadyExistsException("The user already exists");
         }
         user.getUserStatuses().add(
             new UserStatus(

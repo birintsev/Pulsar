@@ -19,12 +19,13 @@ public interface UserService {
     /**
      * Registers new user
      *
-     * @param       user                        a user that has not been
-     *                                          registered yet
-     * @return                                  registered {@code user}
-     * @exception   IllegalArgumentException    if passed {@code user}
-     *                                          is not valid
-     *                                          or it already exists
+     * @param     user                     a user that has not been
+     *                                     registered yet
+     * @return                             registered {@code user}
+     * @exception IllegalArgumentException if passed {@code user}
+     *                                     is not valid
+     * @exception ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException
+     *                                     if passed {@code user} already exists
      * */
     User registerUser(User user);
 

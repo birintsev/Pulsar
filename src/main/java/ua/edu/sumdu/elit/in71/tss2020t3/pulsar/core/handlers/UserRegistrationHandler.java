@@ -96,8 +96,8 @@ public class UserRegistrationHandler implements Handler {
             );
         } catch (AlreadyExistsException e) {
             LOGGER.error(e);
-            throw new JsonHttpResponseException(HttpStatus.Code.BAD_REQUEST
-                .getCode(),
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.BAD_REQUEST.getCode(),
                 "A user with such mail or username already registered"
             );
         }

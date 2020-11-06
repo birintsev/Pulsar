@@ -1,59 +1,43 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-<meta content="uk" http-equiv="Content-Language" />
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-<title>Підтвердження електронної адреси</title>
-<style type="text/css">
-.auto-style1 {
-	font-family: "Times New Roman", Times, serif;
-	font-size: x-large;
-}
-.auto-style3 {
-	color: #00FF00;
-	text-align: left;
-	border-color: #00FF00;
-	border-width: medium;
-	margin-left: 0px;
-	padding-top: 0;
-}
-.auto-style4 {
-	color: #00FF00;
-	border-color: #00FF00;
-	border-width: medium;
-	padding-top: 0;
-}
-</style>
-</head>
-<body link="#000000" style="color: #000000; letter-spacing: normal; border: medium #000080; list-style-image: url('${HOST}/images/pulsar.jpg'); margin-top: 50px; background-image: url('${HOST}/images/email-background.jpg');">
-<img alt="" height="55" src="${HOST}/images/pulsar.jpg" width="191" /><p class="auto-style1">
-<strong>Підтвердження електронної адреси</strong></p>
-<div>
-	<hr class="auto-style4" /><br />
-	Вашу електронну адресу було вказано під час реєстрації особистого кабінету 
-	користувача на сайті <a href="t3.tss2020.site">t3.tss2020.site</a> для 
-	моніторингу стану власних серверів<br />
-	<br />
-	Для підтвердження адреси перейдіть за <a href="${CONFIRMATION_URL}">посиланням</a> (натисніть мишею на ньому):<br />
-	<br />
-	Якщо посилання не натискається, скопіюйте його (виділіть увесь текст 
-	посилання, натисніть праву кнопку миші та виберіть копіювати) і вставте в 
-	адресну строку браузера - програми, яка використовується для перегляду 
-	вебсторінок в Інтернеті. Це має бути один з таких браузерів: Mozilla 
-	Firefoх, Google Chrome.<br />
-	<br />
-	Ящо ваша адреса була вказана помилково - проігноруйте це повідомлення.<br />
-	<br />
-	<hr class="auto-style3" style="width: 403px; margin-left: inherit" /><br />
-	<br />
-	Це автоматичний лист<br />
-</div>
-<br />
-
-</body>
-
-<footer>Це автоматичний лист. Якщо вам потрібна консультація зверніться до 
-контакт-центру чи службу технічної підтримки support@pulsar.com</footer>
-
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title> Підтвердження електронної адреси </title>
+		<style type="text/css">
+			BODY {
+				background: #B0C4DE ;
+			}
+			a {
+				color: #483D8B ;
+				padding: 2px;
+			}
+			a:hover > font {
+				text-decoration: none;
+				color: #000000;
+				background: #6A5ACD;
+			}
+			#footer {
+				position: fixed;
+				left: 0;
+				bottom: 0;
+				padding: 10px;
+				background: #B0C4DE;
+				color: #000000;
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body bgcolor= "#90EE90">
+	<p><img src="${HOST}/images/pulsar.png" width="100%"  alt="Pulsar"></p>
+	<h1 align="center"> <a href="${CONFIRMATION_URL}" style="color:#483D8B"> <font face= "Fira Sans, Open Sans, Roboto"> Підтвердження електронної адреси </font>  </a> </h1>
+		<p align="center"> <font face= "Fira Sans, Open Sans, Roboto">Вашу електронну адресу було вказано під час реєстрації особистого кабінету користувача
+			на <a href="t3.tss2020.site">сайті</a> для моніторингу стану власних серверів. </font> </p>
+		<p align="center" style="color: 	#DB7093"> <font face= "Fira Sans, Open Sans, Roboto">
+			Для підтвердження адреси перейдіть за посиланням (натисніть мишею на "Підтвердження електронної адреси").</font> </p>
+		<p align="center"> <font face= "Fira Sans, Open Sans, Roboto">
+			Якщо ваша адреса була вказана помилково - проігноруйте це повідомлення. </font> </p>
+		<div id="footer" align="center"> <em>
+			Це автоматичний лист. Якщо вам потрібна консультація зверніться до контакт-центру чи службу технічної підтримки support@pulsar.com </em>
+		</div>
+	</body>
 </html>

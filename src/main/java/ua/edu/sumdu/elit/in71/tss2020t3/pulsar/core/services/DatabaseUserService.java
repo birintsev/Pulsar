@@ -55,10 +55,13 @@ public class DatabaseUserService implements UserService {
     @Override
     public User registerUser(User user) {
         UserRegistrationConfirmation userRegistrationConfirmation;
+        boolean existsByEmailAndUsername = existsByEmailAndUsername(
+            user.getId().getEmail(), user.getUsername()
+        );
         if (!isUserValid(user)) {
             throw new IllegalArgumentException("The user in not valid");
         }
-        if (exists(user.getId())) {
+        if (existsByEmailAndUsername) {
             throw new AlreadyExistsException("The user already exists");
         }
         user.getUserStatuses().add(
@@ -115,6 +118,30 @@ public class DatabaseUserService implements UserService {
     public boolean exists(User.UserID userID) {
         try (Session session = sessionFactory.openSession()) {
             return session.get(User.class, userID) != null;
+        }
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        try (Session session = sessionFactory.openSession()) {
+            return (User) session
+                .createQuery("from User u where u.username = :username")
+                .setParameter("username", username)
+                .getSingleResult();
+        }
+    }
+
+    private boolean existsByEmailAndUsername(String email, String username) {
+        try (Session session = sessionFactory.openSession()) {
+            return session
+                .createQuery(
+                    "from User u"
+                        + " where u.username = :username"
+                        + " and u.id.email = :email"
+                )
+                .setParameter("email", email)
+                .setParameter("username", username)
+                .getSingleResult() != null;
         }
     }
 

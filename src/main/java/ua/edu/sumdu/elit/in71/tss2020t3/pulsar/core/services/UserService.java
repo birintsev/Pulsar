@@ -121,4 +121,13 @@ public interface UserService {
      *               or {@code null} if such user does not exist
      * */
     User findByEmail(String email);
+
+    /**
+     * Finds a user by a username
+     *
+     * @param   username a {@code username} of a {@link User}
+     * @return           a user specified by passed {@code username}
+     *                   or {@code null} if such user does not exist
+     * */
+    User findByUsername(String username);
 }

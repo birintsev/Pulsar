@@ -249,16 +249,24 @@ public class SMTPService implements MailService {
         try {
             emailBodyMacros.put(
                 "${RESET_PASSWORD_URL}",
-                new URL(getFrontendURL(), "/reset-password").toString()
+                new URL(getFrontendURL(), "/restore-password").toString()
+            );
+            emailBodyMacros.put(
+                "${RESET_PASSWORD_KEY}",
+                URLEncoder.encode(
+                    userResetPasswordRequest.getResetKey().toString(),
+                    System.getProperty(CHARSET_NAME)
+                )
             );
         } catch (MalformedURLException e) {
             LOGGER.error(e);
             throw new UncheckedIOException(e);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error(
+                "Can not encode key for resetting the user password", e
+            );
+            throw new RuntimeException(e);
         }
-        emailBodyMacros.put(
-            "${RESET_PASSWORD_KEY}",
-            userResetPasswordRequest.getResetKey().toString()
-        );
         return emailBodyMacros;
     }
 

@@ -3,7 +3,6 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -95,7 +94,7 @@ public class ClientHostServiceImpl implements ClientHostService {
     }
 
     @Override
-    public ClientHost getByPrivateKey(UUID privateKey) {
+    public ClientHost getByPrivateKey(String privateKey) {
         try (Session session = sessionFactory.openSession()) {
             return (ClientHost) session
                 .createQuery(

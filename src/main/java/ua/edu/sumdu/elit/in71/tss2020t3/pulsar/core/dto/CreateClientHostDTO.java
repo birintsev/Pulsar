@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateClientHostDTO {
 
-    @JsonProperty(required = true)
+    @JsonProperty(value = "public_key", required = true)
     private String publicKey;
 
-    @JsonProperty(required = true)
+    @JsonProperty(value = "private_key", required = true)
     private String privateKey;
 
     @JsonProperty(required = true)

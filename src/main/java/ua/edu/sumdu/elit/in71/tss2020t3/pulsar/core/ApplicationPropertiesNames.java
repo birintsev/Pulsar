@@ -94,7 +94,7 @@ public final class ApplicationPropertiesNames {
      * Represents a regular expression for a user password validation
      * */
     public static final String USER_PASSWORD_REGEXP                           =
-        "pulsar.user.phone_number.regexp";
+        "pulsar.user.password.regexp";
 
     /**
      * Represents a first name maximum length
@@ -177,7 +177,7 @@ public final class ApplicationPropertiesNames {
     public static final String SMTP_MAIL_PASSWORD                             =
         "pulsar.mail.password";
 
-    // Registration-related mail properties
+    // Mail-related properties
     /**
      * Represents a subject for email which will be sent to user
      * for registration confirmation
@@ -188,6 +188,9 @@ public final class ApplicationPropertiesNames {
      * */
     public static final String REGISTRATION_CONFIRMATION_MAIL_SUBJECT         =
         "pulsar.user.registration.confirmation.mail.subject";
+
+    public static final String RESET_PASSWORD_MAIL_SUBJECT                    =
+        "pulsar.user.password.reset.mail.subject";
 
     /**
      * Represents a {@link java.net.URL} of an HTML file
@@ -200,6 +203,9 @@ public final class ApplicationPropertiesNames {
      * */
     public static final String REGISTRATION_CONFIRMATION_MAIL_BODY_LOCATION   =
         "pulsar.user.registration.confirmation.mail.htmlbody.location";
+
+    public static final String RESET_PASSWORD_MAIL_BODY_LOCATION              =
+        "pulsar.user.password.reset.mail.htmlbody.location";
 
     // ClientHost properties
     /**

@@ -3,6 +3,9 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.DATABASE_TIMEZONE;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
 
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -31,6 +34,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOCo
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
@@ -46,12 +51,16 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatis
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRequestToResetPasswordHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserResetPasswordHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.access.BasicAuthAccessManager;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.SMTPService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
 /**
@@ -244,6 +253,65 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
+    MailService mailService() {
+        return new SMTPService();
+    }
+
+    @Provides @Named("UserRequestToResetPasswordHandler")
+    Handler userRequestToResetPasswordHandler(
+        UserService userService,
+        MailService mailService,
+        Function<String, UserRequestToResetPasswordDTO> dtoConverter
+    ) {
+        return new UserRequestToResetPasswordHandler(
+            userService,
+            mailService,
+            dtoConverter
+        );
+    }
+
+    @Provides @Named("UserResetPasswordHandler")
+    Handler userResetPasswordHandler(
+        UserService userService,
+        Validator validator,
+        Function<String, UserResetPasswordDTO> dtoConverter
+    ) {
+        return new UserResetPasswordHandler(
+            userService,
+            dtoConverter,
+            validator
+        );
+    }
+
+    @Provides
+    Function<String, UserResetPasswordDTO>
+    userResetPasswordDTOConverter() {
+        return string -> {
+            try {
+                return new ObjectMapper().readValue(
+                    string, UserResetPasswordDTO.class
+                );
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    @Provides
+    Function<String, UserRequestToResetPasswordDTO>
+    userRequestToResetPasswordDTOConverter() {
+        return string -> {
+            try {
+                return new ObjectMapper().readValue(
+                    string, UserRequestToResetPasswordDTO.class
+                );
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    @Provides
     Javalin javalin(
         AccessManager accessManager,
         @Named("NewClientHostStatisticHandler")
@@ -261,7 +329,11 @@ public class JavalinApplicationModule extends AbstractModule {
         @Named("AuthenticationHandler")
             Handler authenticationHandler,
         @Named("GetAllClientHostsHandler")
-            Handler getAllClientHostsHandler
+            Handler getAllClientHostsHandler,
+        @Named("UserRequestToResetPasswordHandler")
+            Handler userRequestToResetPasswordHandler,
+        @Named("UserResetPasswordHandler")
+            Handler userResetPasswordHandler
     ) {
         Set<Role> permittedRoles = new HashSet<>(
             Arrays.asList(
@@ -274,11 +346,10 @@ public class JavalinApplicationModule extends AbstractModule {
         );
         return Javalin.create(
             config -> {
-
                 config
                     .accessManager(accessManager)
-                    .addStaticFiles("/static").enableCorsForAllOrigins();
-                /*config.enforceSsl = true;*/
+                    .addStaticFiles("/static")
+                    .enableCorsForAllOrigins();
             }
         )
             .post(
@@ -305,6 +376,14 @@ public class JavalinApplicationModule extends AbstractModule {
                 "/client-hosts",
                 getAllClientHostsHandler,
                 permittedRoles
+            )
+            .post(
+                "/reset-password/request",
+                userRequestToResetPasswordHandler
+            )
+            .post(
+                "/reset-password",
+                userResetPasswordHandler
             )
             .exception(
                 Exception.class,

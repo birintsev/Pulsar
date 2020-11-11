@@ -5,13 +5,17 @@ import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationProperties
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.MAIL_USER;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.REGISTRATION_CONFIRMATION_MAIL_BODY_LOCATION;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.REGISTRATION_CONFIRMATION_MAIL_SUBJECT;
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.RESET_PASSWORD_MAIL_BODY_LOCATION;
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.RESET_PASSWORD_MAIL_SUBJECT;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.SMTP_AUTHENTICATION_ENABLED;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.SMTP_HOST;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.SMTP_MAIL_PASSWORD;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.SMTP_PORT;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.SMTP_STARTTLS_ENABLED;
 
+
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -35,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserResetPasswordRequest;
 
 /**
  * A default implementation of {@link MailService} that uses an SMTP serer
@@ -88,8 +93,35 @@ public class SMTPService implements MailService {
         }
     }
 
+    @Override
+    public void sendResetPasswordEmail(
+        UserResetPasswordRequest userResetPasswordRequest
+    ) {
+        try {
+            Message email = prepareMessageFor(userResetPasswordRequest);
+            LOGGER.trace("Sending the email: " + email);
+            Transport.send(email);
+            LOGGER.trace("The email " + email + " has been sent");
+        } catch (MessagingException e) {
+            LOGGER.error(e);
+            throw new RuntimeException(e);
+        }
+    }
+
     private Message prepareMessageFor(
         UserRegistrationConfirmation confirmation
+    ) throws MessagingException {
+        return getSimpleMessage(
+            confirmation.getId().getUser().getId().getEmail(),
+            System.getProperty(
+                REGISTRATION_CONFIRMATION_MAIL_SUBJECT
+            ),
+            fetchEmailBodyFor(confirmation)
+        );
+    }
+
+    private Message getSimpleMessage(
+        String to, String subject, String body
     ) throws MessagingException {
         Message message = new MimeMessage(
             Session.getDefaultInstance(
@@ -113,23 +145,26 @@ public class SMTPService implements MailService {
         );
         message.setRecipient(
             Message.RecipientType.TO,
-            new InternetAddress(
-                confirmation.getId().getUser().getId().getEmail()
-            )
+            new InternetAddress(to)
         );
-        message.setSubject(
-            System.getProperty(
-                REGISTRATION_CONFIRMATION_MAIL_SUBJECT
-            )
-        );
+        message.setSubject(subject);
         MimeBodyPart bodyContentPart = new MimeBodyPart();
         bodyContentPart.setContent(
-            fetchEmailBodyFor(confirmation),
-            "text/html; charset="
-                + System.getProperty(CHARSET_NAME)
+            body,
+            "text/html; charset=" + System.getProperty(CHARSET_NAME)
         );
         message.setContent(new MimeMultipart(bodyContentPart));
         return message;
+    }
+
+    private Message prepareMessageFor(
+        UserResetPasswordRequest userResetPasswordRequest
+    ) throws MessagingException {
+        return getSimpleMessage(
+            userResetPasswordRequest.getUser().getId().getEmail(),
+            System.getProperty(RESET_PASSWORD_MAIL_SUBJECT),
+            fetchEmailBodyFor(userResetPasswordRequest)
+        );
     }
 
     private String fetchEmailBodyFor(
@@ -155,6 +190,27 @@ public class SMTPService implements MailService {
             );
             throw new RuntimeException(e);
         }
+    }
+
+    private String fetchEmailBodyFrom(URI uri) {
+        try {
+            return IOUtils.toString(uri, System.getProperty(CHARSET_NAME));
+        } catch (IOException e) {
+            LOGGER.error("Can not fetch email body specified by " + uri);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String fetchEmailBodyFor(
+        UserResetPasswordRequest userResetPasswordRequest
+    ) {
+        String rawEmailBodyURL = System.getProperty(
+            RESET_PASSWORD_MAIL_BODY_LOCATION
+        );
+        return replaceMacros(
+            fetchEmailBodyFrom(URI.create(rawEmailBodyURL)),
+            createMacrosFor(userResetPasswordRequest)
+        );
     }
 
     private String replaceMacros(String emailBody, Map<String, String> macros) {
@@ -186,12 +242,42 @@ public class SMTPService implements MailService {
         return emailBodyMacros;
     }
 
+    private Map<String, String> createMacrosFor(
+        UserResetPasswordRequest userResetPasswordRequest
+    ) {
+        Map<String, String> emailBodyMacros = new HashMap<>();
+        try {
+            emailBodyMacros.put(
+                "${RESET_PASSWORD_URL}",
+                new URL(getFrontendURL(), "/reset-password").toString()
+            );
+        } catch (MalformedURLException e) {
+            LOGGER.error(e);
+            throw new UncheckedIOException(e);
+        }
+        emailBodyMacros.put(
+            "${RESET_PASSWORD_KEY}",
+            userResetPasswordRequest.getResetKey().toString()
+        );
+        return emailBodyMacros;
+    }
+
+    private URL getFrontendURL() {
+        try {
+            return new URL(System.getProperty(FRONTEND_URL));
+        } catch (MalformedURLException e) {
+            LOGGER.error(e);
+            throw new UncheckedIOException(e);
+        }
+    }
+
     private URL createRegistrationActivationURLFor(
         UserRegistrationConfirmation confirmation
     ) {
         URL frontendURL;
         URL registrationConfirmationURL;
         try {
+            // todo replace with getFrontendURL
             frontendURL = new URL(System.getProperty(FRONTEND_URL));
             registrationConfirmationURL = new URL(
                 frontendURL,

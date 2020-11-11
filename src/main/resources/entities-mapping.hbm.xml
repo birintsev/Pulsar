@@ -158,9 +158,22 @@
         <property name="confirmationDate">
             <column name="confirmation_date" sql-type="timestamptz" check="confirmation_date is null or registration_date &lt; confirmation_date"/>
         </property>
-        <property name="key" unique="true" not-null="true" generated="insert">
+        <property name="key" insert="false" update="false" generated="insert">
             <column name="key" default="uuid_generate_v4()"/>
         </property>
+    </class>
+
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserResetPasswordRequest" table="pu_users_reset_password_requests">
+        <id name="resetKey" column="reset_key">
+            <generator class="org.hibernate.id.UUIDGenerator"/>
+        </id>
+        <property name="createdWhen">
+            <column name="created_when" not-null="true" default="clock_timestamp()" sql-type="timestamptz"/>
+        </property>
+        <property name="resetWhen">
+            <column name="reset_when" not-null="false" sql-type="timestamptz" check="reset_when is null or reset_when &gt; created_when"/>
+        </property>
+        <many-to-one name="user" column="email" not-null="true" lazy="false" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User" fetch="select"/>
     </class>
 
     <database-object>

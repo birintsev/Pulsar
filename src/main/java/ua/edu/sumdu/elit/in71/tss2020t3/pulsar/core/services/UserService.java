@@ -3,6 +3,7 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 import java.util.UUID;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserResetPasswordRequest;
 
 /**
  * This service-layer interface was designed to represent basic operations
@@ -130,4 +131,71 @@ public interface UserService {
      *                   or {@code null} if such user does not exist
      * */
     User findByUsername(String username);
+
+    /**
+     * Finds latest unused request to reset a {@code user} password
+     * <p>
+     * The words 'latest unused request' mean,
+     * that the {@code user} had requested to reset his/her password,
+     * but has not done it yet.
+     * That is, there is a key ({@link UserResetPasswordRequest#getResetKey()})
+     * that could be used to reset {@code user}'s password.
+     *
+     * @param  user a {@link User} who has requested to reset the pasword
+     * @return      an instance of {@link UserResetPasswordRequest} with empty
+     *              {@link UserResetPasswordRequest#getResetWhen()} date
+     *              or {@code null} if the {@code user} has not requested
+     *              to reset his/her password
+     *              or if the {@code user} does not exist
+     * */
+    UserResetPasswordRequest getLatestUnusedRequestOf(User user);
+
+    /**
+     * This method resets user's password
+     * <p>
+     *
+     * @param     resetKey                 a key for password resetting
+     * @param     newPassword              a new password value
+     * @exception IllegalArgumentException if the {@code resetKey} is already
+     *                                     used (i.e. associated
+     *                                     {@link UserResetPasswordRequest}
+     *                                     has non-{@code null}
+     *                                     {@link UserResetPasswordRequest#getResetWhen()}
+     *                                     value) or the {@code password}
+     *                                     does not satisfy requirements
+     *                                     to password format
+     * */
+    void resetPasswordByRequest(
+        UUID resetKey, String newPassword
+    );
+
+    /**
+     * This method creates a request to reset the password of a {@code user}.
+     * <p>
+     * In other words, this methods notes, that a user has requested to reset
+     * his/her password. So, the {@code user} may update the password
+     * using a {@link UserResetPasswordRequest#getResetKey()} as a one-time
+     * credential for performing the authorized action.
+     *
+     * @param     user                     a {@link User} who raised a request
+     * @return                             a container for
+     *                                     {@link UserResetPasswordRequest#getResetKey()}
+     *                                     using which the user may perform
+     *                                     the authorized action
+     *                                     of resetting the password.
+     *                                     If such one (unused) already exists,
+     *                                     this method will return it.
+     * @exception IllegalArgumentException if the {@code user} does not exist
+     * */
+    UserResetPasswordRequest createResetPasswordRequestFor(User user);
+
+    /**
+     * Returns a {@link UserResetPasswordRequest}
+     * associated with passed {@code resetKey}
+     *
+     * @param  resetKey a key for password resetting
+     * @return          a {@link UserResetPasswordRequest} associated with
+     *                  passed key or {@code null} if no results found
+     * */
+    UserResetPasswordRequest findByKey(UUID resetKey);
 }

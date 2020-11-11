@@ -3,11 +3,14 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMATION_PENDING;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
 
+
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -15,8 +18,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserResetPasswordRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException;
 
@@ -128,20 +133,6 @@ public class DatabaseUserService implements UserService {
                 .createQuery("from User u where u.username = :username")
                 .setParameter("username", username)
                 .getSingleResult();
-        }
-    }
-
-    private boolean existsByEmailAndUsername(String email, String username) {
-        try (Session session = sessionFactory.openSession()) {
-            return session
-                .createQuery(
-                    "from User u"
-                        + " where u.username = :username"
-                        + " and u.id.email = :email"
-                )
-                .setParameter("email", email)
-                .setParameter("username", username)
-                .getSingleResult() != null;
         }
     }
 
@@ -262,6 +253,76 @@ public class DatabaseUserService implements UserService {
         }
     }
 
+    @Override
+    public UserResetPasswordRequest getLatestUnusedRequestOf(User user) {
+        String selectHQL = "from UserResetPasswordRequest urpr"
+            + " where urpr.user = :user"
+            + " and urpr.resetWhen is null"
+            + " order by urpr.createdWhen desc";
+        List<UserResetPasswordRequest> requests;
+        try (Session session = sessionFactory.openSession()) {
+            requests = (List<UserResetPasswordRequest>)
+                session
+                    .createQuery(selectHQL)
+                    .setParameter("user", user)
+                    .setMaxResults(1).list();
+        }
+        return requests.size() == 0 ? null : requests.get(0);
+    }
+
+    @Override
+    public void resetPasswordByRequest(
+        UUID resetKey, String newPassword
+    ) {
+        User user;
+        UserResetPasswordRequest resetPasswordRequest = findByKey(resetKey);
+        if (resetPasswordRequest == null) {
+            throw new IllegalArgumentException("Passed key doesn't exist");
+        }
+        if (resetPasswordRequest.getResetWhen() != null) {
+            throw new IllegalArgumentException(
+                "Passed key has been already used"
+            );
+        }
+        user = resetPasswordRequest.getUser();
+        String oldPassword = user.getPassword();
+        UserResetPasswordRequest resetRequest = getLatestUnusedRequestOf(user);
+        if (resetRequest == null) {
+            throw new IllegalStateException(
+                "The user has not submitted a request ot reset his/her password"
+            );
+        }
+        if (!passwordFitsRequirements(newPassword)) {
+            throw new IllegalArgumentException(
+                "New password does not fit all the requirements"
+            );
+        }
+        user.setPassword(newPassword);
+        resetRequest.setResetWhen(ZonedDateTime.now());
+        try (Session session = sessionFactory.openSession()) {
+            Transaction t = session.beginTransaction();
+            session.update(user);
+            session.update(resetRequest);
+            session.flush();
+            t.commit();
+        } catch (Exception e) {
+            LOGGER.error(
+                "Error during user's (email = "
+                    + user.getId().getEmail()
+                    + ") password reset"
+            );
+            user.setPassword(oldPassword);
+            throw e;
+        }
+    }
+
+    private boolean passwordFitsRequirements(String password) {
+        Pattern userPasswordPattern = Pattern.compile(
+            System.getProperty(ApplicationPropertiesNames.USER_PASSWORD_REGEXP)
+        );
+        return userPasswordPattern.matcher(password).matches();
+    }
+
     private boolean isUserValid(User user) {
         Set<ConstraintViolation<User>> violations =
             validator.validate(user);
@@ -275,6 +336,61 @@ public class DatabaseUserService implements UserService {
                     + violations
             );
             return false;
+        }
+    }
+
+    private boolean existsByEmailAndUsername(String email, String username) {
+        try (Session session = sessionFactory.openSession()) {
+            return session
+                .createQuery(
+                    "from User u"
+                        + " where u.username = :username"
+                        + " and u.id.email = :email"
+                )
+                .setParameter("email", email)
+                .setParameter("username", username)
+                .getSingleResult() != null;
+        }
+    }
+
+    @Override
+    public UserResetPasswordRequest createResetPasswordRequestFor(User user) {
+        UserResetPasswordRequest resetPasswordRequest;
+        if (!exists(user.getId())) {
+            throw new IllegalArgumentException("The user does not exist");
+        }
+        resetPasswordRequest = getLatestUnusedRequestOf(user);
+        if (resetPasswordRequest != null) {
+            return resetPasswordRequest;
+        } else {
+            try (Session session = sessionFactory.openSession()) {
+                Transaction t = session.beginTransaction();
+                session.save(
+                        new UserResetPasswordRequest(
+                            null,
+                            user,
+                            ZonedDateTime.now(),
+                            null
+                        )
+                    );
+                session.flush();
+                t.commit();
+            }
+            resetPasswordRequest = getLatestUnusedRequestOf(user);
+        }
+        return resetPasswordRequest;
+    }
+
+    @Override
+    public UserResetPasswordRequest findByKey(UUID resetKey) {
+        try (Session session = sessionFactory.openSession()) {
+            return (UserResetPasswordRequest) session
+                .createQuery(
+                    "from UserResetPasswordRequest urpr "
+                        + "where urpr.resetKey = :resetKey"
+                )
+                .setParameter("resetKey", resetKey)
+                .getSingleResult();
         }
     }
 }

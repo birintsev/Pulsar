@@ -349,7 +349,7 @@ public class DatabaseUserService implements UserService {
                 )
                 .setParameter("email", email)
                 .setParameter("username", username)
-                .getSingleResult() != null;
+                .list().size() > 0;
         }
     }
 

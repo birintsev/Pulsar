@@ -1,12 +1,10 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client;
 
+import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 
 /**
@@ -48,6 +46,6 @@ public class ClientHost implements Serializable {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ID implements Serializable {
-        private UUID privateKey;
+        private String privateKey;
     }
 }

@@ -1,7 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,7 @@ public class CreateClientHostDTO {
     private String publicKey;
 
     @JsonProperty(required = true)
-    private UUID privateKey;
+    private String privateKey;
 
     @JsonProperty(required = true)
     private String name;

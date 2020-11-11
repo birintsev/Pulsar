@@ -135,7 +135,7 @@ public class ClientHostServiceImpl implements ClientHostService {
                 )
                 .setParameter("publicKey", dto.getPublicKey())
                 .setParameter("privateKey", dto.getPrivateKey())
-                .uniqueResult() == null;
+                .list().size() == 0;
         }
     }
 

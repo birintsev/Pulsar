@@ -85,10 +85,12 @@ public class GetClientHostStatisticHandler implements Handler {
         User user = userService.findByEmail(
             ctx.basicAuthCredentials().getUsername()
         );
-        if (!isUserOwnerOfHost(user, request.getPublicKey())) {
+        if (
+            !clientHostService.subscriberOrOwner(user, request.getPublicKey())
+        ) {
             throw new JsonHttpResponseException(
                 HttpStatus.Code.FORBIDDEN.getCode(),
-                "The user is not an owner of the host"
+                "The user is not an owner or subscriber of the host"
             );
         }
         List<ClientHostStatistic> statistic =
@@ -134,6 +136,18 @@ public class GetClientHostStatisticHandler implements Handler {
      * associated with teh {@code publicKey}
      * */
     private boolean isUserOwnerOfHost(User user, String publicKey) {
+        ClientHost clientHost = clientHostService.getByPublicKey(publicKey);
+        if (clientHost == null) {
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.NOT_FOUND.getCode(),
+                "Client host not found",
+                Collections.emptyMap()
+            );
+        }
+        return clientHost.getOwner().equals(user);
+    }
+
+    private boolean isUserSubscriberOfHost(User user, String publicKey) {
         ClientHost clientHost = clientHostService.getByPublicKey(publicKey);
         if (clientHost == null) {
             throw new JsonHttpResponseException(

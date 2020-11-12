@@ -176,6 +176,13 @@
         <many-to-one name="user" column="email" not-null="true" lazy="false" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User" fetch="select"/>
     </class>
 
+    <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserSubscription" table="pu_users_subscriptions">
+        <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserSubscription$ID">
+            <key-many-to-one name="user" column="email"/>
+            <key-many-to-one name="clientHost" column="private_key"/>
+        </composite-id>
+    </class>
+
     <database-object>
         <create><![CDATA[alter table pu_users add constraint email_check check (email ~ $$${pulsar.email.regexp}$$)]]></create>
         <drop><![CDATA[alter table pu_users drop constraint email_check]]></drop>

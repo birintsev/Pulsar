@@ -60,7 +60,9 @@ public class GetAllClientHostsHandler implements Handler {
         User user = userService.findByEmail(
             ctx.basicAuthCredentials().getUsername()
         );
-        ctx.result(convertToResponse(clientHostService.getByOwner(user)));
+        Set<ClientHost> allClientHosts = clientHostService.getByOwner(user);
+        allClientHosts.addAll(clientHostService.getBySubscriber(user));
+        ctx.result(convertToResponse(allClientHosts));
     }
 
     private String convertToResponse(

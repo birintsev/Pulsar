@@ -34,6 +34,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOCo
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
@@ -50,6 +51,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHa
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.SubscribeClientHostHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRequestToResetPasswordHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserResetPasswordHandler;
@@ -312,6 +314,33 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
+    Function<String, SubscribeToClientHostRequest>
+    subscribeToClientHostRequestConverter() {
+        return s -> {
+            try {
+                return new ObjectMapper()
+                    .readValue(s, SubscribeToClientHostRequest.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    @Provides
+    @Named("SubscribeClientHostHandler")
+    Handler subscribeClientHostHandler(
+        UserService userService,
+        ClientHostService clientHostService,
+        Function<String, SubscribeToClientHostRequest> requestConverter
+    ) {
+        return new SubscribeClientHostHandler(
+            userService,
+            clientHostService,
+            requestConverter
+        );
+    }
+
+    @Provides
     Javalin javalin(
         AccessManager accessManager,
         @Named("NewClientHostStatisticHandler")
@@ -333,7 +362,9 @@ public class JavalinApplicationModule extends AbstractModule {
         @Named("UserRequestToResetPasswordHandler")
             Handler userRequestToResetPasswordHandler,
         @Named("UserResetPasswordHandler")
-            Handler userResetPasswordHandler
+            Handler userResetPasswordHandler,
+        @Named("SubscribeClientHostHandler")
+            Handler subscribeClientHostHandler
     ) {
         Set<Role> permittedRoles = new HashSet<>(
             Arrays.asList(
@@ -384,6 +415,10 @@ public class JavalinApplicationModule extends AbstractModule {
             .post(
                 "/reset-password",
                 userResetPasswordHandler
+            ).post(
+                "/client-host/subscribe",
+                subscribeClientHostHandler,
+                permittedRoles
             )
             .exception(
                 Exception.class,

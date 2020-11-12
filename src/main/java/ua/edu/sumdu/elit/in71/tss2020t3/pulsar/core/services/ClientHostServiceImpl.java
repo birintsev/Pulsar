@@ -2,6 +2,7 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -12,6 +13,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserSubscription;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException;
 
@@ -115,6 +117,73 @@ public class ClientHostServiceImpl implements ClientHostService {
                             "from ClientHost c where c.owner = :owner"
                         ).setParameter("owner", owner)
                         .list()
+            );
+        }
+    }
+
+    @Override
+    public void subscribeByPublicKey(String publicKey, User user) {
+        ClientHost clientHost = getByPublicKey(publicKey);
+        if (clientHost == null) {
+            throw new NoSuchElementException(
+                "ClientHost (publicKey = " + publicKey + ") does not exist"
+            );
+        }
+        try (Session session = sessionFactory.openSession()) {
+            Transaction t = session.beginTransaction();
+            session.save(
+                new UserSubscription(
+                    new UserSubscription.ID(
+                        user, clientHost
+                    )
+                )
+            );
+            session.flush();
+            t.commit();
+        }
+    }
+
+    @Override
+    public Set<ClientHost> getBySubscriber(User subscriber) {
+        try (Session session = sessionFactory.openSession()) {
+            return new HashSet<>(
+                (List<ClientHost>) session
+                    .createQuery(
+                        "select us.id.clientHost "
+                            + "from UserSubscription us "
+                            + "where us.id.user = :user"
+                    )
+                    .setParameter("user", subscriber)
+                    .list()
+            );
+        }
+    }
+
+    @Override
+    public boolean subscriberOrOwner(User user, String publicKey) {
+        String ownerQuery = "select count(*) "
+            + "from ClientHost ch "
+            + "where ch.publicKey = :publicKey "
+            + "and ch.owner = :owner";
+        String subscriberQuery = "select count(*) "
+            + "from UserSubscription us "
+            + "where us.id.clientHost = "
+                + "(from ClientHost ch "
+                + "where ch.publicKey = :publicKey)"
+            + " and us.id.user = :subscriber";
+        try (Session session = sessionFactory.openSession()) {
+            return (
+                ((long) session
+                        .createQuery(ownerQuery)
+                        .setParameter("owner", user)
+                        .setParameter("publicKey", publicKey)
+                        .getSingleResult()) > 0
+            ) || (
+                ((long) session
+                        .createQuery(subscriberQuery)
+                        .setParameter("subscriber", user)
+                        .setParameter("publicKey", publicKey)
+                        .getSingleResult()) > 0
             );
         }
     }

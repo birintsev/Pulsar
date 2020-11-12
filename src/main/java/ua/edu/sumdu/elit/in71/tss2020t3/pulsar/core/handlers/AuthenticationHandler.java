@@ -29,15 +29,30 @@ public class AuthenticationHandler implements Handler {
 
     @Override
     public void handle(@NotNull Context ctx) {
-        String userEmail = ctx.basicAuthCredentials().getUsername();
-        String userPassword = ctx.basicAuthCredentials().getPassword();
-        User user = userService.findByEmail(userEmail);
-        if (user == null || !user.getPassword().equals(userPassword)) {
-            LOGGER.error("The user does not exist or wrong password specified: "
+        String userEmail;
+        String userPassword;
+        User user;
+        if (!ctx.basicAuthCredentialsExist()) {
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.UNAUTHORIZED.getCode(),
+                "Basic credentials not found"
+            );
+        }
+        userEmail = ctx.basicAuthCredentials().getUsername();
+        userPassword = ctx.basicAuthCredentials().getPassword();
+        user = userService.findByEmail(userEmail);
+        if (
+            user == null
+            || !user.getPassword().equals(userPassword)
+            || !userService.isActive(user.getId())
+        ) {
+            LOGGER.error(
+                "The user does not exist"
+                + " (or is not active) or wrong password specified: "
                 + ctx.basicAuthCredentials().getUsername()
             );
             throw new JsonHttpResponseException(
-                HttpStatus.Code.BAD_REQUEST.getCode(),
+                HttpStatus.Code.UNAUTHORIZED.getCode(),
                 "Bad credentials"
             );
         } else {

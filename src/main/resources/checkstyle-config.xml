@@ -54,7 +54,7 @@
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
         <property name="max" value="80"/>
-        <property name="ignorePattern" value="^( )+\* (@see [\$_\w\.#(,)$]+)|(\{@link [\w#\.(,)$]+\})|(@((exception)|(throws)) [\$_\w\.#$]+)$"/>
+        <property name="ignorePattern" value="^ *\*.*$"/>
     </module>
 
     <!-- Checks for whitespace                               -->

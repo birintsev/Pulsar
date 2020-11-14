@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigInteger;
-import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -32,7 +31,7 @@ public class ClientHostStatisticDTO {
     );
 
     @JsonProperty
-    private URL host;
+    private String host;
 
     @JsonProperty("at")
     @JsonSerialize(converter = ZDT2StringConverter.class)

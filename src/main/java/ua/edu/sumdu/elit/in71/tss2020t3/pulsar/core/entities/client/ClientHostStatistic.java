@@ -1,7 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -25,7 +24,7 @@ public class ClientHostStatistic implements Serializable {
 
     private ClientHostStatisticID id;
 
-    private URL host;
+    private String host;
 
     private ZonedDateTime bootTime;
 

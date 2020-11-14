@@ -1,9 +1,10 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
-import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import java.util.Set;
 import java.util.function.Function;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import org.apache.log4j.Logger;
@@ -59,7 +60,6 @@ public class UserRegistrationHandler implements Handler {
     public void handle(@NotNull Context ctx) {
         UserRegistrationDTO dto;
         User user;
-        BadRequestResponse badResponse;
         try {
             dto = deserializer.apply(ctx.body());
         } catch (Exception e) {
@@ -72,21 +72,12 @@ public class UserRegistrationHandler implements Handler {
                     + "to UserRegistrationDTO"
                 , e
             );
-            badResponse = new BadRequestResponse(
-                "The request body is not a valid registration request"
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.BAD_REQUEST.getCode(),
+                "Bad request format"
             );
-            throw badResponse;
         }
-        if (!isRequestValid(dto)) {
-            LOGGER.error("Invalid registration request received: " + dto);
-            badResponse = new BadRequestResponse();
-            validator.validate(dto).forEach(constraintViolation ->
-                badResponse.getDetails().put(
-                String.valueOf(constraintViolation.getInvalidValue()),
-                constraintViolation.getMessage()
-            ));
-            throw badResponse;
-        }
+        validate(dto);
         try {
             user = userService.registerUser(
                 dtoConverter.apply(dto)
@@ -108,7 +99,15 @@ public class UserRegistrationHandler implements Handler {
         );
     }
 
-    private boolean isRequestValid(UserRegistrationDTO dto) {
-        return validator.validate(dto).size() == 0;
+    private void validate(UserRegistrationDTO dto) {
+        Set<ConstraintViolation<UserRegistrationDTO>> constraintViolations
+            = validator.validate(dto);
+        if (!constraintViolations.isEmpty()) {
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.BAD_REQUEST.getCode(),
+                "Bad request",
+                constraintViolations.toArray(new ConstraintViolation[0])
+            );
+        }
     }
 }

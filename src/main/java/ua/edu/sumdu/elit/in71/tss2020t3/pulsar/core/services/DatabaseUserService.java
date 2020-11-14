@@ -345,7 +345,7 @@ public class DatabaseUserService implements UserService {
                 .createQuery(
                     "from User u"
                         + " where u.username = :username"
-                        + " and u.id.email = :email"
+                        + " or u.id.email = :email"
                 )
                 .setParameter("email", email)
                 .setParameter("username", username)

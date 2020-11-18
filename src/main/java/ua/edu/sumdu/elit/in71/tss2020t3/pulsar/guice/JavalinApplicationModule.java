@@ -35,6 +35,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostRequest;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
@@ -52,6 +53,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatis
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.SubscribeClientHostHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UpdateUserStatusHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRequestToResetPasswordHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserResetPasswordHandler;
@@ -341,6 +343,32 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
+    Function<String, UpdateUserStatusDTO> updateUserStatusDTOConverter() {
+        return s -> {
+            try {
+                return new ObjectMapper()
+                    .readValue(s, UpdateUserStatusDTO.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    @Provides
+    @Named("UpdateUserStatusHandler")
+    Handler updateUserStatusHandler(
+        UserService userService,
+        Function<String, UpdateUserStatusDTO> bodyConverter,
+        Validator validator
+    ) {
+        return new UpdateUserStatusHandler(
+            userService,
+            bodyConverter,
+            validator
+        );
+    }
+
+    @Provides
     Javalin javalin(
         AccessManager accessManager,
         @Named("NewClientHostStatisticHandler")
@@ -364,7 +392,9 @@ public class JavalinApplicationModule extends AbstractModule {
         @Named("UserResetPasswordHandler")
             Handler userResetPasswordHandler,
         @Named("SubscribeClientHostHandler")
-            Handler subscribeClientHostHandler
+            Handler subscribeClientHostHandler,
+        @Named("UpdateUserStatusHandler")
+        Handler updateUserStatusHandler
     ) {
         Set<Role> permittedRoles = new HashSet<>(
             Arrays.asList(
@@ -418,6 +448,10 @@ public class JavalinApplicationModule extends AbstractModule {
             ).post(
                 "/client-host/subscribe",
                 subscribeClientHostHandler,
+                permittedRoles
+            ).post(
+                "/user/update-status",
+                updateUserStatusHandler,
                 permittedRoles
             )
             .exception(

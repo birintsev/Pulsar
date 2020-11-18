@@ -264,20 +264,26 @@ public class ClientHostServiceImpl implements ClientHostService {
      * */
     private int getSubscribedClientHostsOf(User user) {
         try (Session session = sessionFactory.openSession()) {
-            return Integer.parseInt(session
-                .createQuery(
-                    "select count(*)"
-                        + " from UserSubscription us"
-                        + " where us.id.user = :subscriber"
-                )
-                .setParameter("subscriber", user)
-                .getSingleResult().toString());
+            return Integer.parseInt(
+                session
+                    .createQuery(
+                        "select count(*)"
+                            + " from UserSubscription us"
+                            + " where us.id.user = :subscriber"
+                    )
+                    .setParameter("subscriber", user)
+                    .getSingleResult()
+                    .toString()
+            );
         }
     }
 
     private boolean userReachedClientHostsLimit(User user) {
-        if (user.getUserStatuses().contains(
-            new UserStatus(USER_STATUS_PREMIUM_ACCOUNT)) // premium account users can add unlimited client hosts
+        // premium account users can add unlimited client hosts
+        if (
+            user.getUserStatuses().contains(
+                new UserStatus(USER_STATUS_PREMIUM_ACCOUNT)
+            )
         ) {
             return false;
         }

@@ -1,9 +1,11 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import java.util.Set;
 import java.util.UUID;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserResetPasswordRequest;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 
 /**
  * This service-layer interface was designed to represent basic operations
@@ -198,4 +200,43 @@ public interface UserService {
      *                  passed key or {@code null} if no results found
      * */
     UserResetPasswordRequest findByKey(UUID resetKey);
+
+    /**
+     * Adds the {@link UserStatus userStatus} to passed {@link User user}.
+     * <p>
+     * If the user has already associated with passed status,
+     * no updates will be performed.
+     *
+     * @param user       a {@link User user} to whom the {@link UserStatus}
+     *                   status will be assigned
+     * @param userStatus a {@link UserStatus status} which will be associated
+     *                   with the {@link User user}
+     * @exception java.util.NoSuchElementException if the
+     *                                             {@link UserStatus userStatus}
+     *                                             does not exist
+     * */
+    void addUserStatus(User user, UserStatus userStatus);
+
+    /**
+     * Returns list of all available statuses
+     *
+     * @return all the available {@link UserStatus user statuses}
+     * */
+    Set<UserStatus> getAllStatuses();
+
+    /**
+     * Removes the {@link UserStatus userStatus}
+     * from passed {@link User user} statuses list.
+     * <p>
+     * If the {@link User user} does not has the {@link UserStatus userStatus}
+     * in his/her statuses list
+     * or the {@link UserStatus userStatus} does not exist,
+     * no updates will be performed.
+     *
+     * @param user       a {@link User user} whose {@link UserStatus userStatus}
+     *                   will be revoked
+     * @param userStatus a {@link UserStatus status} to be revoked from the
+     *                   {@link User user}
+     * */
+    void removeStatus(User user, UserStatus userStatus);
 }

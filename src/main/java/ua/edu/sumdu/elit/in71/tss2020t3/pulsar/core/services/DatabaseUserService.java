@@ -4,7 +4,10 @@ import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationProperties
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
 
 
+import java.sql.SQLException;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -18,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
@@ -34,6 +38,10 @@ public class DatabaseUserService implements UserService {
     private static final Logger LOGGER = Logger.getLogger(
         DatabaseUserService.class
     );
+
+    public static final String USER_STATUS_FREE_ACCOUNT = "FREE_ACCOUNT";
+
+    public static final String USER_STATUS_PREMIUM_ACCOUNT = "PREMIUM_ACCOUNT";
 
     private final SessionFactory sessionFactory;
 
@@ -69,11 +77,14 @@ public class DatabaseUserService implements UserService {
         if (existsByEmailAndUsername) {
             throw new AlreadyExistsException("The user already exists");
         }
-        user.getUserStatuses().add(
-            new UserStatus(
-                System.getProperty(
-                    USER_STATUS_REGISTRATION_CONFIRMATION_PENDING
-                )
+        user.getUserStatuses().addAll(
+            Arrays.asList(
+                new UserStatus(
+                    System.getProperty(
+                        USER_STATUS_REGISTRATION_CONFIRMATION_PENDING
+                    )
+                ),
+                new UserStatus(USER_STATUS_FREE_ACCOUNT)
             )
         );
         userRegistrationConfirmation = new UserRegistrationConfirmation(
@@ -84,6 +95,9 @@ public class DatabaseUserService implements UserService {
         );
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
+            for (UserStatus userStatus : user.getUserStatuses()) {
+                session.save(userStatus);
+            }
             session.save(user);
             session.save(userRegistrationConfirmation);
             session.flush();
@@ -316,43 +330,6 @@ public class DatabaseUserService implements UserService {
         }
     }
 
-    private boolean passwordFitsRequirements(String password) {
-        Pattern userPasswordPattern = Pattern.compile(
-            System.getProperty(ApplicationPropertiesNames.USER_PASSWORD_REGEXP)
-        );
-        return userPasswordPattern.matcher(password).matches();
-    }
-
-    private boolean isUserValid(User user) {
-        Set<ConstraintViolation<User>> violations =
-            validator.validate(user);
-        if (violations.size() == 0) {
-            return true;
-        } else {
-            LOGGER.error(
-                "User is not valid:" + System.lineSeparator()
-                    + user + System.lineSeparator()
-                    + "Constraints violations:" + System.lineSeparator()
-                    + violations
-            );
-            return false;
-        }
-    }
-
-    private boolean existsByEmailAndUsername(String email, String username) {
-        try (Session session = sessionFactory.openSession()) {
-            return session
-                .createQuery(
-                    "from User u"
-                        + " where u.username = :username"
-                        + " or u.id.email = :email"
-                )
-                .setParameter("email", email)
-                .setParameter("username", username)
-                .list().size() > 0;
-        }
-    }
-
     @Override
     public UserResetPasswordRequest createResetPasswordRequestFor(User user) {
         UserResetPasswordRequest resetPasswordRequest;
@@ -391,6 +368,87 @@ public class DatabaseUserService implements UserService {
                 )
                 .setParameter("resetKey", resetKey)
                 .getSingleResult();
+        }
+    }
+
+    @Override
+    public void addUserStatus(User user, UserStatus userStatus) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction t = session.beginTransaction();
+            user.getUserStatuses().add(userStatus);
+            session.update(user);
+            session.flush();
+            t.commit();
+        } catch (ConstraintViolationException e) {
+            LOGGER.error(e);
+            throw new NoSuchElementException(
+                e.getMessage() + ": "
+                    + Optional
+                    .ofNullable(e.getCause())
+                    .orElse(new SQLException())
+                    .getMessage()
+            );
+        } finally {
+            user.getUserStatuses().remove(userStatus);
+        }
+    }
+
+    @Override
+    public Set<UserStatus> getAllStatuses() {
+        try (Session session = sessionFactory.openSession()) {
+            return new HashSet<>(
+                (List<UserStatus>) session
+                    .createQuery("from UserStatus")
+                    .list()
+            );
+        }
+    }
+
+    @Override
+    public void removeStatus(User user, UserStatus userStatus) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction t = session.beginTransaction();
+            user.getUserStatuses().remove(userStatus);
+            session.update(user);
+            session.flush();
+            t.commit();
+        }
+    }
+
+    private boolean passwordFitsRequirements(String password) {
+        Pattern userPasswordPattern = Pattern.compile(
+            System.getProperty(ApplicationPropertiesNames.USER_PASSWORD_REGEXP)
+        );
+        return userPasswordPattern.matcher(password).matches();
+    }
+
+    private boolean isUserValid(User user) {
+        Set<ConstraintViolation<User>> violations =
+            validator.validate(user);
+        if (violations.size() == 0) {
+            return true;
+        } else {
+            LOGGER.error(
+                "User is not valid:" + System.lineSeparator()
+                    + user + System.lineSeparator()
+                    + "Constraints violations:" + System.lineSeparator()
+                    + violations
+            );
+            return false;
+        }
+    }
+
+    private boolean existsByEmailAndUsername(String email, String username) {
+        try (Session session = sessionFactory.openSession()) {
+            return session
+                .createQuery(
+                    "from User u"
+                        + " where u.username = :username"
+                        + " or u.id.email = :email"
+                )
+                .setParameter("email", email)
+                .setParameter("username", username)
+                .list().size() > 0;
         }
     }
 }

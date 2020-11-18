@@ -24,6 +24,9 @@ public interface ClientHostService {
      * @exception IllegalArgumentException
      *                      if {@code owner} does not exist
      *                      or passed object is not valid
+     * @exception ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException
+     *                      if the {@link User user} has reached the limit
+     *                      of owned {@link ClientHost ClientHosts}
      * */
     ClientHost createForUserRequest(
         CreateClientHostDTO request, User requester
@@ -75,6 +78,11 @@ public interface ClientHostService {
      *                                             {@link ClientHost}
      *                                             associated with passed
      *                                             {@code publicKey}
+     * @exception ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException
+     *                                             if the {@link User user}
+     *                                             has reached the limit
+     *                                             of owned
+     *                                             {@link ClientHost ClientHosts}
      * */
     void subscribeByPublicKey(String publicKey, User user);
 

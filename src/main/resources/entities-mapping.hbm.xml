@@ -9,7 +9,7 @@
         <composite-id name="id" class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User$UserID">
             <key-property name="email" column="email"/>
         </composite-id>
-        <set name="userStatuses" table="pu_user_statuses_assignment" fetch="join" cascade="save-update" lazy="false">
+        <set name="userStatuses" table="pu_user_statuses_assignment" fetch="join" cascade="merge" lazy="false">
             <key column="email"/>
             <many-to-many entity-name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus" column="status"/>
         </set>
@@ -144,7 +144,9 @@
     </class>
 
     <class name="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus" table="pu_user_statuses">
-        <id name="status"/>
+        <id name="status">
+            <column name="status"/>
+        </id>
     </class>
 
     <!--<generator class="org.hibernate.id.UUIDGenerator"/>-->

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
@@ -62,6 +63,12 @@ public class SubscribeClientHostHandler implements Handler {
             throw new JsonHttpResponseException(
                 HttpStatus.Code.BAD_REQUEST.getCode(),
                 subscribeRequest.getPublicKey() + " does not exist"
+            );
+        } catch (UserStatusException e) {
+            LOGGER.error(e);
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.FORBIDDEN.getCode(),
+                "The user has reached the subscribed/created client hosts limit"
             );
         }
     }

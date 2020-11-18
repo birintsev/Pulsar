@@ -15,6 +15,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
@@ -87,6 +89,12 @@ public class CreateClientHostHandler implements Handler {
             );
             throw new BadRequestResponse(
                 new ObjectMapper().writeValueAsString(errors)
+            );
+        }  catch (UserStatusException e) {
+            LOGGER.error(e);
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.FORBIDDEN.getCode(),
+                "The user has reached the created/subscribed client hosts limit"
             );
         }
         ctx.status(HttpStatus.Code.OK.getCode());

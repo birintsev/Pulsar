@@ -28,7 +28,7 @@ public class ClientHostServiceImpl implements ClientHostService {
         ClientHostServiceImpl.class
     );
 
-    public static final int FREE_ACCOUNT_MAX_CLIENT_HOSTS = 3;
+    public static final int FREE_ACCOUNT_MAX_CLIENT_HOSTS = 2;
 
     private final UserService userService;
 

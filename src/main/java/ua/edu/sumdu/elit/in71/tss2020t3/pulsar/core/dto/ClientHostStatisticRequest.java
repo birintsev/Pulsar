@@ -1,5 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class ClientHostStatisticRequest {
      * A public key associated with destination
      * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost}
      * */
+    @JsonProperty(value = "public_key", required = true)
     private String publicKey;
 
     private int pageSize;

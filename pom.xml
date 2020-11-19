@@ -6,7 +6,7 @@
 
     <groupId>ua.edu.sumdu.elit.in71.tss2020t3</groupId>
     <artifactId>Pulsar-backend</artifactId>
-    <version>Stage-1</version>
+    <version>Stage-2</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

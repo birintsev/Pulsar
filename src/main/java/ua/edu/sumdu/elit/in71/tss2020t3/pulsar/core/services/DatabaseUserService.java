@@ -2,7 +2,8 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMATION_PENDING;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
-
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.USER_STATUS_FREE_ACCOUNT;
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.USER_STATUS_PREMIUM_ACCOUNT;
 
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
@@ -38,10 +39,6 @@ public class DatabaseUserService implements UserService {
     private static final Logger LOGGER = Logger.getLogger(
         DatabaseUserService.class
     );
-
-    public static final String USER_STATUS_FREE_ACCOUNT = "FREE_ACCOUNT";
-
-    public static final String USER_STATUS_PREMIUM_ACCOUNT = "PREMIUM_ACCOUNT";
 
     private final SessionFactory sessionFactory;
 
@@ -448,6 +445,27 @@ public class DatabaseUserService implements UserService {
                 )
                 .setParameter("email", email)
                 .setParameter("username", username)
+                .list().size() > 0;
+        }
+    }
+
+    @Override
+    public boolean isUserPremiumAccount(User user) {
+        try (Session session = sessionFactory.openSession()) {
+            return session
+                .createQuery(
+                    "from User u "
+                        + " where u.id.email = :email"
+                        + " and :premiumStatus in elements(u.userStatuses) "
+                )
+                .setParameter(
+                    "email",
+                    user.getId().getEmail()
+                )
+                .setParameter(
+                    "premiumStatus",
+                    new UserStatus(USER_STATUS_PREMIUM_ACCOUNT)
+                )
                 .list().size() > 0;
         }
     }

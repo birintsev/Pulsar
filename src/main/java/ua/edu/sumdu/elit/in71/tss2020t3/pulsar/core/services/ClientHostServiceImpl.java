@@ -1,7 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
-import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService.USER_STATUS_PREMIUM_ACCOUNT;
-
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.USER_STATUS_PREMIUM_ACCOUNT;
 
 import java.util.HashSet;
 import java.util.List;

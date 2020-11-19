@@ -1,5 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 
@@ -36,4 +37,29 @@ public interface ClientHostStatisticService {
      *         or an empty list if the client's host doesn't exist
      * */
     List<ClientHostStatistic> getByPublicKey(String publicKey);
+
+    /**
+     * Searches for all the {@link ClientHostStatistic} inputs of a
+     * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost}
+     * that is associated with passed {@code publicKey}
+     * from passed time interval.
+     * <p>
+     * Note, that there could be too much stored statistic,
+     * so use this method when it's really necessary.
+     *
+     * @param     publicKey                a client's host public key
+     * @param     from                     the beginning of the period
+     * @param     to                       the end of the period
+     * @return                             all the stored client's host
+     *                                     statistic from the passed interval
+     *                                     or an empty list if the client's host
+     *                                     doesn't exist
+     * @exception IllegalArgumentException if {@code from} is equal to
+     *                                     {@code to}
+     *                                     or represents a timestamp
+     *                                     after {@code to}
+     * */
+    List<ClientHostStatistic> getByPublicKey(
+        String publicKey, ZonedDateTime from, ZonedDateTime to
+    );
 }

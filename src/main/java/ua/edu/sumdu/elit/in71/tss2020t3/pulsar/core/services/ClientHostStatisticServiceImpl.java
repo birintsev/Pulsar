@@ -1,5 +1,7 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -56,7 +58,36 @@ public class ClientHostStatisticServiceImpl
                     .createQuery(
                         "from ClientHostStatistic s where"
                             + " s.id.clientHost.publicKey = :publicKey")
-                    .setString("publicKey", publicKey)
+                    .setParameter("publicKey", publicKey)
+                    .list();
+        }
+    }
+
+    @Override
+    public List<ClientHostStatistic> getByPublicKey(
+        String publicKey,
+        ZonedDateTime from,
+        ZonedDateTime to
+    ) {
+        try (Session session = sessionFactory.openSession()) {
+            return (List<ClientHostStatistic>)
+                session
+                    .createQuery(
+                        "from ClientHostStatistic s where "
+                            + "s.id.clientHost.publicKey = :publicKey "
+                            + "and s.id.clientLocalTime between :from and :to")
+                    .setParameter(
+                        "publicKey",
+                        publicKey
+                    )
+                    .setParameter(
+                        "from",
+                        from.withZoneSameLocal(ZoneOffset.UTC)
+                    )
+                    .setParameter(
+                        "to",
+                        to.withZoneSameLocal(ZoneOffset.UTC)
+                    )
                     .list();
         }
     }

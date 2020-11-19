@@ -1,10 +1,13 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.FREE_ACCOUNT_STORED_STATISTIC_DAYS;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,6 +85,7 @@ public class GetClientHostStatisticHandler implements Handler {
     @Override
     public void handle(@NotNull Context ctx) throws Exception {
         ClientHostStatisticRequest request = createFromContextRequestURL(ctx);
+        List<ClientHostStatistic> statistic;
         User user = userService.findByEmail(
             ctx.basicAuthCredentials().getUsername()
         );
@@ -93,8 +97,20 @@ public class GetClientHostStatisticHandler implements Handler {
                 "The user is not an owner or subscriber of the host"
             );
         }
-        List<ClientHostStatistic> statistic =
-            clientHostStatisticService.getByPublicKey(request.getPublicKey());
+        // todo move to strategy pattern
+        if (userService.isUserPremiumAccount(user)) {
+            statistic = clientHostStatisticService.getByPublicKey(
+                request.getPublicKey()
+            );
+        } else {
+            statistic = clientHostStatisticService.getByPublicKey(
+                request.getPublicKey(),
+                ZonedDateTime
+                    .now()
+                    .minusDays(FREE_ACCOUNT_STORED_STATISTIC_DAYS),
+                ZonedDateTime.now()
+            );
+        }
         ctx.status(HttpStatus.Code.OK.getCode());
         ctx.result(convertToResponse(statistic));
     }

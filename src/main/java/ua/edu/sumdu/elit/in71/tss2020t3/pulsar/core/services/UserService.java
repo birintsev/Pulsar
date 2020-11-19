@@ -239,4 +239,15 @@ public interface UserService {
      *                   {@link User user}
      * */
     void removeStatus(User user, UserStatus userStatus);
+
+    /**
+     * Informs that the user has upgraded the account to premium account
+     *
+     * @param   user a {@link User user} whose
+     *               {@link User#getUserStatuses() statuses list}
+     *               will be checked
+     * @return       {@code true} if the {@link User user} exists
+     *               and has PREMIUM_ACCOUNT status, {@code false} otherwise
+     * */
+    boolean isUserPremiumAccount(User user);
 }

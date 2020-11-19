@@ -24,6 +24,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.modelmapper.ModelMapper;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.InitialDataLoader;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.CPUInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatistic2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter;
@@ -369,6 +370,11 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
+    InitialDataLoader initialDataLoader(SessionFactory sessionFactory) {
+        return new InitialDataLoader(sessionFactory, false);
+    }
+
+    @Provides
     Javalin javalin(
         AccessManager accessManager,
         @Named("NewClientHostStatisticHandler")
@@ -394,7 +400,8 @@ public class JavalinApplicationModule extends AbstractModule {
         @Named("SubscribeClientHostHandler")
             Handler subscribeClientHostHandler,
         @Named("UpdateUserStatusHandler")
-        Handler updateUserStatusHandler
+        Handler updateUserStatusHandler,
+        InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
             Arrays.asList(
@@ -405,7 +412,7 @@ public class JavalinApplicationModule extends AbstractModule {
                 )
             )
         );
-        return Javalin.create(
+        Javalin javalin = Javalin.create(
             config -> {
                 config
                     .accessManager(accessManager)
@@ -458,6 +465,8 @@ public class JavalinApplicationModule extends AbstractModule {
                 Exception.class,
                 exceptionHandler
             );
+        initialDataLoader.initDatabase();
+        return javalin;
     }
 
     @Provides

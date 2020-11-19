@@ -18,6 +18,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserStatus implements Serializable, Role {
 
+    public static final String USER_STATUS_REGISTRATION_CONFIRMATION_PENDING =
+        "REGISTRATION_ACTIVATION_PENDING";
+
+    public static final String USER_STATUS_REGISTRATION_CONFIRMED            =
+        "REGISTRATION_CONFIRMED";
+
+    public static final String USER_STATUS_FREE_ACCOUNT                      =
+        "FREE_ACCOUNT";
+
+    public static final String USER_STATUS_PREMIUM_ACCOUNT                   =
+        "PREMIUM_ACCOUNT";
+
+    public static final int FREE_ACCOUNT_STORED_STATISTIC_DAYS               =
+        3;
+
     /**
      * A string representation of a status
      * */

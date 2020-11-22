@@ -92,9 +92,6 @@ public class DatabaseUserService implements UserService {
         );
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            for (UserStatus userStatus : user.getUserStatuses()) {
-                session.save(userStatus);
-            }
             session.save(user);
             session.save(userRegistrationConfirmation);
             session.flush();

@@ -3,7 +3,6 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.DATABASE_TIMEZONE;
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
@@ -35,10 +34,12 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOCo
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
@@ -48,6 +49,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.AuthenticationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateClientHostHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateOrganisationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.ExceptionHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
@@ -65,6 +67,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatistic
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.SMTPService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
@@ -75,10 +79,13 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
  * */
 public class JavalinApplicationModule extends AbstractModule {
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     SessionFactory sessionFactory() {
         Configuration hibernateConfig = new Configuration();
-        hibernateConfig.configure()
+        hibernateConfig
+            .configure()
+            .addAnnotatedClass(Organisation.class)
             .setProperty(
                 "hibernate.connection.driver_class",
                 System.getProperty(
@@ -109,9 +116,9 @@ public class JavalinApplicationModule extends AbstractModule {
                     ApplicationPropertiesNames.DATABASE_URL
                 )
             ).setProperty(
-            "hibernate.jdbc.time_zone",
-            System.getProperty(DATABASE_TIMEZONE)
-        );
+                "hibernate.jdbc.time_zone",
+                System.getProperty(DATABASE_TIMEZONE)
+            );
         return hibernateConfig.buildSessionFactory();
     }
 
@@ -155,6 +162,17 @@ public class JavalinApplicationModule extends AbstractModule {
     SessionFactory sessionFactory
     ) {
         return new ClientHostStatisticServiceImpl(sessionFactory);
+    }
+
+    @Provides
+    OrganisationService organisationService(
+        SessionFactory sessionFactory,
+        UserService userService
+    ) {
+        return new OrganisationServiceImpl(
+            sessionFactory,
+            userService
+        );
     }
 
     @Provides
@@ -289,6 +307,36 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
+    @Named("CreateOrganisationHandler")
+    Handler createOrganisationHandler(
+        UserService userService,
+        OrganisationService organisationService,
+        Function<String, CreateOrganisationRequest> bodyConverter,
+        Validator validator
+    ) {
+        return new CreateOrganisationHandler(
+            userService,
+            organisationService,
+            bodyConverter,
+            validator
+        );
+    }
+
+    @Provides
+    Function<String, CreateOrganisationRequest>
+    createOrganisationRequestBodyConverter() {
+        return body -> {
+            try {
+                return new ObjectMapper().readValue(
+                    body, CreateOrganisationRequest.class
+                );
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    @Provides
     Function<String, UserResetPasswordDTO>
     userResetPasswordDTOConverter() {
         return string -> {
@@ -401,6 +449,8 @@ public class JavalinApplicationModule extends AbstractModule {
             Handler subscribeClientHostHandler,
         @Named("UpdateUserStatusHandler")
         Handler updateUserStatusHandler,
+        @Named("CreateOrganisationHandler")
+        Handler createOrganisationHandler,
         InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
@@ -459,6 +509,10 @@ public class JavalinApplicationModule extends AbstractModule {
             ).post(
                 "/user/update-status",
                 updateUserStatusHandler,
+                permittedRoles
+            ).post(
+                "/organisation/create",
+                createOrganisationHandler,
                 permittedRoles
             )
             .exception(

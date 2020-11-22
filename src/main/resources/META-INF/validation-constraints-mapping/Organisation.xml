@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<constraint-mappings
+        xmlns="http://xmlns.jcp.org/xml/ns/validation/mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/validation/mapping
+            http://xmlns.jcp.org/xml/ns/validation/mapping/validation-mapping-2.0.xsd"
+        version="2.0">
+    <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation">
+        <field name="name">
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Organisation name must only contain English or Ukrainian letters and be of 1—60 characters in length</message>
+                <element name="regexp"><![CDATA[${pulsar.organisation.name.regexp}]]></element>
+            </constraint>
+        </field>
+    </bean>
+    <bean class="ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationRequest">
+        <field name="name">
+            <constraint annotation="javax.validation.constraints.NotBlank">
+                <message>Organisation name must be set</message>
+            </constraint>
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Organisation name must only contain English or Ukrainian letters and be of 1—60 characters in length</message>
+                <element name="regexp"><![CDATA[${pulsar.organisation.name.regexp}]]></element>
+            </constraint>
+        </field>
+    </bean>
+</constraint-mappings>

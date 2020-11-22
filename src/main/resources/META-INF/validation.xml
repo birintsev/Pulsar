@@ -23,4 +23,7 @@ validation-configuration-1.1.xsd"
     <constraint-mapping>
         META-INF/validation-constraints-mapping/UserRegistrationDTO.xml
     </constraint-mapping>
+    <constraint-mapping>
+        META-INF/validation-constraints-mapping/Organisation.xml
+    </constraint-mapping>
 </validation-config>

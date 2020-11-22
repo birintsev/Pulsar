@@ -1,7 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +17,5 @@ import lombok.NoArgsConstructor;
 public class CreateOrganisationRequest {
 
     @JsonProperty(required = true)
-    @NotBlank(message = "Organisation name must be set")
     private String name;
 }

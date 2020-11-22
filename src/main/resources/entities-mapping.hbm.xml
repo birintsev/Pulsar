@@ -209,7 +209,13 @@
         <create><![CDATA[alter table pu_clients_hosts add constraint client_host_public_key_check check (name ~ $$${pulsar.client_host.public_key.regexp}$$)]]></create>
         <drop><![CDATA[alter table pu_clients_hosts drop constraint client_host_public_key_check]]></drop>
     </database-object>
-    
+
+    <database-object>
+        <create><![CDATA[alter table pu_organisations add constraint pu_organisations_name_check check (name ~ $$${pulsar.organisation.name.regexp}$$)]]></create>
+        <drop>alter table pu_organisations drop constraint pu_organisations_name_check</drop>
+    </database-object>
+
+    <!--Note! The 'uuid-ossp' extension can only be created with superuser privileges-->
     <database-object>
         <create>create extension if not exists "uuid-ossp"</create>
         <drop>drop extension if exists "uuid-ossp"</drop>

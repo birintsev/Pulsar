@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
  * It always returns {@link Collections#emptyMap()} on
  * {@link #getDetails()} invocation.
  * */
+// todo a ResponseExceptionFactory (to abstract from response format)
+// todo replace all the direct throws of JsonHttpResponseException in handlers
 public class JsonHttpResponseException extends HttpResponseException {
 
     /**

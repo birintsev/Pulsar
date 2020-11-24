@@ -57,4 +57,25 @@ public class OrganisationServiceImpl implements OrganisationService {
         }
         return organisation;
     }
+
+    @Override
+    public Organisation findById(Organisation.ID organisationId) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.find(
+                Organisation.class, organisationId.getOrganisationId()
+            );
+        }
+    }
+
+    @Override
+    public boolean isMember(User user, Organisation organisation) {
+        try (Session session = sessionFactory.openSession()) {
+            return session
+                .createQuery(
+                    "from Organisation o where :member in elements(o.members)"
+                )
+                .setParameter("member", user)
+                .list().size() > 0;
+        }
+    }
 }

@@ -60,7 +60,7 @@ public class Organisation implements Serializable {
     private Set<User> members;
 
     public ID getId() {
-        return new ID();
+        return new ID(id);
     }
 
     /**
@@ -68,13 +68,12 @@ public class Organisation implements Serializable {
      * of current organisation
      * (for read-only operations such as find-by-id, exists-by-id and other)
      * */
-    public final class ID { // todo create similar class in other db-entities
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    // todo create similar class in other db-entities
+    public static final class ID {
 
-        private ID() {
-        }
-
-        public UUID getOrganisationId() {
-            return id;
-        }
+        private UUID organisationId;
     }
 }

@@ -31,10 +31,12 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.DiskInfo2DTOConve
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2CreateClientHostConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.MemoryInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonConversionStrategy;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationRequest;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.JoinOrganisationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
@@ -53,6 +55,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateOrganisationH
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.ExceptionHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.JoinOrganisationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.SubscribeClientHostHandler;
@@ -71,6 +74,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationService
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.SMTPService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.BasicAuthenticationStrategy;
 
 /**
  * A Guice injection configuration class for
@@ -199,6 +204,14 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
+    Function<String, JoinOrganisationRequest>
+    joinOrganisationRequestConverter() {
+        return new DefaultJsonConversionStrategy<>(
+            JoinOrganisationRequest.class
+        );
+    }
+
+    @Provides
     Function<ClientHostStatistic, ClientHostStatisticDTO>
     statistic2DTOConverter(
         Function<CPUInfo, ClientHostStatisticDTO.CPUInfoDTO> cpu2DTOConverter,
@@ -222,7 +235,8 @@ public class JavalinApplicationModule extends AbstractModule {
         return new BasicAuthAccessManager(userService);
     }
 
-    @Provides @Named("NewClientHostStatisticHandler")
+    @Provides
+    @Named("NewClientHostStatisticHandler")
     Handler newClientHostStatisticHandler(
         SessionFactory sessionFactory,
         Function<ClientHostStatisticDTO, ClientHostStatistic> dtoConverter
@@ -230,17 +244,20 @@ public class JavalinApplicationModule extends AbstractModule {
         return new NewClientHostStatisticHandler(sessionFactory, dtoConverter);
     }
 
-    @Provides @Named("UserRegistrationHandler")
+    @Provides
+    @Named("UserRegistrationHandler")
     Handler newClientHostStatisticHandler(SessionFactory sessionFactory) {
         return new UserRegistrationHandler(sessionFactory);
     }
 
-    @Provides @Named("RegistrationConfirmationHandler")
+    @Provides
+    @Named("RegistrationConfirmationHandler")
     Handler registrationConfirmationHandler(SessionFactory sessionFactory) {
         return new RegistrationConfirmationHandler(sessionFactory);
     }
 
-    @Provides @Named("CreateClientHostHandler")
+    @Provides
+    @Named("CreateClientHostHandler")
     Handler createClientHostHandler(
         UserService userService,
         ClientHostService clientHostService,
@@ -253,7 +270,8 @@ public class JavalinApplicationModule extends AbstractModule {
         );
     }
 
-    @Provides @Named("GetClientHostStatisticHandler")
+    @Provides
+    @Named("GetClientHostStatisticHandler")
     Handler getClientHostStatisticHandler(
         UserService userService,
         ClientHostService clientHostService,
@@ -270,7 +288,8 @@ public class JavalinApplicationModule extends AbstractModule {
         );
     }
 
-    @Provides @Named("ExceptionHandler")
+    @Provides
+    @Named("ExceptionHandler")
     ExceptionHandler exceptionHandler() {
         return new ExceptionHandler();
     }
@@ -280,7 +299,8 @@ public class JavalinApplicationModule extends AbstractModule {
         return new SMTPService();
     }
 
-    @Provides @Named("UserRequestToResetPasswordHandler")
+    @Provides
+    @Named("UserRequestToResetPasswordHandler")
     Handler userRequestToResetPasswordHandler(
         UserService userService,
         MailService mailService,
@@ -293,7 +313,8 @@ public class JavalinApplicationModule extends AbstractModule {
         );
     }
 
-    @Provides @Named("UserResetPasswordHandler")
+    @Provides
+    @Named("UserResetPasswordHandler")
     Handler userResetPasswordHandler(
         UserService userService,
         Validator validator,
@@ -404,6 +425,13 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
+    AuthenticationStrategy basicAuthenticationStrategy(
+        UserService userService
+    ) {
+        return new BasicAuthenticationStrategy(userService);
+    }
+
+    @Provides
     @Named("UpdateUserStatusHandler")
     Handler updateUserStatusHandler(
         UserService userService,
@@ -414,6 +442,22 @@ public class JavalinApplicationModule extends AbstractModule {
             userService,
             bodyConverter,
             validator
+        );
+    }
+
+    @Provides
+    @Named("JoinOrganisationHandler")
+    Handler joinOrganisationHandler(
+        Validator validator,
+        AuthenticationStrategy userAuthenticationStrategy,
+        OrganisationService organisationService,
+        Function<String, JoinOrganisationRequest> bodyConverter
+    ) {
+        return new JoinOrganisationHandler(
+            validator,
+            bodyConverter,
+            userAuthenticationStrategy,
+            organisationService
         );
     }
 
@@ -451,6 +495,8 @@ public class JavalinApplicationModule extends AbstractModule {
         Handler updateUserStatusHandler,
         @Named("CreateOrganisationHandler")
         Handler createOrganisationHandler,
+        @Named("JoinOrganisationHandler")
+        Handler joinOrganisationHandler,
         InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
@@ -514,8 +560,11 @@ public class JavalinApplicationModule extends AbstractModule {
                 "/organisation/create",
                 createOrganisationHandler,
                 permittedRoles
-            )
-            .exception(
+            ).post(
+                "/organisation/join",
+                joinOrganisationHandler,
+                permittedRoles
+            ).exception(
                 Exception.class,
                 exceptionHandler
             );
@@ -538,7 +587,8 @@ public class JavalinApplicationModule extends AbstractModule {
         return modelMapper;
     }
 
-    @Provides @Named(value = "GetAllClientHostsHandler")
+    @Provides
+    @Named(value = "GetAllClientHostsHandler")
     Handler getAllClientHostsHandler(
         UserService userService,
         ClientHostService clientHostService,
@@ -551,7 +601,8 @@ public class JavalinApplicationModule extends AbstractModule {
         );
     }
 
-    @Provides @Named(value = "AuthenticationHandler")
+    @Provides
+    @Named(value = "AuthenticationHandler")
     Handler authenticationHandler(UserService userService) {
         return new AuthenticationHandler(userService);
     }

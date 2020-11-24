@@ -26,8 +26,27 @@ public interface OrganisationService {
      * If passed user already is a member of passed organisation,
      * no actions will be performed.
      *
-     * @param user a user to be added to the organisation members
+     * @param user         a user to be added to the organisation members
      * @param organisation an organisation to which the user will enter
      * */
     void addToOrganisationMembers(User user, Organisation organisation);
+
+    /**
+     * Finds an {@link Organisation} by identifier
+     *
+     * @param organisationId an identifier of the {@link Organisation} being searched
+     * @return the {@link Organisation} being searched or {@code null} if such {@link Organisation} does not exist
+     * */
+    Organisation findById(Organisation.ID organisationId);
+
+    /**
+     * Provides information whether the {@link User user}
+     * is a member of passed {@link Organisation organisation}
+     *
+     * @param user         checked user
+     * @param organisation checked organisation
+     * @return             {@code true} if the user is a member
+     *                     of the organisation, {@code false} otherwise
+     * */
+    boolean isMember(User user, Organisation organisation);
 }

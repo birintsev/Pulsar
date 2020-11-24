@@ -29,8 +29,9 @@ public interface ClientHostService {
      *                      of owned {@link ClientHost ClientHosts}
      * */
     ClientHost createForUserRequest(
-        CreateClientHostDTO request, User requester
-    );
+        CreateClientHostDTO request, // todo refactor this parameter
+        User requester               // todo because it is a part
+    );                               // todo of representational layer
 
     /**
      * Searches en entity of {@link ClientHost} by its public key

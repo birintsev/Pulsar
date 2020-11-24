@@ -4,15 +4,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.ClientHostDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserClientHostsResponse;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
 /**
@@ -32,27 +39,33 @@ public class GetAllClientHostsHandler implements Handler {
 
     private final ClientHostService clientHostService;
 
+    private final OrganisationService organisationService;
+
     private final ModelMapper modelMapper;
 
     /**
      * A default constructor
      *
-     * @param userService       a service for retrieving a {@link User} object
-     * @param clientHostService a service for retrieving
-     *                          {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic}
-     *                          objects
-     * @param modelMapper       a {@link ModelMapper} for converting
-     *                          {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic} objects to {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO}
-     *                          objects
+     * @param userService         a service for retrieving a {@link User} object
+     * @param clientHostService   a service for retrieving
+     *                            {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic}
+     *                            objects
+     * @param modelMapper         a {@link ModelMapper} for converting
+     *                            {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic} objects to {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO}
+     *                            objects
+     * @param organisationService a service for retrieving {@link Organisation}
+     *                            objects
      * */
     public GetAllClientHostsHandler(
         UserService userService,
         ClientHostService clientHostService,
-        ModelMapper modelMapper
+        ModelMapper modelMapper,
+        OrganisationService organisationService
     ) {
         this.userService = userService;
         this.clientHostService = clientHostService;
         this.modelMapper = modelMapper;
+        this.organisationService = organisationService;
     }
 
     @Override
@@ -60,19 +73,63 @@ public class GetAllClientHostsHandler implements Handler {
         User user = userService.findByEmail(
             ctx.basicAuthCredentials().getUsername()
         );
-        Set<ClientHost> allClientHosts = clientHostService.getByOwner(user);
-        allClientHosts.addAll(clientHostService.getBySubscriber(user));
-        ctx.result(convertToResponse(allClientHosts));
+        Set<ClientHost> ownedClientHosts =
+            clientHostService.getByOwner(user);
+        Set<ClientHost> subscribedClientHosts =
+            clientHostService.getBySubscriber(user);
+        Map<Organisation, Set<ClientHost>> organisationClientHosts =
+            new HashMap<>();
+        Set<Organisation> userOrganisations =
+            organisationService.getByMember(user);
+        userOrganisations.forEach(
+            organisation -> organisationClientHosts.put(
+                organisation,
+                organisationService.getOrganisationClientHosts(organisation)
+            )
+        );
+        ctx.result(
+            convertToResponse(
+                ownedClientHosts,
+                subscribedClientHosts,
+                organisationClientHosts
+            )
+        );
     }
 
     private String convertToResponse(
-        Set<ClientHost> clientHosts
+        Set<ClientHost> ownedClientHosts,
+        Set<ClientHost> subscribedClientHosts,
+        Map<Organisation, Set<ClientHost>> organisationClientHosts
     ) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(
-            clientHosts
-                .stream()
-                .map(ch -> modelMapper.map(ch, ClientHostDTO.class))
-                .collect(Collectors.toSet())
+            new UserClientHostsResponse(
+                convert(ownedClientHosts),
+                convert(subscribedClientHosts),
+                convert(organisationClientHosts)
+            )
         );
+    }
+
+    private List<ClientHostDTO> convert(Set<ClientHost> clientHosts) {
+        return clientHosts
+            .stream()
+            .map(ch -> modelMapper.map(ch, ClientHostDTO.class))
+            .collect(Collectors.toList());
+    }
+
+    private List<UserClientHostsResponse.OrganisationClientsHosts> convert(
+        Map<Organisation, Set<ClientHost>> organisationsClientHosts
+    ) {
+        List<UserClientHostsResponse.OrganisationClientsHosts>
+            organisationsClientHostsDTO = new ArrayList<>();
+        organisationsClientHosts.forEach(
+            (organisation, clientHosts) -> organisationsClientHostsDTO.add(
+                new UserClientHostsResponse.OrganisationClientsHosts(
+                    organisation.getId().getOrganisationId(),
+                    convert(clientHosts)
+                )
+            )
+        );
+        return organisationsClientHostsDTO;
     }
 }

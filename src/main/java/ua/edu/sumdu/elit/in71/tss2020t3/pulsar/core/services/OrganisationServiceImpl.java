@@ -1,6 +1,8 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -8,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException;
 
 /**
@@ -76,6 +79,44 @@ public class OrganisationServiceImpl implements OrganisationService {
                 )
                 .setParameter("member", user)
                 .list().size() > 0;
+        }
+    }
+
+    @Override
+    public Set<ClientHost> getOrganisationClientHosts(
+        Organisation organisation
+    ) {
+        try (Session session = sessionFactory.openSession()) {
+            return new HashSet<>(
+                (List<ClientHost>) session
+                    .createQuery(
+                        "select distinct ch "
+                            + "from Organisation o "
+                            + "left join User u on "
+                            + "(u in elements(o.members) or u = o.owner) "
+                            + "inner join ClientHost ch "
+                            + "on ch.owner = u "
+                            + "where o = :organisation"
+                    )
+                    .setParameter("organisation", organisation)
+                    .list()
+            );
+        }
+    }
+
+    @Override
+    public Set<Organisation> getByMember(User member) {
+        try (Session session = sessionFactory.openSession()) {
+            return new HashSet<>(
+                (List<Organisation>) session
+                    .createQuery(
+                        "select distinct o "
+                            + "from Organisation o "
+                            + "where :member in elements(o.members)"
+                    )
+                    .setParameter("member", member)
+                    .list()
+            );
         }
     }
 }

@@ -32,7 +32,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2Create
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.MemoryInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonConversionStrategy;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationRequest;
@@ -592,12 +592,14 @@ public class JavalinApplicationModule extends AbstractModule {
     Handler getAllClientHostsHandler(
         UserService userService,
         ClientHostService clientHostService,
-        ModelMapper modelMapper
+        ModelMapper modelMapper,
+        OrganisationService organisationService
     ) {
         return new GetAllClientHostsHandler(
             userService,
             clientHostService,
-            modelMapper
+            modelMapper,
+            organisationService
         );
     }
 

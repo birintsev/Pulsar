@@ -1,7 +1,9 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import java.util.Set;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 
 public interface OrganisationService {
 
@@ -49,4 +51,24 @@ public interface OrganisationService {
      *                     of the organisation, {@code false} otherwise
      * */
     boolean isMember(User user, Organisation organisation);
+
+    /**
+     * Returns all the {@link ClientHost ClientHosts}
+     * shared by the {@link Organisation organisation} members
+     *
+     * @param   organisation an organisation
+     * @return               a set of {@link ClientHost ClientHosts}
+     *                       owned by the organisation
+     *                       {@link Organisation#getMembers() members}
+     * */
+    Set<ClientHost> getOrganisationClientHosts(Organisation organisation);
+
+    /**
+     * Returns all the {@link Organisation organisations}
+     * to which the {@link User member} belongs
+     *
+     * @param member a member of organisations
+     * @return a set of {@link Organisation} to which the member now belongs
+     * */
+    Set<Organisation> getByMember(User member);
 }

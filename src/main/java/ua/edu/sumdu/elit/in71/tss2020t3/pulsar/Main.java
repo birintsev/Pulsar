@@ -2,9 +2,12 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -12,8 +15,13 @@ import org.apache.log4j.PropertyConfigurator;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.CLIFrontController;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.cli.commands.StartApplicationInstanceCLICommand;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.CLIModule;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.JavalinApplicationModule;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.CLIModule;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.UtilsModule;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.core.ConversionServicesModule;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.core.DatabaseModule;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.core.ServicesModule;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.core.application.ApplicationModule;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.core.application.HandlersModule;
 
 public class Main {
 
@@ -55,10 +63,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Injector injector = Guice.createInjector(
-            new CLIModule(),
-            new JavalinApplicationModule()
-        );
+        Injector injector = Guice.createInjector(getAllModules());
         CLIFrontController cliFrontController = injector.getInstance(
             CLIFrontController.class
         );
@@ -111,5 +116,18 @@ public class Main {
             newSystemProperties.setProperty(key, properties.getProperty(key));
         }
         System.setProperties(newSystemProperties);
+    }
+
+    // returns all the application components configuration modules
+    private static List<Module> getAllModules() {
+        return Arrays.asList(
+            new UtilsModule(),
+            new ApplicationModule(),
+            new HandlersModule(),
+            new ConversionServicesModule(),
+            new DatabaseModule(),
+            new ServicesModule(),
+            new CLIModule()
+        );
     }
 }

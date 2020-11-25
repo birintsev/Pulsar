@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;

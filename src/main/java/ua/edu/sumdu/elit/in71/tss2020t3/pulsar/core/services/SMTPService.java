@@ -54,7 +54,7 @@ public class SMTPService implements MailService {
     /**
      * A default constructor
      * */
-    public SMTPService() {
+    public SMTPService() { // todo create a constructor with custom Properties
         smtpProperties = new Properties();
         smtpProperties.put(
             "mail.smtp.auth",

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,9 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.ClientHostDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.OrganisationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserClientHostsResponse;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
@@ -103,33 +104,33 @@ public class GetAllClientHostsHandler implements Handler {
     ) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(
             new UserClientHostsResponse(
-                convert(ownedClientHosts),
-                convert(subscribedClientHosts),
-                convert(organisationClientHosts)
+                modelMapper.map(
+                    ownedClientHosts,
+                    new TypeToken<List<ClientHostDTO>>() { }.getType()
+                ),
+                modelMapper.map(
+                    subscribedClientHosts,
+                    new TypeToken<List<ClientHostDTO>>() { }.getType()
+                ),
+                organisationClientHosts
+                    .entrySet()
+                    .stream()
+                    .map(
+                        organisationSetEntry ->
+                            new UserClientHostsResponse.OrganisationClientHosts(
+                                modelMapper.map(
+                                    organisationSetEntry.getKey(),
+                                    OrganisationDTO.class
+                                ),
+                                modelMapper.map(
+                                    organisationSetEntry.getValue(),
+                                    new TypeToken<List<ClientHostDTO>>() {
+                                    }.getType()
+                                )
+                        )
+                    )
+                    .collect(Collectors.toList())
             )
         );
-    }
-
-    private List<ClientHostDTO> convert(Set<ClientHost> clientHosts) {
-        return clientHosts
-            .stream()
-            .map(ch -> modelMapper.map(ch, ClientHostDTO.class))
-            .collect(Collectors.toList());
-    }
-
-    private List<UserClientHostsResponse.OrganisationClientsHosts> convert(
-        Map<Organisation, Set<ClientHost>> organisationsClientHosts
-    ) {
-        List<UserClientHostsResponse.OrganisationClientsHosts>
-            organisationsClientHostsDTO = new ArrayList<>();
-        organisationsClientHosts.forEach(
-            (organisation, clientHosts) -> organisationsClientHostsDTO.add(
-                new UserClientHostsResponse.OrganisationClientsHosts(
-                    organisation.getId().getOrganisationId(),
-                    convert(clientHosts)
-                )
-            )
-        );
-        return organisationsClientHostsDTO;
     }
 }

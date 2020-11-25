@@ -71,4 +71,11 @@ public interface OrganisationService {
      * @return a set of {@link Organisation} to which the member now belongs
      * */
     Set<Organisation> getByMember(User member);
+
+    /**
+     * Returns all the existing {@link Organisation organisations}
+     *
+     * @return all the existing {@link Organisation organisations}
+     * */
+    Set<Organisation> getAll();
 }

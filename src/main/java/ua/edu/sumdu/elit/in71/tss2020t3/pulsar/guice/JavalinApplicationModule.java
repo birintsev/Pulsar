@@ -32,7 +32,6 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2Create
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.MemoryInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonConversionStrategy;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationRequest;
@@ -41,6 +40,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostReq
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.ClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
@@ -55,6 +55,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateOrganisationH
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.ExceptionHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetOrganisationsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.JoinOrganisationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
@@ -462,6 +463,18 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
+    @Named("GetOrganisationsHandler")
+    Handler getOrganisationsHandler(
+        OrganisationService organisationService,
+        ModelMapper modelMapper
+    ) {
+        return new GetOrganisationsHandler(
+            organisationService,
+            modelMapper
+        );
+    }
+
+    @Provides
     InitialDataLoader initialDataLoader(SessionFactory sessionFactory) {
         return new InitialDataLoader(sessionFactory, false);
     }
@@ -492,11 +505,13 @@ public class JavalinApplicationModule extends AbstractModule {
         @Named("SubscribeClientHostHandler")
             Handler subscribeClientHostHandler,
         @Named("UpdateUserStatusHandler")
-        Handler updateUserStatusHandler,
+            Handler updateUserStatusHandler,
         @Named("CreateOrganisationHandler")
-        Handler createOrganisationHandler,
+            Handler createOrganisationHandler,
         @Named("JoinOrganisationHandler")
-        Handler joinOrganisationHandler,
+            Handler joinOrganisationHandler,
+        @Named("GetOrganisationsHandler")
+            Handler getOrganisationsHandler,
         InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
@@ -564,6 +579,10 @@ public class JavalinApplicationModule extends AbstractModule {
                 "/organisation/join",
                 joinOrganisationHandler,
                 permittedRoles
+            ).get(
+                "/organisation",
+                getOrganisationsHandler,
+                permittedRoles
             ).exception(
                 Exception.class,
                 exceptionHandler
@@ -578,12 +597,14 @@ public class JavalinApplicationModule extends AbstractModule {
     }
 
     @Provides
-    ModelMapper modelMapper() {
+    ModelMapper modelMapper() { // model mapper configuration
         ModelMapper modelMapper = new ModelMapper();
-        modelMapper.typeMap(ClientHost.class, ClientHostDTO.class).addMapping(
-            source -> source.getId().getPrivateKey(),
-            ClientHostDTO::setPrivateKey
-        );
+        modelMapper
+            .typeMap(ClientHost.class, ClientHostDTO.class)
+            .addMapping(
+                source -> source.getId().getPrivateKey(),
+                ClientHostDTO::setPrivateKey
+            );
         return modelMapper;
     }
 

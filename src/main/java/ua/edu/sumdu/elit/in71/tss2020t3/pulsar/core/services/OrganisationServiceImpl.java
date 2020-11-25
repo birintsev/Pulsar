@@ -119,4 +119,17 @@ public class OrganisationServiceImpl implements OrganisationService {
             );
         }
     }
+
+    @Override
+    public Set<Organisation> getAll() {
+        try (Session session = sessionFactory.openSession()) {
+            return new HashSet<>(
+                (List<Organisation>) session
+                    .createQuery(
+                        "from Organisation"
+                    )
+                    .list()
+            );
+        }
+    }
 }

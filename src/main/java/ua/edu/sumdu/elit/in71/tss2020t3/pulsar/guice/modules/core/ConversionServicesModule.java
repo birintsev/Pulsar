@@ -13,7 +13,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.DiskInfo2DTOConve
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2CreateClientHostConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.MemoryInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOConverter;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonConversionStrategy;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonReaderStrategy;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonWriterStrategy;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationRequest;
@@ -22,6 +23,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostReq
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo;
@@ -62,7 +64,7 @@ public class ConversionServicesModule extends AbstractModule {
     @Provides
     Function<String, JoinOrganisationRequest>
     joinOrganisationRequestConverter() {
-        return new DefaultJsonConversionStrategy<>(
+        return new DefaultJsonReaderStrategy<>(
             JoinOrganisationRequest.class
         );
     }
@@ -168,5 +170,10 @@ public class ConversionServicesModule extends AbstractModule {
     @Provides
     Function<String, CreateClientHostDTO> createClientHostDTOConverter() {
         return new JSONString2CreateClientHostConverter();
+    }
+
+    @Provides
+    Function<UserDTO, String> userDTO2StringConversionStrategy() {
+        return new DefaultJsonWriterStrategy<>(UserDTO.class);
     }
 }

@@ -16,6 +16,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostReq
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.AuthenticationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateClientHostHandler;
@@ -214,7 +215,15 @@ public class HandlersModule extends AbstractModule {
 
     @Provides
     @Named(value = "AuthenticationHandler")
-    Handler authenticationHandler(UserService userService) {
-        return new AuthenticationHandler(userService);
+    Handler authenticationHandler(
+        AuthenticationStrategy authenticationStrategy,
+        ModelMapper modelMapper,
+        Function<UserDTO, String> jsonWriterStrategy
+    ) {
+        return new AuthenticationHandler(
+            modelMapper,
+            jsonWriterStrategy,
+            authenticationStrategy
+        );
     }
 }

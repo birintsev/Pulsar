@@ -8,24 +8,24 @@ import org.apache.log4j.Logger;
 
 /**
  * A default implementation for {@link Function}
- * which converts JSON to POJO objects
+ * which converts POJO objects to a JSON string
  *
- * @param <OUT> a type of output POJOs
+ * @param <POJO> a type of POJOs for converting
+ * @see          DefaultJsonReaderStrategy
  * */
 @AllArgsConstructor
-public class DefaultJsonConversionStrategy<OUT>  // todo replace use of other
-implements Function<String, OUT> {               // todo similar converters
-                                                 // todo with this class
+public class DefaultJsonWriterStrategy<POJO> implements Function<POJO, String> {
+
     private static final Logger LOGGER = Logger.getLogger(
-        DefaultJsonConversionStrategy.class
+        DefaultJsonWriterStrategy.class
     );
 
-    private final Class<OUT> outClass;
+    private final Class<POJO> pojoClass;
 
     @Override
-    public OUT apply(String json) {
+    public String apply(POJO pojo) {
         try {
-            return new ObjectMapper().readValue(json, outClass);
+            return new ObjectMapper().writeValueAsString(pojo);
         } catch (JsonProcessingException e) {
             LOGGER.error(e);
             throw new RuntimeException(e);

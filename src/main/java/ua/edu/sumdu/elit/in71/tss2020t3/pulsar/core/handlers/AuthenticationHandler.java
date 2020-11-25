@@ -2,35 +2,35 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import java.util.function.Function;
+import javax.naming.AuthenticationException;
+import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
+import org.modelmapper.ModelMapper;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
 // just a dummy for further use of another authentication type (e.g. JWT)
+@AllArgsConstructor
 public class AuthenticationHandler implements Handler {
 
     private static final Logger LOGGER = Logger.getLogger(
         AuthenticationHandler.class
     );
 
-    private final UserService userService;
+    private final ModelMapper modelMapper;
 
-    /**
-     * A default constructor
-     *
-     * @param userService a service for retrieving a {@link User} instance
-     * */
-    public AuthenticationHandler(UserService userService) {
-        this.userService = userService;
-    }
+    private final Function<UserDTO, String> responseConverter;
+
+    private final AuthenticationStrategy authenticationStrategy;
 
     @Override
     public void handle(@NotNull Context ctx) {
-        String userEmail;
-        String userPassword;
         User user;
         if (!ctx.basicAuthCredentialsExist()) {
             throw new JsonHttpResponseException(
@@ -38,26 +38,31 @@ public class AuthenticationHandler implements Handler {
                 "Basic credentials not found"
             );
         }
-        userEmail = ctx.basicAuthCredentials().getUsername();
-        userPassword = ctx.basicAuthCredentials().getPassword();
-        user = userService.findByEmail(userEmail);
-        if (
-            user == null
-            || !user.getPassword().equals(userPassword)
-            || !userService.isActive(user.getId())
-        ) {
-            LOGGER.error(
-                "The user does not exist"
-                + " (or is not active) or wrong password specified: "
-                + ctx.basicAuthCredentials().getUsername()
-            );
+        try {
+            user = authenticationStrategy.authenticate(ctx);
+        } catch (AuthenticationException e) {
+            LOGGER.error(e);
             throw new JsonHttpResponseException(
                 HttpStatus.Code.UNAUTHORIZED.getCode(),
                 "Bad credentials"
             );
-        } else {
-            LOGGER.trace("User (email = " + userEmail + ") authenticated");
-            ctx.status(HttpStatus.Code.OK.getCode());
+        } catch (UserStatusException e) {
+            LOGGER.error(e);
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.UNAUTHORIZED.getCode(),
+                "The account has not been confirmed yet"
+            );
         }
+        ctx.result(
+            responseConverter.apply(modelMapper.map(user, UserDTO.class))
+        );
+        ctx.status(
+            HttpStatus.Code.OK.getCode()
+        );
+        LOGGER.trace(
+            "User (username = "
+                + user.getUsername()
+                + ") has been authenticated"
+        );
     }
 }

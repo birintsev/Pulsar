@@ -6,6 +6,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import org.modelmapper.ModelMapper;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.ClientHostDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 
 /**
@@ -24,8 +26,14 @@ public class UtilsModule extends AbstractModule {
         modelMapper
             .typeMap(ClientHost.class, ClientHostDTO.class)
             .addMapping(
-                source -> source.getId().getPrivateKey(),
+                clientHost -> clientHost.getId().getPrivateKey(),
                 ClientHostDTO::setPrivateKey
+            );
+        modelMapper
+            .typeMap(User.class, UserDTO.class)
+            .addMapping(
+                user -> user.getId().getEmail(),
+                UserDTO::setEmail
             );
         return modelMapper;
     }

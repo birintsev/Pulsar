@@ -291,4 +291,13 @@ public class ClientHostServiceImpl implements ClientHostService {
         return subscribedClientHostsNumber + ownedClientHostsNumber
             >= FREE_ACCOUNT_MAX_CLIENT_HOSTS;
     }
+
+    @Override
+    public Set<ClientHost> getAll() {
+        try (Session session = sessionFactory.openSession()) {
+            return new HashSet<>(
+                (List<ClientHost>) session.createQuery("from ClientHost").list()
+            );
+        }
+    }
 }

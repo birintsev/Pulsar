@@ -59,6 +59,8 @@ public class ApplicationModule extends AbstractModule {
             Handler joinOrganisationHandler,
         @Named("GetOrganisationsHandler")
             Handler getOrganisationsHandler,
+        @Named("GetAllClientHostsHandler")
+            Handler getAllClientHostsHandler,
         InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
@@ -81,24 +83,30 @@ public class ApplicationModule extends AbstractModule {
             .post(
                 "/api/endpoint",
                 newClientHostStatisticHandler
-            ).post(
+            )
+            .post(
                 "/registration",
                 userRegistrationHandler
-            ).get(
+            )
+            .get(
                 "/registration-confirmation",
                 registrationConfirmationHandler
-            ).post(
+            )
+            .post(
                 "/client-host/create",
                 createClientHostHandler,
                 permittedRoles
-            ).get(
+            )
+            .get(
                 "/client-host-statistic",
                 getClientHostStatisticHandler,
                 permittedRoles
-            ).get(
+            )
+            .get(
                 "/authentication",
                 authenticationHandler
-            ).get(
+            )
+            .get(
                 "/user/client-hosts",
                 getUserClientHostsHandler,
                 permittedRoles
@@ -110,27 +118,38 @@ public class ApplicationModule extends AbstractModule {
             .post(
                 "/reset-password",
                 userResetPasswordHandler
-            ).post(
+            )
+            .post(
                 "/client-host/subscribe",
                 subscribeClientHostHandler,
                 permittedRoles
-            ).post(
+            )
+            .post(
                 "/user/update-status",
                 updateUserStatusHandler,
                 permittedRoles
-            ).post(
+            )
+            .post(
                 "/organisation/create",
                 createOrganisationHandler,
                 permittedRoles
-            ).post(
+            )
+            .post(
                 "/organisation/join",
                 joinOrganisationHandler,
                 permittedRoles
-            ).get(
+            )
+            .get(
                 "/organisation",
                 getOrganisationsHandler,
                 permittedRoles
-            ).exception(
+            )
+            .get(
+                "/client-host/all",
+                getAllClientHostsHandler,
+                permittedRoles
+            )
+            .exception(
                 Exception.class,
                 exceptionHandler
             );

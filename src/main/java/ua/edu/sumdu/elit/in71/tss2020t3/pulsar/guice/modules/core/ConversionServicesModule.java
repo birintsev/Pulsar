@@ -176,4 +176,9 @@ public class ConversionServicesModule extends AbstractModule {
     Function<UserDTO, String> userDTO2StringConversionStrategy() {
         return new DefaultJsonWriterStrategy<>(UserDTO.class);
     }
+
+    @Provides
+    Function<Object, String> responseConversionStrategy() {
+        return new DefaultJsonWriterStrategy<>(Object.class);
+    }
 }

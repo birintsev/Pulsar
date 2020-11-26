@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserDTO {
-
+@JsonInclude(JsonInclude.Include.NON_NULL) // todo replace this
+public class UserDTO {                     // todo with JsonIgnoreProperties
+                                           // todo in descendant classes
     private String email;
 
     private String username;

@@ -112,4 +112,11 @@ public interface ClientHostService {
      *                   the {@code publicKey} or is subscribed to the host
      * */
     boolean subscriberOrOwner(User user, String publicKey);
+
+    /**
+     * Returns all the existing {@link ClientHost client hosts}
+     *
+     * @return all the existing {@link ClientHost client hosts}
+     * */
+    Set<ClientHost> getAll();
 }

@@ -43,8 +43,8 @@ public class ApplicationModule extends AbstractModule {
             ExceptionHandler exceptionHandler,
         @Named("AuthenticationHandler")
             Handler authenticationHandler,
-        @Named("GetAllClientHostsHandler")
-            Handler getAllClientHostsHandler,
+        @Named("GetUserClientHostsHandler")
+            Handler getUserClientHostsHandler,
         @Named("UserRequestToResetPasswordHandler")
             Handler userRequestToResetPasswordHandler,
         @Named("UserResetPasswordHandler")
@@ -99,8 +99,8 @@ public class ApplicationModule extends AbstractModule {
                 "/authentication",
                 authenticationHandler
             ).get(
-                "/client-hosts",
-                getAllClientHostsHandler,
+                "/user/client-hosts",
+                getUserClientHostsHandler,
                 permittedRoles
             )
             .post(

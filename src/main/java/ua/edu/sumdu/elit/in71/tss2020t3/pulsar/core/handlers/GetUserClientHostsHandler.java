@@ -30,10 +30,10 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
  * It returns all the {@link ClientHost} owned by a user
  * who reaches the endpoint.
  * */
-public class GetAllClientHostsHandler implements Handler {
+public class GetUserClientHostsHandler implements Handler {
 
     private static final Logger LOGGER = Logger.getLogger(
-        GetAllClientHostsHandler.class
+        GetUserClientHostsHandler.class
     );
 
     private final UserService userService;
@@ -57,7 +57,7 @@ public class GetAllClientHostsHandler implements Handler {
      * @param organisationService a service for retrieving {@link Organisation}
      *                            objects
      * */
-    public GetAllClientHostsHandler(
+    public GetUserClientHostsHandler(
         UserService userService,
         ClientHostService clientHostService,
         ModelMapper modelMapper,

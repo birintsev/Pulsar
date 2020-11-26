@@ -21,7 +21,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostSt
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.AuthenticationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateClientHostHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateOrganisationHandler;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetUserClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetOrganisationsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.JoinOrganisationHandler;
@@ -198,14 +198,14 @@ public class HandlersModule extends AbstractModule {
     }
 
     @Provides
-    @Named(value = "GetAllClientHostsHandler")
+    @Named(value = "GetUserClientHostsHandler")
     Handler getAllClientHostsHandler(
         UserService userService,
         ClientHostService clientHostService,
         ModelMapper modelMapper,
         OrganisationService organisationService
     ) {
-        return new GetAllClientHostsHandler(
+        return new GetUserClientHostsHandler(
             userService,
             clientHostService,
             modelMapper,

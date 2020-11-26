@@ -97,7 +97,9 @@ public class CreateClientHostHandler implements Handler {
                 "The user has reached the created/subscribed client hosts limit"
             );
         }
-        ctx.status(HttpStatus.Code.OK.getCode());
+        ctx.status(
+            HttpStatus.Code.OK.getCode()
+        );
         LOGGER.trace(
             "Registered new client host (public key = "
                 + newClientHost.getPublicKey()

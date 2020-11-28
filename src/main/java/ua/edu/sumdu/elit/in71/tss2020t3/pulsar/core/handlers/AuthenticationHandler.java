@@ -12,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
 // just a dummy for further use of another authentication type (e.g. JWT)
@@ -45,12 +44,6 @@ public class AuthenticationHandler implements Handler {
             throw new JsonHttpResponseException(
                 HttpStatus.Code.UNAUTHORIZED.getCode(),
                 "Bad credentials"
-            );
-        } catch (UserStatusException e) {
-            LOGGER.error(e);
-            throw new JsonHttpResponseException(
-                HttpStatus.Code.UNAUTHORIZED.getCode(),
-                "The account has not been confirmed yet"
             );
         }
         ctx.result(

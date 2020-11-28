@@ -11,7 +11,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
 /**
@@ -43,7 +43,7 @@ public class RegistrationConfirmationHandler implements Handler {
     public RegistrationConfirmationHandler(
         SessionFactory sessionFactory
     ) {
-        userService = new DatabaseUserService(sessionFactory);
+        userService = new UserServiceImpl(sessionFactory);
     }
 
     @Override

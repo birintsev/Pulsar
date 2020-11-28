@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import io.javalin.http.Context;
 import java.util.function.Function;
 import javax.validation.Validator;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.CPUInfo2DTOConverter;
@@ -59,14 +60,6 @@ public class ConversionServicesModule extends AbstractModule {
     Function<DiskInfo, ClientHostStatisticDTO.DiskInfoDTO>
     disk2DTOConverter() {
         return new DiskInfo2DTOConverter();
-    }
-
-    @Provides
-    Function<String, JoinOrganisationRequest>
-    joinOrganisationRequestConverter() {
-        return new DefaultJsonReaderStrategy<>(
-            JoinOrganisationRequest.class
-        );
     }
 
     @Provides
@@ -144,18 +137,6 @@ public class ConversionServicesModule extends AbstractModule {
     }
 
     @Provides
-    Function<String, UpdateUserStatusDTO> updateUserStatusDTOConverter() {
-        return s -> {
-            try {
-                return new ObjectMapper()
-                    .readValue(s, UpdateUserStatusDTO.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        };
-    }
-
-    @Provides
     Function<ClientHostStatisticDTO, ClientHostStatistic>
     clientHostStatisticConverter(
         ClientHostService clientHostService,
@@ -180,5 +161,33 @@ public class ConversionServicesModule extends AbstractModule {
     @Provides
     Function<Object, String> responseConversionStrategy() {
         return new DefaultJsonWriterStrategy<>(Object.class);
+    }
+
+    @Provides
+    Function<Context, JoinOrganisationRequest>
+    joinOrganisationRequestConverter(
+        Function<String, JoinOrganisationRequest> bodyConverter
+    ) {
+        return context -> bodyConverter.apply(context.body());
+    }
+
+    @Provides
+    Function<String, JoinOrganisationRequest>
+    joinOrganisationRequestStringConverter() {
+        return new DefaultJsonReaderStrategy<>(JoinOrganisationRequest.class);
+    }
+
+    @Provides
+    Function<Context, UpdateUserStatusDTO>
+    updateUserStatusDTOConverter(
+        Function<String, UpdateUserStatusDTO> bodyConverter
+    ) {
+        return context -> bodyConverter.apply(context.body());
+    }
+
+    @Provides
+    Function<String, UpdateUserStatusDTO>
+    updateUserStatusDTOStringConverter() {
+        return new DefaultJsonReaderStrategy<>(UpdateUserStatusDTO.class);
     }
 }

@@ -1,5 +1,7 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.USER_STATUS_PREMIUM_ACCOUNT;
+
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import java.util.Collections;
@@ -15,6 +17,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationReques
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.UserStatusException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
@@ -60,10 +63,20 @@ public class CreateOrganisationHandler implements Handler {
             );
         }
         validate(request);
-        organisation = organisationService.create(
-            request.getName(),
-            requester
-        );
+        try {
+            organisation = organisationService.create(
+                request.getName(),
+                requester
+            );
+        } catch (UserStatusException e) {
+            LOGGER.error(e);
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.FORBIDDEN.getCode(),
+                "Only users with "
+                    + USER_STATUS_PREMIUM_ACCOUNT
+                    + " status are allowed to create organisations"
+            );
+        }
         throw new JsonHttpResponseException(
             HttpStatus.Code.OK.getCode(),
             "The organisation \""

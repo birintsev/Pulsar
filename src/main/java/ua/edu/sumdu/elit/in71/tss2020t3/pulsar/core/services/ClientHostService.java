@@ -4,6 +4,8 @@ import java.util.Set;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.UserStatusException;
 
 public interface ClientHostService {
 
@@ -17,21 +19,22 @@ public interface ClientHostService {
      *                      for creating a new {@link ClientHost}
      * @param     requester a requester and an owner of new {@link ClientHost}
      * @return              created {@link ClientHost}
-     * @exception ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException
+     * @throws   AlreadyExistsException
      *                      if there already exists a host with such private key
+     * @throws   UserStatusException
+     *                      if the {@link User user} has reached the limit
+     *                      of owned {@link ClientHost ClientHosts}
      * @exception javax.validation.ConstraintViolationException
      *                      if passed {@code request} is not valid
      * @exception IllegalArgumentException
      *                      if {@code owner} does not exist
      *                      or passed object is not valid
-     * @exception ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException
-     *                      if the {@link User user} has reached the limit
-     *                      of owned {@link ClientHost ClientHosts}
+     *
      * */
     ClientHost createForUserRequest(
         CreateClientHostDTO request, // todo refactor this parameter
-        User requester               // todo because it is a part
-    );                               // todo of representational layer
+        User requester // todo because it is a part of representational layer
+    ) throws AlreadyExistsException, UserStatusException;
 
     /**
      * Searches en entity of {@link ClientHost} by its public key
@@ -69,23 +72,19 @@ public interface ClientHostService {
      * After this operation, {@code user} will be able to review the information
      * about the host as well as its statistic.
      *
-     * @param     publicKey                        a
-     *                                             {@link ClientHost#getPublicKey() publicKey}
-     *                                             of a host to be added
-     * @param     user                             a {@link User}
-     *                                             who should be able
-     *                                             to review the host statistic
-     * @exception java.util.NoSuchElementException if there is not such
-     *                                             {@link ClientHost}
-     *                                             associated with passed
-     *                                             {@code publicKey}
-     * @exception ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException
-     *                                             if the {@link User user}
-     *                                             has reached the limit
-     *                                             of owned
-     *                                             {@link ClientHost ClientHosts}
+     * @param     publicKey a {@link ClientHost#getPublicKey() publicKey}
+     *                      of a host to be added
+     * @param     user      a {@link User} who should be able to review
+     *                      the host statistic
+     * @throws    UserStatusException
+     *                      if the {@link User user} has reached the limit
+     *                      of owned/subscribed {@link ClientHost ClientHosts}
+     * @exception java.util.NoSuchElementException
+     *                      if there is not such {@link ClientHost}
+     *                      associated with passed {@code publicKey}
      * */
-    void subscribeByPublicKey(String publicKey, User user);
+    void subscribeByPublicKey(String publicKey, User user)
+        throws UserStatusException;
 
     /**
      * Searches all the {@link ClientHost} subscribed by passed {@link User}

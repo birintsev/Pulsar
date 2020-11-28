@@ -1,27 +1,27 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.USER_STATUS_PREMIUM_ACCOUNT;
+
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.function.Function;
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
-import org.jetbrains.annotations.NotNull;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.UserStatusException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.templates.UserRequestHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
 /**
  * A handler for updating {@link User} statuses
  * */
-@AllArgsConstructor
-public class UpdateUserStatusHandler implements Handler {
+public class UpdateUserStatusHandler
+extends UserRequestHandler<UpdateUserStatusDTO> {
 
     private static final Logger LOGGER = Logger.getLogger(
         UpdateUserStatusHandler.class
@@ -29,43 +29,38 @@ public class UpdateUserStatusHandler implements Handler {
 
     private final UserService userService;
 
-    private final Function<String, UpdateUserStatusDTO> bodyConverter;
-
-    private final Validator validator;
-
-    @Override
-    public void handle(@NotNull Context ctx) {
-        UpdateUserStatusDTO body;
-        Set<ConstraintViolation<UpdateUserStatusDTO>> validationResult;
-        User user = userService.findByEmail(
-            ctx.basicAuthCredentials().getUsername()
-        );
-        try {
-            body = bodyConverter.apply(ctx.body());
-        } catch (Exception e) {
-            LOGGER.error(e);
-            throw new JsonHttpResponseException(
-                HttpStatus.Code.BAD_REQUEST.getCode(),
-                "Bad request"
-            );
-        }
-        validationResult = validator.validate(body);
-        if (!validationResult.isEmpty()) {
-            throw new JsonHttpResponseException(
-                HttpStatus.Code.BAD_REQUEST.getCode(),
-                "Bad request",
-                validationResult.toArray(new ConstraintViolation[0])
-            );
-        }
-        handle(body, user);
+    /**
+     * A default constructor for dependency injection
+     *
+     * @param authenticationStrategy a strategy for user authentication
+     * @param validator              a validator for a request entity
+     * @param userService            a service for managing user statuses
+     * @param requestConverter       a function for converting
+     *                               a {@link Context user request}
+     *                               to its {@link UpdateUserStatusDTO POJO}
+     *                               representation
+     * */
+    public UpdateUserStatusHandler(
+        AuthenticationStrategy authenticationStrategy,
+        Validator validator,
+        Function<Context, UpdateUserStatusDTO> requestConverter,
+        UserService userService
+    ) {
+        super(authenticationStrategy, validator, requestConverter);
+        this.userService = userService;
     }
 
-    private void handle(UpdateUserStatusDTO request, User user) {
+    @Override
+    public void handleUserRequest(
+        UpdateUserStatusDTO request,
+        User requester,
+        Context context
+    ) {
         switch (request.getAction()) {
             case ADD:
                 try {
                     userService.addUserStatus(
-                        user,
+                        requester,
                         new UserStatus(request.getStatus())
                     );
                 } catch (NoSuchElementException e) {
@@ -77,10 +72,22 @@ public class UpdateUserStatusHandler implements Handler {
                 }
                 break;
             case REMOVE:
-                userService.removeStatus(
-                    user,
-                    new UserStatus(request.getStatus())
-                );
+                try {
+                    userService.removeStatus(
+                        requester,
+                        new UserStatus(request.getStatus())
+                    );
+                } catch (UserStatusException e) {
+                    LOGGER.error(e);
+                    throw new JsonHttpResponseException(
+                        HttpStatus.Code.FORBIDDEN.getCode(),
+                        "The user is a member/owner of an organisation."
+                            + " Consider leaving all the organisations "
+                            + "before removing "
+                            + USER_STATUS_PREMIUM_ACCOUNT
+                            + " status"
+                    );
+                }
                 break;
             default:
                 throw new JsonHttpResponseException(

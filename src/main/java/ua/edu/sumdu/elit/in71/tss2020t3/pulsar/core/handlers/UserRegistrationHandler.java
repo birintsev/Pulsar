@@ -15,9 +15,9 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2UserDT
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.UserRegistrationDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.SMTPService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
@@ -51,7 +51,7 @@ public class UserRegistrationHandler implements Handler {
     public UserRegistrationHandler(SessionFactory sessionFactory) {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
         dtoConverter = new UserRegistrationDTOConverter();
-        userService = new DatabaseUserService(sessionFactory);
+        userService = new UserServiceImpl(sessionFactory);
         deserializer = new JSONString2UserDTOConverter();
         this.mailService = new SMTPService();
     }

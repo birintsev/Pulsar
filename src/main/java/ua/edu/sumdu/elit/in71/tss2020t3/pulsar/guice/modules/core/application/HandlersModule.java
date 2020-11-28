@@ -3,6 +3,7 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.core.application;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
+import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import java.util.function.Function;
 import javax.validation.Validator;
@@ -160,13 +161,15 @@ public class HandlersModule extends AbstractModule {
     @Named("UpdateUserStatusHandler")
     Handler updateUserStatusHandler(
         UserService userService,
-        Function<String, UpdateUserStatusDTO> bodyConverter,
-        Validator validator
+        Function<Context, UpdateUserStatusDTO> requestConverter,
+        Validator validator,
+        AuthenticationStrategy authenticationStrategy
     ) {
         return new UpdateUserStatusHandler(
-            userService,
-            bodyConverter,
-            validator
+            authenticationStrategy,
+            validator,
+            requestConverter,
+            userService
         );
     }
 
@@ -175,13 +178,13 @@ public class HandlersModule extends AbstractModule {
     Handler joinOrganisationHandler(
         Validator validator,
         AuthenticationStrategy userAuthenticationStrategy,
-        OrganisationService organisationService,
-        Function<String, JoinOrganisationRequest> bodyConverter
+        Function<Context, JoinOrganisationRequest> requestConverter,
+        OrganisationService organisationService
     ) {
         return new JoinOrganisationHandler(
-            validator,
-            bodyConverter,
             userAuthenticationStrategy,
+            validator,
+            requestConverter,
             organisationService
         );
     }

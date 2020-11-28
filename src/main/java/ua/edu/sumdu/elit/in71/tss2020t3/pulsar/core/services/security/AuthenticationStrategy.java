@@ -19,9 +19,6 @@ public interface AuthenticationStrategy {
      *                                 (e.g. the {@link Context context}
      *                                 contains bad credentials
      *                                 or does not contain them at all)
-     * @throws ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException
-     *                                 if the user has not confirmed
-     *                                 his/her account
      * @see                            ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus#USER_STATUS_REGISTRATION_CONFIRMATION_PENDING
      * @see                            ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus#USER_STATUS_REGISTRATION_CONFIRMED
      * */

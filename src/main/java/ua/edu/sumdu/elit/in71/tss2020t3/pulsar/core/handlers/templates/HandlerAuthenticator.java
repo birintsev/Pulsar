@@ -9,7 +9,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
 /**
@@ -36,12 +35,6 @@ public abstract class HandlerAuthenticator implements Handler {
             throw new JsonHttpResponseException(
                 HttpStatus.Code.UNAUTHORIZED.getCode(),
                 "Bad credentials"
-            );
-        } catch (UserStatusException e) {
-            LOGGER.error(e);
-            throw new JsonHttpResponseException(
-                HttpStatus.Code.FORBIDDEN.getCode(),
-                "The user should confirm his/her account before authenticating"
             );
         }
         handleAuthenticated(ctx, user);

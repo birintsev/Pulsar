@@ -6,6 +6,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserResetPasswordRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.UserStatusException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
 
 /**
  * This service-layer interface was designed to represent basic operations
@@ -25,12 +27,10 @@ public interface UserService {
      * @param     user                     a user that has not been
      *                                     registered yet
      * @return                             registered {@code user}
-     * @exception IllegalArgumentException if passed {@code user}
-     *                                     is not valid
-     * @exception ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException
-     *                                     if passed {@code user} already exists
+     * @throws    AlreadyExistsException   if passed {@code user} already exists
+     * @exception IllegalArgumentException if passed {@code user} is not valid
      * */
-    User registerUser(User user);
+    User registerUser(User user) throws AlreadyExistsException;
 
     /**
      * Provides information whether a {@link User} with such {@code userID}
@@ -233,12 +233,19 @@ public interface UserService {
      * or the {@link UserStatus userStatus} does not exist,
      * no updates will be performed.
      *
-     * @param user       a {@link User user} whose {@link UserStatus userStatus}
-     *                   will be revoked
-     * @param userStatus a {@link UserStatus status} to be revoked from the
-     *                   {@link User user}
+     * @param  user       a {@link User user}
+     *                    whose {@link UserStatus userStatus}
+     *                    will be revoked
+     * @param  userStatus a {@link UserStatus status} to be revoked
+     *                    from the {@link User user}
+     * @throws UserStatusException
+     *                    if the status being removed is
+     *                    {@link UserStatus#USER_STATUS_PREMIUM_ACCOUNT premium account status}
+     *                    and the user is a member or an owner of any
+     *                    {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation#getMembers organisation}
      * */
-    void removeStatus(User user, UserStatus userStatus);
+    void removeStatus(User user, UserStatus userStatus)
+        throws UserStatusException;
 
     /**
      * Informs that the user has upgraded the account to premium account

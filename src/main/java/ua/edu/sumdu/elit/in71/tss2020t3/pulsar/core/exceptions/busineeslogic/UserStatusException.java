@@ -1,4 +1,4 @@
-package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions;
+package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic;
 
 /**
  * This exception indicates that an operation that is being performed
@@ -12,7 +12,7 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions;
  * the {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User user}
  * has status not suitable for the operation
  * */
-public class UserStatusException extends RuntimeException {
+public class UserStatusException extends BusinessLogicException {
 
     /**
      * A default constructor

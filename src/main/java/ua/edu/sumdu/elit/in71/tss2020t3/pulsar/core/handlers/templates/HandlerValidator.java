@@ -26,7 +26,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseE
  * before processing a request:
  * <ol>
  *     <li> {@link Function#apply Converts} the request body
- *          to a {@link REQUEST POJO} with {@link #bodyConverter}
+ *          to a {@link REQUEST POJO} with {@link #requestConverter}
  *     <li> Validates the {@link REQUEST POJO} with {@link #validator}
  *     <li> If the {@link REQUEST POJO} is valid,
  *          processes the {@link REQUEST POJO} with {@link #handleValid}
@@ -55,7 +55,7 @@ public abstract class HandlerValidator<REQUEST> implements Handler {
 
     private final Validator validator;
 
-    private final Function<String, REQUEST> bodyConverter;
+    private final Function<Context, REQUEST> requestConverter;
 
     /**
      * A method for the logic implementation
@@ -71,7 +71,7 @@ public abstract class HandlerValidator<REQUEST> implements Handler {
     public final void handle(@NotNull Context ctx) {
         REQUEST request;
         try {
-            request = bodyConverter.apply(ctx.body());
+            request = requestConverter.apply(ctx);
         } catch (Exception e) {
             LOGGER.error(e);
             throw new JsonHttpResponseException(

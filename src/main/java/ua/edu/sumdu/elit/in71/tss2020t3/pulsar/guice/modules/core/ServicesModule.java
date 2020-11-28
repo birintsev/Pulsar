@@ -8,7 +8,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticServiceImpl;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.DatabaseUserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserServiceImpl;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationServiceImpl;
@@ -23,7 +23,7 @@ public class ServicesModule extends AbstractModule {
 
     @Provides
     UserService userService(SessionFactory sessionFactory) {
-        return new DatabaseUserService(sessionFactory);
+        return new UserServiceImpl(sessionFactory);
     }
 
     @Provides

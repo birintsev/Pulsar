@@ -28,16 +28,17 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserResetPasswordRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.UserStatusException;
 
 /**
  * A default implementation of {@link UserService} that works with users stored
  * in an application database
  * */
-public class DatabaseUserService implements UserService {
+public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = Logger.getLogger(
-        DatabaseUserService.class
+        UserServiceImpl.class
     );
 
     private final SessionFactory sessionFactory;
@@ -50,7 +51,7 @@ public class DatabaseUserService implements UserService {
      * @param sessionFactory    a session factory that will be used
      *                          during interacting with a database
      * */
-    public DatabaseUserService(SessionFactory sessionFactory) {
+    public UserServiceImpl(SessionFactory sessionFactory) {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
         this.sessionFactory = sessionFactory;
     }
@@ -63,7 +64,7 @@ public class DatabaseUserService implements UserService {
      * status
      * */
     @Override
-    public User registerUser(User user) {
+    public User registerUser(User user) throws AlreadyExistsException {
         UserRegistrationConfirmation userRegistrationConfirmation;
         boolean existsByEmailAndUsername = existsByEmailAndUsername(
             user.getId().getEmail(), user.getUsername()
@@ -399,13 +400,42 @@ public class DatabaseUserService implements UserService {
     }
 
     @Override
-    public void removeStatus(User user, UserStatus userStatus) {
+    public void removeStatus(User user, UserStatus userStatus)
+        throws UserStatusException {
+        if (
+            new UserStatus(USER_STATUS_PREMIUM_ACCOUNT).equals(userStatus)
+                && !mayPremiumAccountBeRevokedFrom(user)
+        ) {
+            throw new UserStatusException(
+                "The user is a member/owner of an organisation. "
+            );
+        }
         try (Session session = sessionFactory.openSession()) {
             Transaction t = session.beginTransaction();
             user.getUserStatuses().remove(userStatus);
             session.update(user);
             session.flush();
             t.commit();
+        }
+    }
+
+    /* todo
+            replace this method with something more
+            abstract like listening engine
+            which tracks user actions like a status transaction
+            or other business-related actions
+     */
+    private boolean mayPremiumAccountBeRevokedFrom(User user) {
+        try (Session session = sessionFactory.openSession()) {
+            return session
+                .createQuery(
+                    "select o "
+                        + "from Organisation o "
+                        + "where :user in elements(o.members) "
+                        + "or :user = o.owner"
+                )
+                .setParameter("user", user)
+                .list().size() == 0;
         }
     }
 
@@ -452,15 +482,15 @@ public class DatabaseUserService implements UserService {
             return session
                 .createQuery(
                     "from User u "
-                        + " where u.id.email = :email"
-                        + " and :premiumStatus in elements(u.userStatuses) "
+                        + " where u = :user"
+                        + " and :status in elements(u.userStatuses) "
                 )
                 .setParameter(
-                    "email",
-                    user.getId().getEmail()
+                    "user",
+                    user
                 )
                 .setParameter(
-                    "premiumStatus",
+                    "status",
                     new UserStatus(USER_STATUS_PREMIUM_ACCOUNT)
                 )
                 .list().size() > 0;

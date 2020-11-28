@@ -18,8 +18,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserSubscription;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.AlreadyExistsException;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.UserStatusException;
 
 public class ClientHostServiceImpl implements ClientHostService {
 
@@ -57,7 +57,7 @@ public class ClientHostServiceImpl implements ClientHostService {
     @Override
     public ClientHost createForUserRequest(
         CreateClientHostDTO request, User requester
-    ) {
+    ) throws AlreadyExistsException, UserStatusException {
         ClientHost newClientHost;
         if (userReachedClientHostsLimit(requester)) {
             throw new UserStatusException(
@@ -134,7 +134,8 @@ public class ClientHostServiceImpl implements ClientHostService {
     }
 
     @Override
-    public void subscribeByPublicKey(String publicKey, User user) {
+    public void subscribeByPublicKey(String publicKey, User user)
+        throws UserStatusException {
         ClientHost clientHost;
         if (userReachedClientHostsLimit(user)) {
             throw new UserStatusException(

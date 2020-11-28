@@ -1,16 +1,20 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.USER_STATUS_PREMIUM_ACCOUNT;
+
 import io.javalin.http.Context;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
-import javax.naming.AuthenticationException;
 import javax.validation.Validator;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.JoinOrganisationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.templates.HandlerValidator;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.UserStatusException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.templates.UserRequestHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.OrganisationService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
@@ -18,78 +22,75 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.Authentica
  * This class represents a handler for {@link JoinOrganisationRequest requests}
  * */
 public class JoinOrganisationHandler
-extends HandlerValidator<JoinOrganisationRequest> {
+extends UserRequestHandler<JoinOrganisationRequest> {
 
     private static final Logger LOGGER = Logger.getLogger(
         JoinOrganisationHandler.class
     );
 
-    private final AuthenticationStrategy authenticationStrategy;
-
     private final OrganisationService organisationService;
 
     /**
-     * A default dependency injection constructor
+     * A default constructor for dependency injection
      *
-     * @param validator              a validator for request POJOs
-     * @param bodyConverter          an object for
-     *                               {@link Context#body() request} to
-     *                               {@link JoinOrganisationRequest POJO}
-     *                               converting
-     * @param authenticationStrategy a strategy for {@link User} authentication
-     * @param organisationService    a business-logic provider for
-     *                               {@link JoinOrganisationRequest requests}
-     *                               handling
+     * @param authenticationStrategy a strategy for user authentication
+     * @param validator              a validator for user requests POJOs
+     * @param requestConverter       a converter for retrieving POJO objects
+     *                               from user requests
+     * @param organisationService    a business logic provider for
+     *                               {@link Organisation}-related operations
      * */
     public JoinOrganisationHandler(
-        Validator validator,
-        Function<String, JoinOrganisationRequest> bodyConverter,
         AuthenticationStrategy authenticationStrategy,
+        Validator validator,
+        Function<Context, JoinOrganisationRequest> requestConverter,
         OrganisationService organisationService
     ) {
-        super(validator, bodyConverter);
-        this.authenticationStrategy = authenticationStrategy;
+        super(authenticationStrategy, validator, requestConverter);
         this.organisationService = organisationService;
     }
 
     @Override
-    public void handleValid(
-        Context ctx,
-        JoinOrganisationRequest joinOrganisationRequest
+    public void handleUserRequest(
+        JoinOrganisationRequest joinOrganisationRequest,
+        User requester,
+        Context context
     ) {
-        User user;
-        Organisation organisation;
         try {
-            user = authenticationStrategy.authenticate(ctx);
-        } catch (AuthenticationException e) {
+            organisationService.addToOrganisationMembers(
+                requester,
+                new Organisation.ID(
+                    joinOrganisationRequest.getOrganisationId()
+                )
+            );
+        } catch (UserStatusException e) {
             LOGGER.error(e);
             throw new JsonHttpResponseException(
-                HttpStatus.Code.UNAUTHORIZED.getCode(),
-                "Consider to check the credentials"
+                HttpStatus.Code.FORBIDDEN.getCode(),
+                "Only users with "
+                    + USER_STATUS_PREMIUM_ACCOUNT
+                    + " status are allowed to be organisation members"
             );
-        }
-        organisation = organisationService.findById(
-            new Organisation.ID(joinOrganisationRequest.getOrganisationId())
-        );
-        if (organisation == null) {
-            throw new JsonHttpResponseException(
-                HttpStatus.Code.BAD_REQUEST.getCode(),
-                "The organisation not found"
-            );
-        }
-        if (organisationService.isMember(user, organisation)) {
+        } catch (AlreadyExistsException e) {
+            LOGGER.error(e);
             throw new JsonHttpResponseException(
                 HttpStatus.Code.OK.getCode(),
-                "The user is a member of " + organisation.getName() + " already"
+                "The user is already a member of the organisation"
+            );
+        } catch (NoSuchElementException e) {
+            LOGGER.error(e);
+            throw new JsonHttpResponseException(
+                HttpStatus.Code.BAD_REQUEST.getCode(),
+                "Organisation with id "
+                    + joinOrganisationRequest.getOrganisationId()
+                    + " does not exist"
             );
         }
-        organisationService.addToOrganisationMembers(user, organisation);
         throw new JsonHttpResponseException(
             HttpStatus.Code.OK.getCode(),
             "The user "
-                + user.getUsername()
-                + " has joined "
-                + organisation.getName()
+                + requester.getUsername()
+                + " has joined the organisation"
         );
     }
 }

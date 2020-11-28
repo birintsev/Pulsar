@@ -1,7 +1,10 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services;
 
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.USER_STATUS_PREMIUM_ACCOUNT;
+
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
@@ -11,7 +14,8 @@ import org.hibernate.Transaction;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.UserStatusException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.UserStatusException;
 
 /**
  * This is a default implementation of {@link OrganisationService}
@@ -28,18 +32,52 @@ public class OrganisationServiceImpl implements OrganisationService {
     private final UserService userService;
 
     @Override
-    public void addToOrganisationMembers(User user, Organisation organisation) {
+    public void addToOrganisationMembers(
+        User user,
+        Organisation.ID organisationId
+    ) throws AlreadyExistsException {
+        Organisation organisation = findById(organisationId);
+        if (organisation == null) {
+            throw new NoSuchElementException(
+                "The organisation specified by "
+                    + organisationId
+                    + " does not exist"
+            );
+        }
         try (Session session = sessionFactory.openSession()) {
+            if (isMember(user, organisation)) {
+                throw new AlreadyExistsException(
+                    "The user (username = "
+                        + user.getUsername()
+                        + ") is a member of "
+                        + organisation.getName()
+                        + " (organisation id = "
+                        + organisation.getId()
+                        + ") already"
+                );
+            }
+            if (!userService.isUserPremiumAccount(user)) {
+                throw new UserStatusException(
+                    "The user (username = "
+                        + user.getUsername()
+                        + ") does not have "
+                        + USER_STATUS_PREMIUM_ACCOUNT
+                        + " status"
+                );
+            }
             Transaction t = session.beginTransaction();
             organisation.getMembers().add(user);
             session.update(organisation);
             session.flush();
             t.commit();
+        } catch (UserStatusException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    public Organisation create(String organisationName, User owner) {
+    public Organisation create(String organisationName, User owner)
+        throws UserStatusException {
         Organisation organisation;
         if (!userService.isUserPremiumAccount(owner)) {
             throw new UserStatusException(
@@ -105,16 +143,17 @@ public class OrganisationServiceImpl implements OrganisationService {
     }
 
     @Override
-    public Set<Organisation> getByMember(User member) {
+    public Set<Organisation> getByMember(User user) {
         try (Session session = sessionFactory.openSession()) {
             return new HashSet<>(
                 (List<Organisation>) session
                     .createQuery(
                         "select distinct o "
                             + "from Organisation o "
-                            + "where :member in elements(o.members)"
+                            + "where :user in elements(o.members) "
+                            + "or :user = o.owner"
                     )
-                    .setParameter("member", member)
+                    .setParameter("user", user)
                     .list()
             );
         }

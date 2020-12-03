@@ -61,6 +61,8 @@ public class ApplicationModule extends AbstractModule {
             Handler getOrganisationsHandler,
         @Named("GetAllClientHostsHandler")
             Handler getAllClientHostsHandler,
+        @Named("HttpAccessibilityRequestHandler")
+            Handler httpAccessibilityRequestHandler,
         InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
@@ -147,6 +149,11 @@ public class ApplicationModule extends AbstractModule {
             .get(
                 "/client-host/all",
                 getAllClientHostsHandler,
+                permittedRoles
+            )
+            .get(
+                "/check-accessibility",
+                httpAccessibilityRequestHandler,
                 permittedRoles
             )
             .exception(

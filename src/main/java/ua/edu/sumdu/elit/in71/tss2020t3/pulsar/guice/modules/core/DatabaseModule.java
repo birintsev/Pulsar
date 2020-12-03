@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.InitialDataLoader;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.HttpAccessibilityCheck;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation;
 
 /**
@@ -23,6 +24,7 @@ public class DatabaseModule extends AbstractModule {
         hibernateConfig
             .configure()
             .addAnnotatedClass(Organisation.class)
+            .addAnnotatedClass(HttpAccessibilityCheck.class)
             .setProperty(
                 "hibernate.connection.driver_class",
                 System.getProperty(

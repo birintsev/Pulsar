@@ -17,6 +17,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostReq
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.requests.PingRequest;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.HttpAccessibilityCheckDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.AuthenticationHandler;
@@ -26,6 +28,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHa
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetUserClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetOrganisationsHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.HttpAccessibilityRequestHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.JoinOrganisationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.NewClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.RegistrationConfirmationHandler;
@@ -34,6 +37,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UpdateUserStatusHan
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRequestToResetPasswordHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserResetPasswordHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.AccessibilityService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
@@ -244,6 +248,26 @@ public class HandlersModule extends AbstractModule {
             clientHostService,
             modelMapper,
             responseConversionStrategy
+        );
+    }
+
+    @Provides
+    @Named("HttpAccessibilityRequestHandler")
+    Handler httpAccessibilityRequestHandler(
+        AuthenticationStrategy authenticationStrategy,
+        Validator validator,
+        Function<Context, PingRequest> requestConverter,
+        AccessibilityService accessibilityService,
+        Function<HttpAccessibilityCheckDTO, String> responseConverter,
+        ModelMapper modelMapper
+    ) {
+        return new HttpAccessibilityRequestHandler(
+            authenticationStrategy,
+            validator,
+            requestConverter,
+            accessibilityService,
+            responseConverter,
+            modelMapper
         );
     }
 }

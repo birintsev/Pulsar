@@ -59,7 +59,8 @@ public class AccessibilityServiceImpl implements AccessibilityService {
             timeBeforeConnection = System.currentTimeMillis();
             httpConnection.connect();
             responseTime =
-                (double) (System.currentTimeMillis() - timeBeforeConnection);
+                (double) (System.currentTimeMillis() - timeBeforeConnection)
+                    / MILLISECONDS_IN_SECONDS;
             responseCode = httpConnection.getResponseCode();
             httpConnection.disconnect();
         } catch (MalformedURLException e) {

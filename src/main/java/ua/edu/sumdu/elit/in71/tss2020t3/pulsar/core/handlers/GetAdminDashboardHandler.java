@@ -13,6 +13,19 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.templates.HandlerAu
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.AdminDashboardService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
+/**
+ * This is a handler for retrieving such admin statistic as:
+ * <ul>
+ *     <li>the total number of users and active users</li>
+ *     <li>the total number of client hosts and active client hosts</li>
+ *     <li>the total number of emails sent</li>
+ *     <li>the total number of active HTTP/HTTPS checks made</li>
+ * </ul>
+ * If need of other statistic data arises,
+ * it should be provided in this handler.
+ *
+ * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus#USER_STATUS_ADMIN_ACCOUNT
+ * */
 public class GetAdminDashboardHandler extends HandlerAuthenticator {
 
     private static final Logger LOGGER = Logger.getLogger(
@@ -58,7 +71,7 @@ public class GetAdminDashboardHandler extends HandlerAuthenticator {
     }
 
     /**
-     * Just a response templete class
+     * Just a response template class
      * */
     @Data
     @AllArgsConstructor

@@ -17,6 +17,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.DiskInfo2DTOConve
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2CreateClientHostConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.MemoryInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.NetworkInfo2DTOConverter;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.UserRegistrationDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonReaderStrategy;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonWriterStrategy;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
@@ -25,11 +26,13 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationReques
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.JoinOrganisationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.requests.PingRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.HttpAccessibilityCheckDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo;
@@ -249,5 +252,15 @@ public class ConversionServicesModule extends AbstractModule {
     Function<HttpAccessibilityCheckDTO, String>
     httpAccessibilityCheckDTOWriter() {
         return new DefaultJsonWriterStrategy<>(HttpAccessibilityCheckDTO.class);
+    }
+
+    @Provides
+    Function<String, UserRegistrationDTO> userRegistrationDTOReader() {
+        return new DefaultJsonReaderStrategy<>(UserRegistrationDTO.class);
+    }
+
+    @Provides
+    Function<UserRegistrationDTO, User> userRegistrationDTOConverter() {
+        return new UserRegistrationDTOConverter();
     }
 }

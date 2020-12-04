@@ -1,6 +1,7 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.guice.modules.core.application;
 
 import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.ApplicationPropertiesNames.USER_STATUS_REGISTRATION_CONFIRMED;
+import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.USER_STATUS_ADMIN_ACCOUNT;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -10,6 +11,7 @@ import io.javalin.core.security.AccessManager;
 import io.javalin.core.security.Role;
 import io.javalin.http.Handler;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.InitialDataLoader;
@@ -63,6 +65,8 @@ public class ApplicationModule extends AbstractModule {
             Handler getAllClientHostsHandler,
         @Named("HttpAccessibilityRequestHandler")
             Handler httpAccessibilityRequestHandler,
+        @Named("GetAdminDashboardHandler")
+            Handler getAdminDashboardHandler,
         InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
@@ -155,6 +159,13 @@ public class ApplicationModule extends AbstractModule {
                 "/check-accessibility",
                 httpAccessibilityRequestHandler,
                 permittedRoles
+            )
+            .get(
+                "/admin/dashboard",
+                getAdminDashboardHandler,
+                Collections.singleton(
+                    new UserStatus(USER_STATUS_ADMIN_ACCOUNT)
+                )
             )
             .exception(
                 Exception.class,

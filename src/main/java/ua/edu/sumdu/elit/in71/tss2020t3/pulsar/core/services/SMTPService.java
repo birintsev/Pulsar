@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -38,6 +39,10 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Email;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserRegistrationConfirmation;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserResetPasswordRequest;
 
@@ -51,10 +56,18 @@ public class SMTPService implements MailService {
 
     private final Properties smtpProperties;
 
+    private final SessionFactory sessionFactory;
+
     /**
      * A default constructor
+     *
+     * @param sessionFactory a session factory for storing information
+     *                       about sent emails
      * */
-    public SMTPService() { // todo create a constructor with custom Properties
+    public SMTPService(// todo create a constructor with custom Properties
+        SessionFactory sessionFactory
+    ) {
+        this.sessionFactory = sessionFactory;
         smtpProperties = new Properties();
         smtpProperties.put(
             "mail.smtp.auth",
@@ -84,11 +97,19 @@ public class SMTPService implements MailService {
             LOGGER.trace("Sending the email: " + email);
             Transport.send(email);
             LOGGER.trace("The email " + email + " has been sent");
+            recordToDatabase(
+                email,
+                confirmation.getId().getUser(),
+                ZonedDateTime.now()
+            );
         } catch (MessagingException e) {
             LOGGER.error(
                 "Error during sending an email to the user"
                     + " (registration confirmation). The email is: " + email
             );
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            LOGGER.error(e);
             throw new RuntimeException(e);
         }
     }
@@ -102,7 +123,12 @@ public class SMTPService implements MailService {
             LOGGER.trace("Sending the email: " + email);
             Transport.send(email);
             LOGGER.trace("The email " + email + " has been sent");
-        } catch (MessagingException e) {
+            recordToDatabase(
+                email,
+                userResetPasswordRequest.getUser(),
+                ZonedDateTime.now()
+            );
+        } catch (MessagingException | IOException e) {
             LOGGER.error(e);
             throw new RuntimeException(e);
         }
@@ -304,5 +330,31 @@ public class SMTPService implements MailService {
             throw new RuntimeException(e);
         }
         return registrationConfirmationURL;
+    }
+
+    private void recordToDatabase(
+        Message message,
+        User receiver,
+        ZonedDateTime sentWhen
+    ) throws MessagingException, IOException {
+        try (org.hibernate.Session session = sessionFactory.openSession()) {
+            Transaction t = session.beginTransaction();
+            session.save(
+                new Email(
+                    null,
+                    receiver,
+                    message.getSubject(),
+                    extractBodyFrom(message),
+                    sentWhen
+                )
+            );
+            session.flush();
+            t.commit();
+        }
+    }
+
+    private String extractBodyFrom(Message message)
+        throws IOException, MessagingException {
+        return message.getContent().toString();
     }
 }

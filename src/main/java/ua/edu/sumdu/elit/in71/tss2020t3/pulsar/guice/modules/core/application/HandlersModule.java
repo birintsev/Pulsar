@@ -15,15 +15,18 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationReques
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.JoinOrganisationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.SubscribeToClientHostRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UpdateUserStatusDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRequestToResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.requests.PingRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.HttpAccessibilityCheckDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.AuthenticationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateClientHostHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateOrganisationHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAdminDashboardHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetUserClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
@@ -38,6 +41,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHan
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRequestToResetPasswordHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserResetPasswordHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.AccessibilityService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.AdminDashboardService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
@@ -61,8 +65,20 @@ public class HandlersModule extends AbstractModule {
 
     @Provides
     @Named("UserRegistrationHandler")
-    Handler newClientHostStatisticHandler(SessionFactory sessionFactory) {
-        return new UserRegistrationHandler(sessionFactory);
+    Handler newClientHostStatisticHandler(
+        Validator validator,
+        Function<UserRegistrationDTO, User> dtoToUserConverter,
+        Function<String, UserRegistrationDTO> requestConverter,
+        UserService userService,
+        MailService mailService
+    ) {
+        return new UserRegistrationHandler(
+            validator,
+            dtoToUserConverter,
+            requestConverter,
+            userService,
+            mailService
+        );
     }
 
     @Provides
@@ -268,6 +284,20 @@ public class HandlersModule extends AbstractModule {
             accessibilityService,
             responseConverter,
             modelMapper
+        );
+    }
+
+    @Provides
+    @Named("GetAdminDashboardHandler")
+    Handler getAdminDashboardHandler(
+        AuthenticationStrategy authenticationStrategy,
+        AdminDashboardService adminDashboardService,
+        Function<Object, String> defaultResponseWriter
+    ) {
+        return new GetAdminDashboardHandler(
+            authenticationStrategy,
+            adminDashboardService,
+            defaultResponseWriter
         );
     }
 }

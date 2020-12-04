@@ -5,27 +5,23 @@ import io.javalin.http.Handler;
 import java.util.Set;
 import java.util.function.Function;
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
+import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
-import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2UserDTOConverter;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.UserRegistrationDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserRegistrationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserServiceImpl;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.busineeslogic.AlreadyExistsException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.MailService;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.SMTPService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
 /**
  * This class represents a controller for new user creation requests
  * (registration requests)
  * */
+@AllArgsConstructor
 public class UserRegistrationHandler implements Handler {
 
     private static final Logger LOGGER = Logger.getLogger(
@@ -41,20 +37,6 @@ public class UserRegistrationHandler implements Handler {
     private final UserService userService;
 
     private final MailService mailService;
-
-    /**
-     * A default dependency injection constructor
-     *
-     * @param sessionFactory a session factory that will be used
-     *                       during input handling to persist statistic
-     * */
-    public UserRegistrationHandler(SessionFactory sessionFactory) {
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-        dtoConverter = new UserRegistrationDTOConverter();
-        userService = new UserServiceImpl(sessionFactory);
-        deserializer = new JSONString2UserDTOConverter();
-        this.mailService = new SMTPService();
-    }
 
     @Override
     public void handle(@NotNull Context ctx) {

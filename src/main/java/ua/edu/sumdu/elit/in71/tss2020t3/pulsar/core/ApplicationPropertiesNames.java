@@ -230,6 +230,9 @@ public final class ApplicationPropertiesNames {
     public static final String KEYSTORE_PASSWORD                              =
         "pulsar.keystore.password";
 
+    public static final String SESSIONS_TABLE_NAME                            =
+        "pu_user_sessions";
+
 
     private ApplicationPropertiesNames() {
 

@@ -30,6 +30,9 @@ public class UserStatus implements Serializable, Role {
     public static final String USER_STATUS_PREMIUM_ACCOUNT                   =
         "PREMIUM_ACCOUNT";
 
+    public static final String USER_STATUS_ADMIN_ACCOUNT                     =
+        "ADMIN_ACCOUNT";
+
     public static final int FREE_ACCOUNT_STORED_STATISTIC_DAYS               =
         3;
 

@@ -5,19 +5,27 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ua.edu.sumdu.elit.in71.tss2020t3</groupId>
-    <artifactId>Pulsar-backend</artifactId>
+    <artifactId>Pulsar-backend-parent</artifactId>
     <version>Stage-2</version>
 
+    <name>Pulsar</name>
+
+    <modules>
+        <module>backend-core</module>
+    </modules>
+
     <properties>
+        <!--Maven properties-->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--Version control properties-->
         <javalin.version>3.10.1</javalin.version>
         <picocli.version>4.5.1</picocli.version>
         <log4j.version>1.2.17</log4j.version>
         <jackson.version>2.11.2</jackson.version>
         <lombok.version>1.18.12</lombok.version>
-        <slf4j-api.version>1.8.0-beta4</slf4j-api.version>
+        <slf4j-api.version>2.0.0-alpha1</slf4j-api.version>
         <slf4j-simple.version>1.7.30</slf4j-simple.version>
         <commons-io.version>2.8.0</commons-io.version>
         <hibernate-core.version>5.4.22.Final</hibernate-core.version>
@@ -32,17 +40,21 @@
         <commons-text.version>1.9</commons-text.version>
         <guice.version>4.2.3</guice.version>
         <modelmapper.version>2.3.0</modelmapper.version>
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <delombok.output>${project.build.directory}/delombok</delombok.output>
+        <quartz.version>2.3.2</quartz.version>
+        <!--Pulsar properties--> <!--NOTE! Should be overridden in children POMs-->
+        <pulsar.checkstyle-config.location>${project.basedir}/src/main/resources/checkstyle-config.xml</pulsar.checkstyle-config.location>
+        <pulsar.default.properties.location>${project.basedir}/src/main/resources/default.properties</pulsar.default.properties.location>
+        <pulsar.common-resources.directory>${project.basedir}/src/main/resources</pulsar.common-resources.directory>
     </properties>
 
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <build>
-        <finalName>Pulsar</finalName>
+        <finalName>${project.name}</finalName>
         <filters>
-            <filter>
-                ${project.basedir}/src/main/resources/default.properties
-            </filter>
+            <filter>${pulsar.default.properties.location}</filter>
         </filters>
         <resources>
             <resource>
@@ -56,9 +68,14 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.3.0</version>
-                <configuration>
+                <!--<configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
@@ -78,7 +95,7 @@
                             <goal>single</goal>
                         </goals>
                     </execution>
-                </executions>
+                </executions>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -93,7 +110,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyle-plugin.version}</version>
                 <configuration>
-                    <configLocation>${project.basedir}/src/main/resources/checkstyle-config.xml</configLocation>
+                    <configLocation>${pulsar.checkstyle-config.location}</configLocation>
                     <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <failOnViolation>true</failOnViolation>
@@ -125,6 +142,44 @@
                         <goals>
                             <goal>delombok</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-common-resources</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${pulsar.common-resources.directory}</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-module-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -227,6 +282,17 @@
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
             <version>${modelmapper.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>2.0.0-alpha1</version>
         </dependency>
     </dependencies>
 </project>

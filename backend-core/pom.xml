@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>Pulsar-backend-parent</artifactId>
+        <groupId>ua.edu.sumdu.elit.in71.tss2020t3</groupId>
+        <version>Stage-2</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>Pulsar-backend-core</artifactId>
+
+    <name>Pulsar-backend-core</name>
+
+    <properties>
+        <!--Pulsar properties--> <!--Overridden parent properties-->
+        <pulsar.default.properties.location>../src/main/resources/default.properties</pulsar.default.properties.location>
+        <pulsar.common-resources.directory>../src/main/resources</pulsar.common-resources.directory>
+        <pulsar.checkstyle-config.location>../src/main/resources/checkstyle-config.xml</pulsar.checkstyle-config.location>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>ua.edu.sumdu.elit.in71.tss2020t3.pulsar.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <finalName>${project.build.finalName}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

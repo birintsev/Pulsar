@@ -6,16 +6,13 @@ import io.javalin.http.Handler;
 import java.util.Set;
 import java.util.function.Function;
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
+import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.JSONString2ServerStatisticDTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticService;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticServiceImpl;
 
 /**
  * This class represents a controller for inputs
@@ -24,6 +21,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatistic
  * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.JavalinApplication
  * @see ClientHostStatistic
  * */
+@AllArgsConstructor
 public class NewClientHostStatisticHandler implements Handler {
 
     private final Function<String, ClientHostStatisticDTO> deserializer;
@@ -38,26 +36,6 @@ public class NewClientHostStatisticHandler implements Handler {
     private static final Logger LOGGER = Logger.getLogger(
         NewClientHostStatisticHandler.class
     );
-
-    /**
-     * A default constructor
-     *
-     * @param sessionFactory a session factory that will be used
-     *                       during input handling to persist statistic
-     * @param dtoConverter   a converter for a request body POJO-representation
-     * */
-    public NewClientHostStatisticHandler(
-        SessionFactory sessionFactory,
-        Function<ClientHostStatisticDTO, ClientHostStatistic> dtoConverter
-    ) {
-        this.deserializer = new JSONString2ServerStatisticDTOConverter();
-        this.validator =
-            Validation.buildDefaultValidatorFactory().getValidator();
-        this.clientHostStatisticService = new ClientHostStatisticServiceImpl(
-            sessionFactory
-        );
-        this.dtoConverter = dtoConverter;
-    }
 
     /**
      * Saves passed statistic to the database

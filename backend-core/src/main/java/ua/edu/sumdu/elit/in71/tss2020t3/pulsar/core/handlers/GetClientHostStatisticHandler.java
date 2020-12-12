@@ -1,177 +1,130 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 
-import static ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus.FREE_ACCOUNT_STORED_STATISTIC_DAYS;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
-import org.jetbrains.annotations.NotNull;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.UserAccessException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.templates.UserRequestHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostStatisticService;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
 /**
- * A handler for handling the request to get a {@link ClientHostStatistic}
+ * A handler for handling the request to get a
+ * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic}
  * */
-public class GetClientHostStatisticHandler implements Handler {
+public class GetClientHostStatisticHandler
+extends UserRequestHandler<ClientHostStatisticRequest> {
 
     private static final Logger LOGGER = Logger.getLogger(
         GetClientHostStatisticHandler.class
     );
 
-    private static final String PUBLIC_KEY_QUERY_PARAM_NAME = "publicKey";
-
-    private static final String PAGE_SIZE_QUERY_PARAM_NAME = "pageSize";
-
-    private static final String START_PAGE_QUERY_PARAM_NAME = "startPage";
-
-    private final UserService userService;
-
-    private final ClientHostService clientHostService;
-
     private final ClientHostStatisticService clientHostStatisticService;
 
-    private final Validator validator;
+    private final ModelMapper modelMapper;
 
-    private final Function<ClientHostStatistic, ClientHostStatisticDTO>
-        responseConverter;
+    private final Function<Object, String> responseWritingStrategy;
 
     /**
      * A default constructor for dependency injection
      *
-     * @param userService                a service for working with
-     *                                   {@link User}s
-     * @param clientHostService          a service for working with
-     *                                   {@link ClientHost}s
-     * @param clientHostStatisticService a service for working with
-     *                                   {@link ClientHostStatistic}s
-     * @param validator                  a javax validator
-     * @param responseConverter          a converter for statistic container
-     *                                   objects from their business-level POJOs
-     *                                   to representation-level POJOs
+     * @param authenticationStrategy        a strategy for user authentication
+     * @param validator                     a validator for user requests
+     * @param requestConverter              a user request converter
+     * @param clientHostStatisticService    a service for working with portions
+     *                                      of a client host statistic
+     * @param modelMapper                   a mapper for converting
+     *                                      business-logic level entities
+     *                                      to their representation-layer
+     *                                      analogues
+     * @param responseWritingStrategy       a default object toString-converting
+     *                                      strategy
      * */
     public GetClientHostStatisticHandler(
-        UserService userService,
-        ClientHostService clientHostService,
-        ClientHostStatisticService clientHostStatisticService,
+        AuthenticationStrategy authenticationStrategy,
         Validator validator,
-        Function<ClientHostStatistic, ClientHostStatisticDTO> responseConverter
+        Function<Context, ClientHostStatisticRequest> requestConverter,
+        ClientHostStatisticService clientHostStatisticService,
+        ModelMapper modelMapper,
+        Function<Object, String> responseWritingStrategy
     ) {
-        this.userService = userService;
-        this.clientHostService = clientHostService;
+        super(authenticationStrategy, validator, requestConverter);
         this.clientHostStatisticService = clientHostStatisticService;
-        this.validator = validator;
-        this.responseConverter = responseConverter;
+        this.modelMapper = modelMapper;
+        this.responseWritingStrategy = responseWritingStrategy;
     }
 
     @Override
-    public void handle(@NotNull Context ctx) throws Exception {
-        ClientHostStatisticRequest request = createFromContextRequestURL(ctx);
-        List<ClientHostStatistic> statistic;
-        User user = userService.findByEmail(
-            ctx.basicAuthCredentials().getUsername()
-        );
-        if (
-            !clientHostService.subscriberOrOwner(user, request.getPublicKey())
-        ) {
+    public void handleUserRequest(
+        ClientHostStatisticRequest request,
+        User requester,
+        Context context
+    ) {
+        try {
+            context.result(
+                responseWritingStrategy.apply(
+                    modelMapper.map(
+                        clientHostStatisticService.getByPublicKey(
+                            requester,
+                            request.getPublicKey(),
+                            request.getStartDate(),
+                            request.getEndDate()
+                        ),
+                        new TypeToken<List<ClientHostStatisticDTO>>() {
+                        }.getType()
+                    )
+                )
+            );
+        } catch (UserAccessException e) {
+            LOGGER.error(e);
             throw new JsonHttpResponseException(
                 HttpStatus.Code.FORBIDDEN.getCode(),
-                "The user is not an owner or subscriber of the host"
+                "The user is not authorized to view the "
+                    + (e.getAccessedObject() instanceof ClientHost
+                        ? ((ClientHost) e.getAccessedObject()).getName() + " "
+                        : ""
+                    )
+                    + "host statistic"
             );
-        }
-        // todo move to strategy pattern
-        if (userService.isUserPremiumAccount(user)) {
-            statistic = clientHostStatisticService.getByPublicKey(
-                request.getPublicKey()
-            );
-        } else {
-            statistic = clientHostStatisticService.getByPublicKey(
-                request.getPublicKey(),
-                ZonedDateTime
-                    .now()
-                    .minusDays(FREE_ACCOUNT_STORED_STATISTIC_DAYS),
-                ZonedDateTime.now()
-            );
-        }
-        ctx.status(HttpStatus.Code.OK.getCode());
-        ctx.result(convertToResponse(statistic));
-    }
-
-    private String convertToResponse(
-        List<ClientHostStatistic> statistics
-    ) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<ClientHostStatisticDTO> dtos = new ArrayList<>(statistics.size());
-        statistics.stream().map(responseConverter).forEach(dtos::add);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        return mapper.writeValueAsString(dtos);
-    }
-
-    private ClientHostStatisticRequest createFromContextRequestURL(
-        Context ctx
-    ) {
-        ClientHostStatisticRequest dto = new ClientHostStatisticRequest(
-            ctx.queryParam(PUBLIC_KEY_QUERY_PARAM_NAME),
-            ctx.queryParam(PAGE_SIZE_QUERY_PARAM_NAME, int.class, "10").get(),
-            ctx.queryParam(START_PAGE_QUERY_PARAM_NAME, int.class, "1").get()
-        );
-        Set<ConstraintViolation<ClientHostStatisticRequest>> validationResult =
-            validator.validate(dto);
-        if (!validationResult.isEmpty()) {
-            throw new JsonHttpResponseException(
-                HttpStatus.Code.BAD_REQUEST.getCode(),
-                null,
-                validationResult.toArray(new ConstraintViolation[0])
-            );
-        } else {
-            return dto;
         }
     }
 
-    /**
-     * Checks if user is authorized to view the statistic of the
-     * {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost}
-     * associated with teh {@code publicKey}
-     * */
-    private boolean isUserOwnerOfHost(User user, String publicKey) {
-        ClientHost clientHost = clientHostService.getByPublicKey(publicKey);
-        if (clientHost == null) {
-            throw new JsonHttpResponseException(
-                HttpStatus.Code.NOT_FOUND.getCode(),
-                "Client host not found",
-                Collections.emptyMap()
-            );
-        }
-        return clientHost.getOwner().equals(user);
-    }
+    @AllArgsConstructor
+    public static class RequestReadingStrategy
+    implements Function<Context, ClientHostStatisticRequest> {
 
-    private boolean isUserSubscriberOfHost(User user, String publicKey) {
-        ClientHost clientHost = clientHostService.getByPublicKey(publicKey);
-        if (clientHost == null) {
-            throw new JsonHttpResponseException(
-                HttpStatus.Code.NOT_FOUND.getCode(),
-                "Client host not found",
-                Collections.emptyMap()
+        public static final String PUBLIC_KEY_QUERY_PARAM_NAME = "public_key";
+
+        public static final String START_DATE_QUERY_PARAM_NAME = "start_date";
+
+        public static final String END_DATE_QUERY_PARAM_NAME = "end_date";
+
+        private final Function<String, ZonedDateTime>
+        zonedDateTimeReadingStrategy;
+
+        @Override
+        public ClientHostStatisticRequest apply(Context context) {
+            return new ClientHostStatisticRequest(
+                context.queryParam(PUBLIC_KEY_QUERY_PARAM_NAME),
+                zonedDateTimeReadingStrategy.apply(
+                    context.queryParam(START_DATE_QUERY_PARAM_NAME)
+                ),
+                zonedDateTimeReadingStrategy.apply(
+                    context.queryParam(END_DATE_QUERY_PARAM_NAME)
+                )
             );
         }
-        return clientHost.getOwner().equals(user);
     }
 }

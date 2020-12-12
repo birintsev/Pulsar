@@ -48,9 +48,15 @@ public class ServicesModule extends AbstractModule {
 
     @Provides
     ClientHostStatisticService clientHostStatisticService(
-        SessionFactory sessionFactory
+        SessionFactory sessionFactory,
+        ClientHostService clientHostService,
+        UserService userService
     ) {
-        return new ClientHostStatisticServiceImpl(sessionFactory);
+        return new ClientHostStatisticServiceImpl(
+            sessionFactory,
+            clientHostService,
+            userService
+        );
     }
 
     @Provides

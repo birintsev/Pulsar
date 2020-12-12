@@ -10,6 +10,7 @@ import javax.validation.Validator;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.JoinOrganisationRequest;
@@ -58,10 +59,17 @@ public class HandlersModule extends AbstractModule {
     @Provides
     @Named("NewClientHostStatisticHandler")
     Handler newClientHostStatisticHandler(
-        SessionFactory sessionFactory,
-        Function<ClientHostStatisticDTO, ClientHostStatistic> dtoConverter
+        Function<ClientHostStatisticDTO, ClientHostStatistic> dtoConverter,
+        Function<String, ClientHostStatisticDTO> statisticReadingStrategy,
+        Validator validator,
+        ClientHostStatisticService clientHostStatisticService
     ) {
-        return new NewClientHostStatisticHandler(sessionFactory, dtoConverter);
+        return new NewClientHostStatisticHandler(
+            statisticReadingStrategy,
+            validator,
+            clientHostStatisticService,
+            dtoConverter
+        );
     }
 
     @Provides
@@ -105,18 +113,20 @@ public class HandlersModule extends AbstractModule {
     @Provides
     @Named("GetClientHostStatisticHandler")
     Handler getClientHostStatisticHandler(
-        UserService userService,
-        ClientHostService clientHostService,
+        AuthenticationStrategy authenticationStrategy,
+        Function<Context, ClientHostStatisticRequest> requestReadingStrategy,
+        ModelMapper modelMapper,
+        Function<Object, String> defaultResponseWritingStrategy,
         ClientHostStatisticService clientHostStatisticService,
-        Validator validator,
-        Function<ClientHostStatistic, ClientHostStatisticDTO> responseConverter
+        Validator validator
     ) {
         return new GetClientHostStatisticHandler(
-            userService,
-            clientHostService,
-            clientHostStatisticService,
+            authenticationStrategy,
             validator,
-            responseConverter
+            requestReadingStrategy,
+            clientHostStatisticService,
+            modelMapper,
+            defaultResponseWritingStrategy
         );
     }
 

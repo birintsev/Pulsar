@@ -21,6 +21,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.UserRegistrationD
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonReaderStrategy;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.templates.DefaultJsonWriterStrategy;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.ClientHostStatisticRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateOrganisationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.JoinOrganisationRequest;
@@ -39,6 +40,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostSt
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.activetracker.GetHttpAccessibilityCheckResultsRequestHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
 
@@ -258,5 +260,21 @@ public class ConversionServicesModule extends AbstractModule {
     @Provides
     Function<Duration, String> durationStringWriter() {
         return Duration::toString;
+    }
+
+    @Provides
+    Function<Context, ClientHostStatisticRequest>
+    clientHostStatisticRequestExtractingStrategy(
+        Function<String, ZonedDateTime> zonedDateTimeReadingStrategy
+    ) {
+        return new GetClientHostStatisticHandler.RequestReadingStrategy(
+            zonedDateTimeReadingStrategy
+        );
+    }
+
+    @Provides
+    Function<String, ClientHostStatisticDTO>
+    clientHostStatisticDTOReadingStrategy() {
+        return new DefaultJsonReaderStrategy<>(ClientHostStatisticDTO.class);
     }
 }

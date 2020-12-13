@@ -2,13 +2,13 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.templates;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import javax.naming.AuthenticationException;
 import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.AuthenticationException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
 /**

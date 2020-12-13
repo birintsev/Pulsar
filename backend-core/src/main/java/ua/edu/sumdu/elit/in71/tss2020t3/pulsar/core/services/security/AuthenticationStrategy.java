@@ -1,8 +1,8 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security;
 
 import io.javalin.http.Context;
-import javax.naming.AuthenticationException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.AuthenticationException;
 
 /**
  * An authentication provider for a {@link User} {@link Context request}

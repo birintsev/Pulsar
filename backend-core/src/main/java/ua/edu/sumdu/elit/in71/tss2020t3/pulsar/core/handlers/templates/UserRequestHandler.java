@@ -31,6 +31,12 @@ public abstract class UserRequestHandler<REQUEST> implements Handler {
         UserRequestHandler.class
     );
 
+    protected static final String USER_CONTEXT_ATTRIBUTE_NAME =
+        User.class.getName();
+
+    protected static final String REQUEST_CONTEXT_ATTRIBUTE_NAME =
+        "REQUEST";
+
     private final HandlerAuthenticator authenticator;
 
     private final HandlerValidator<REQUEST> handlerValidator;
@@ -48,17 +54,16 @@ public abstract class UserRequestHandler<REQUEST> implements Handler {
         Validator validator,
         Function<Context, REQUEST> requestConverter
     ) {
-        final String userContextAttributeName = User.class.getName();
+
         authenticator = new HandlerAuthenticator(
             authenticationStrategy
         ) {
             @Override
-            public void handleAuthenticated(/*[Step #2]*/
+            public void handleAuthenticated(
                 Context ctx,
                 User user
             ) {
-                ctx.attribute(userContextAttributeName, user);
-                handlerValidator.handle(ctx);
+                ctx.attribute(USER_CONTEXT_ATTRIBUTE_NAME, user);
             }
         };
         handlerValidator = new HandlerValidator<REQUEST>(
@@ -66,26 +71,40 @@ public abstract class UserRequestHandler<REQUEST> implements Handler {
             requestConverter
         ) {
             @Override
-            public void handleValid(/*[Step #3]*/
+            public void handleValid(
                 Context ctx,
                 REQUEST rqst
             ) {
-                handleUserRequest(
-                    rqst,
-                    ctx.attribute(userContextAttributeName),
-                    ctx
-                );
+                ctx.attribute(REQUEST_CONTEXT_ATTRIBUTE_NAME, rqst);
             }
         };
     }
 
     @Override
     public void handle(@NotNull Context ctx) throws Exception {
-        process(ctx);
+        LOGGER.trace("beforeProcess: " + ctx.endpointHandlerPath());
+        beforeProcess(ctx); /*[Step #1]*/
+        LOGGER.trace("process: " + ctx.endpointHandlerPath());
+        process(ctx);       /*[Step #2]*/
+        LOGGER.trace("afterProcess: " + ctx.endpointHandlerPath());
+        afterProcess(ctx);  /*[Step #3]*/
     }
 
-    private void process(Context request) throws Exception {
-        authenticator.handle(request); /*[Step #1]*/
+    protected void beforeProcess(Context request) throws Exception {
+        authenticator.handle(request);
+        handlerValidator.handle(request);
+    }
+
+    protected void process(Context context) {
+        handleUserRequest(
+            context.attribute(REQUEST_CONTEXT_ATTRIBUTE_NAME),
+            context.attribute(USER_CONTEXT_ATTRIBUTE_NAME),
+            context
+        );
+    }
+
+    protected void afterProcess(Context request) {
+        // may be overridden in future extensions of this class
     }
 
     /**
@@ -97,7 +116,7 @@ public abstract class UserRequestHandler<REQUEST> implements Handler {
      * @param requester an authenticated user who sent the request
      * @param context   an original request itself
      * */
-    public abstract void handleUserRequest(/*[Step #4]*/
+    public abstract void handleUserRequest(
         REQUEST request,
         User requester,
         Context context

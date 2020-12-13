@@ -1,5 +1,6 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,5 +21,6 @@ public class JoinOrganisationRequest {
      * An {@link ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.Organisation}
      * identifier a user request to join
      * */
+    @JsonProperty("organisation_id")
     private UUID organisationId;
 }

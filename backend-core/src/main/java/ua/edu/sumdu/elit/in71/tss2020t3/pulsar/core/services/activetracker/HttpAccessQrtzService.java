@@ -3,7 +3,9 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.activetracker;
 import java.net.URL;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
@@ -223,6 +225,24 @@ implements HttpAccessibilityService {
                     endDate
                 )
                 .list();
+        }
+    }
+
+    @Override
+    public Set<HttpAccessibilityCheckConfiguration> getUserSubscriptions(
+        User user
+    ) {
+        try (Session session = sessionFactory.openSession()) {
+            return new HashSet<>(
+                (List<HttpAccessibilityCheckConfiguration>) session
+                    .createQuery(
+                        "select distinct uccs.trackedConfiguration "
+                            + "from UserCheckConfigurationSubscription uccs "
+                            + "where uccs.trackedBy = :user"
+                    )
+                    .setParameter("user", user)
+                    .list()
+            );
         }
     }
 

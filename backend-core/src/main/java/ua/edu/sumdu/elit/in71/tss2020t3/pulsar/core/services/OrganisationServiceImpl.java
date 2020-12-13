@@ -113,9 +113,17 @@ public class OrganisationServiceImpl implements OrganisationService {
         try (Session session = sessionFactory.openSession()) {
             return session
                 .createQuery(
-                    "from Organisation o where :member in elements(o.members)"
+                    "from Organisation o where o.id = :organisationId "
+                        + "and :member in elements(o.members)"
                 )
-                .setParameter("member", user)
+                .setParameter(
+                    "member",
+                    user
+                )
+                .setParameter(
+                    "organisationId",
+                    organisation.getId().getOrganisationId()
+                )
                 .list().size() > 0;
         }
     }

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.activetracker.HttpAccessibilityCheckConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.activetracker.HttpAccessibilityCheckResult;
@@ -174,4 +175,16 @@ public interface HttpAccessibilityService {
         ZonedDateTime startDate,
         ZonedDateTime endDate
     ) throws NotExistsException;
+
+    /**
+     * Finds all the hosts subscribed by passed user
+     *
+     * @param  user a user whose subscriptions are requested
+     * @return      a set of hosts tracking configuration items
+     *              which are tracked by the user
+     *
+     * @see         HttpAccessibilityCheckConfiguration#getTargetUrl
+     * @see         ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.activetracker.UserCheckConfigurationSubscription
+     * */
+    Set<HttpAccessibilityCheckConfiguration> getUserSubscriptions(User user);
 }

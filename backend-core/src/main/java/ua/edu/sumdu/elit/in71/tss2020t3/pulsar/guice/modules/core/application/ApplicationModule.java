@@ -69,6 +69,8 @@ public class ApplicationModule extends AbstractModule {
             Handler createHttpAccessibilityCheckConfigurationRequestHandler,
         @Named("GetHttpAccessibilityCheckResultsRequestHandler")
             Handler getHttpAccessibilityCheckResultsRequestHandler,
+        @Named("GetActiveTrackerUserHosts")
+            Handler getActiveTrackerUserHosts,
         InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
@@ -172,6 +174,11 @@ public class ApplicationModule extends AbstractModule {
             .get(
                 "/active-tracker/results",
                 getHttpAccessibilityCheckResultsRequestHandler,
+                permittedRoles
+            )
+            .get(
+                "/active-tracker/my-hosts",
+                getActiveTrackerUserHosts,
                 permittedRoles
             )
             .exception(

@@ -4,11 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import io.javalin.http.Context;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.function.Function;
 import javax.validation.Validator;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.CPUInfo2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatistic2DTOConverter;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.converters.ClientHostStatisticFromDTOConverter;
@@ -33,8 +37,10 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.requests.activetracker.CreateHttpAccessibilityCheckConfigurationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.requests.activetracker.GetHttpAccessibilityCheckResultsRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.activetracker.HttpAccessibilityCheckConfigurationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.activetracker.HttpAccessibilityCheckResultDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.activetracker.HttpAccessibilityCheckConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.CPUInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo;
@@ -273,8 +279,41 @@ public class ConversionServicesModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     Function<String, ClientHostStatisticDTO>
     clientHostStatisticDTOReadingStrategy() {
         return new DefaultJsonReaderStrategy<>(ClientHostStatisticDTO.class);
+    }
+
+    @Provides
+    @Singleton
+    Function<Context, Void>
+    voidContextConverter() {
+        return context -> null;
+    }
+
+    @Provides
+    @Singleton
+    Function<List<HttpAccessibilityCheckConfigurationDTO>, String>
+    httpAccessibilityCheckConfigurationDTOWritingStrategy(
+        Function<Object, String> defaultWritingStrategy
+    ) {
+        return defaultWritingStrategy::apply;
+    }
+
+    @Provides
+    @Singleton
+    Function<
+        List<HttpAccessibilityCheckConfiguration>,
+        List<HttpAccessibilityCheckConfigurationDTO>
+    >
+    httpAccessibilityCheckConfigurationsToDTOsConverter(
+        ModelMapper modelMapper
+    ) {
+        return configurations -> modelMapper.map(
+            configurations,
+            new TypeToken<List<HttpAccessibilityCheckConfigurationDTO>>() {
+            }.getType()
+        );
     }
 }

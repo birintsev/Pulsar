@@ -19,6 +19,10 @@
             <constraint annotation="javax.validation.constraints.NotNull">
                 <message>Private key must be set</message>
             </constraint>
+            <constraint annotation="javax.validation.constraints.Pattern">
+                <message>Private key must only contain English letters, numbers and be of 5—100 characters in length</message>
+                <element name="regexp"><![CDATA[${pulsar.client_host.private_key.regexp}]]></element>
+            </constraint>
         </field>
         <field name="name">
             <constraint annotation="javax.validation.constraints.NotNull">

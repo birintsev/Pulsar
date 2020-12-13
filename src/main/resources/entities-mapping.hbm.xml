@@ -211,6 +211,11 @@
     </database-object>
 
     <database-object>
+        <create><![CDATA[alter table pu_clients_hosts add constraint client_host_private_key_check check (private_key ~ $$${pulsar.client_host.private_key.regexp}$$)]]></create>
+        <drop><![CDATA[alter table pu_clients_hosts drop constraint client_host_private_key_check]]></drop>
+    </database-object>
+
+    <database-object>
         <create><![CDATA[alter table pu_organisations add constraint pu_organisations_name_check check (name ~ $$${pulsar.organisation.name.regexp}$$)]]></create>
         <drop>alter table pu_organisations drop constraint pu_organisations_name_check</drop>
     </database-object>

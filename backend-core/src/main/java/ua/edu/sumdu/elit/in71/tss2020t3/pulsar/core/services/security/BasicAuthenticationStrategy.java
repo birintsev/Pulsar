@@ -1,10 +1,11 @@
 package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security;
 
 import io.javalin.http.Context;
-import javax.naming.AuthenticationException;
 import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.AuthenticationException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.UserStatusException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.UserService;
 
 /**
@@ -35,7 +36,12 @@ public class BasicAuthenticationStrategy implements AuthenticationStrategy {
         user = userService.findByEmail(email);
         if (user == null) {
             throw new AuthenticationException(
-                "Basic Authentication credentials do not exist"
+                "The user does not exist"
+            );
+        }
+        if (!userService.isActive(user.getId())) {
+            throw new AuthenticationException(
+                new UserStatusException("The user has not confirmed the email")
             );
         }
         if (!password.equals(user.getPassword())) {

@@ -3,7 +3,6 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import java.util.function.Function;
-import javax.naming.AuthenticationException;
 import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
@@ -12,6 +11,8 @@ import org.modelmapper.ModelMapper;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.JsonHttpResponseException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.AuthenticationException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.UserStatusException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
 // just a dummy for further use of another authentication type (e.g. JWT)
@@ -43,7 +44,9 @@ public class AuthenticationHandler implements Handler {
             LOGGER.error(e);
             throw new JsonHttpResponseException(
                 HttpStatus.Code.UNAUTHORIZED.getCode(),
-                "Bad credentials"
+                e.getCause() instanceof UserStatusException
+                    ? "The user has not confirmed the email yet"
+                    : "Bad credentials"
             );
         }
         ctx.result(

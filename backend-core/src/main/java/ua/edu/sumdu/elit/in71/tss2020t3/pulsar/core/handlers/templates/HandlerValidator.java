@@ -53,6 +53,9 @@ public abstract class HandlerValidator<REQUEST> implements Handler {
         HandlerValidator.class
     );
 
+    /**
+     * If set to {@code null}, no validation will be performed
+     * */
     private final Validator validator;
 
     private final Function<Context, REQUEST> requestConverter;
@@ -79,7 +82,9 @@ public abstract class HandlerValidator<REQUEST> implements Handler {
                 "Bad request format"
             );
         }
-        validate(request);
+        if (validator != null) {
+            validate(request);
+        }
         handleValid(ctx, request);
     }
 

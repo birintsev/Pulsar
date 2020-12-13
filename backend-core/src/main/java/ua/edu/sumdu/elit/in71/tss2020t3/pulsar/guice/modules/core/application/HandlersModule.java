@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import java.util.List;
 import java.util.function.Function;
 import javax.validation.Validator;
 import org.hibernate.SessionFactory;
@@ -22,7 +23,9 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.UserResetPasswordDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.requests.activetracker.CreateHttpAccessibilityCheckConfigurationRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.requests.activetracker.GetHttpAccessibilityCheckResultsRequest;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.UserDTO;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.responses.activetracker.HttpAccessibilityCheckConfigurationDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.activetracker.HttpAccessibilityCheckConfiguration;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostStatistic;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.AuthenticationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateClientHostHandler;
@@ -41,6 +44,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRegistrationHan
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserRequestToResetPasswordHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.UserResetPasswordHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.activetracker.CreateHttpAccessibilityCheckConfigurationRequestHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.activetracker.GetActiveTrackerUserHosts;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.activetracker.GetHttpAccessibilityCheckResultsRequestHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.AdminDashboardService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
@@ -327,6 +331,30 @@ public class HandlersModule extends AbstractModule {
             modelMapper,
             accessibilityService,
             defaultResponseWriterStrategy
+        );
+    }
+
+    @Provides
+    @Named("GetActiveTrackerUserHosts")
+    Handler getActiveTrackerUserHosts(
+        AuthenticationStrategy authenticationStrategy,
+        /*Validator validator,*/
+        Function<Context, Void> voidContextConverter,
+        Function<List<HttpAccessibilityCheckConfigurationDTO>, String>
+            responseWritingStrategy,
+        Function<
+            List<HttpAccessibilityCheckConfiguration>,
+            List<HttpAccessibilityCheckConfigurationDTO>
+        > toDtoConverter,
+        HttpAccessibilityService accessibilityService
+    ) {
+        return new GetActiveTrackerUserHosts(
+            authenticationStrategy,
+            /*validator*/null,
+            voidContextConverter,
+            responseWritingStrategy,
+            toDtoConverter,
+            accessibilityService
         );
     }
 }

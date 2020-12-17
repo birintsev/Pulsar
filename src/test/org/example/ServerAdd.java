@@ -6,7 +6,7 @@ import org.example.data.PermanentUserData;
 import org.example.entities.User;
 import org.example.pages.HomePage;
 import org.example.pages.LoginPage;
-import org.example.pages.NewServerPage;
+import org.example.pages.SubscribePage;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -24,7 +24,7 @@ public class ServerAdd
     private ChromeOptions chromeOptions = new ChromeOptions();
     private LoginPage loginPage;
     private HomePage homePage;
-    private NewServerPage newServerPage;
+    private SubscribePage subscribePage;
 
     @BeforeTest
     public void setup(){
@@ -45,9 +45,8 @@ public class ServerAdd
     }
     @Test
     public void server(){
-        Assert.assertEquals("Available Servers", homePage.pageTitle());
-        newServerPage = homePage.addNewServer();
-        homePage = newServerPage.addServer();
+        subscribePage = homePage.addNewServer();
+        homePage = subscribePage.subscribe();
         Assert.assertTrue(true);
     }
     @AfterTest

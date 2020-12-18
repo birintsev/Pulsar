@@ -2,10 +2,12 @@ package moduleCore.entities.client;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.Test;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.testng.asserts.Assertion;
 
 import static org.mockito.Mockito.*;
 
@@ -36,17 +38,18 @@ public class CPUInfoTest {
 
     @Test
     public void testSetNum() throws Exception {
-        cPUInfo.setNum(0d);
+        cPUInfo.setNum(15d);
     }
 
     @Test
     public void testSetUser() throws Exception {
-        cPUInfo.setUser(0d);
+        cPUInfo.setUser(15d);
+
     }
 
     @Test
     public void testSetSystem() throws Exception {
-        cPUInfo.setSystem(0d);
+        cPUInfo.setSystem(15d);
     }
 
     @Test

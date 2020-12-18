@@ -1,7 +1,7 @@
 package moduleConverters;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import java.time.ZonedDateTime;
 import java.util.Date;

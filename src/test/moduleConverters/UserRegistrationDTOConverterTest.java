@@ -3,7 +3,7 @@ package moduleConverters;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -27,7 +27,8 @@ public class UserRegistrationDTOConverterTest {
 
     @Test
     public void testApply() throws Exception {
-        User result = userRegistrationDTOConverter.apply(new UserRegistrationDTO("email", 0, "phoneNumber", "password", "firstName", "lastName", "username"));
+        User result = userRegistrationDTOConverter.apply(
+                new UserRegistrationDTO("email", 0, "phoneNumber", "password", "firstName", "lastName", "username"));
         Assert.assertEquals("User(id=UserID{email='email'}, username=username, firstName=firstName, lastName=lastName, age=0, phoneNumber=phoneNumber, password=password, userStatuses=[])", result.toString());
     }
 }

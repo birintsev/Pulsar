@@ -1,7 +1,7 @@
 package moduleConverters;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import moduleCore.dto.ClientHostStatisticDTO;
 import moduleCore.entities.client.CPUInfo;
 

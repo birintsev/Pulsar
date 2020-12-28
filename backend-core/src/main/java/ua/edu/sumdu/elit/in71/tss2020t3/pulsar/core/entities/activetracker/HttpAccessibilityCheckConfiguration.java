@@ -30,7 +30,7 @@ public class HttpAccessibilityCheckConfiguration implements Serializable {
 
     private static final ChronoUnit TRIGGERS_CHRONO_UNITS = ChronoUnit.MILLIS;
 
-    private static final long SerialVersionUID = 1;
+    private static final long serialVersionUID = 1;
 
     @Id
     @Column(name = "target_url")

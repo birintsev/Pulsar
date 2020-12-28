@@ -28,6 +28,8 @@ public class HttpAccessibilityCheckConfiguration implements Serializable {
 
     private static final ChronoUnit TRIGGERS_CHRONO_UNITS = ChronoUnit.MILLIS;
 
+    public static final Duration MIN_CHECK_INTERVAL = Duration.ofMinutes(5);
+
     @Id
     @Column(name = "target_url")
     private URL targetUrl;

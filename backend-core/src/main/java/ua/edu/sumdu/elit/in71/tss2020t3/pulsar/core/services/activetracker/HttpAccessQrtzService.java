@@ -145,6 +145,16 @@ implements HttpAccessibilityService {
         Duration responseTimeout,
         Duration interval
     ) {
+        if (
+            interval.compareTo(
+                HttpAccessibilityCheckConfiguration.MIN_CHECK_INTERVAL
+            ) < 0
+        ) {
+            throw new IllegalArgumentException(
+                "Interval is less than "
+                    + HttpAccessibilityCheckConfiguration.MIN_CHECK_INTERVAL
+            );
+        }
         HttpAccessibilityCheckConfiguration configuration = findByTargetUrl(
             targetUrl
         );

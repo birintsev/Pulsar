@@ -37,6 +37,23 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
     }
 
     @Override
+    public BigInteger getTotalUsersNumber(ZonedDateTime before) {
+        try (Session session = sessionFactory.openSession()) {
+            return new BigInteger(
+                session
+                    .createQuery(
+                        "select count(distinct urc.id.user) "
+                            + "from UserRegistrationConfirmation urc "
+                            + "where urc.registrationDate <= :before"
+                    )
+                    .setParameter("before", before)
+                    .getSingleResult()
+                    .toString()
+            );
+        }
+    }
+
+    @Override
     public BigInteger getActiveUsersNumber() {
         try (Session session = sessionFactory.openSession()) {
             return new BigInteger(
@@ -50,6 +67,26 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                     .setParameter(
                         "registrationConfirmedStatus",
                         new UserStatus(USER_STATUS_REGISTRATION_CONFIRMED)
+                    )
+                    .getSingleResult()
+                    .toString()
+            );
+        }
+    }
+
+    @Override
+    public BigInteger getActiveUsersNumber(ZonedDateTime before) {
+        try (Session session = sessionFactory.openSession()) {
+            return new BigInteger(
+                session
+                    .createQuery(
+                        "select count(distinct urc.id.user) "
+                            + "from UserRegistrationConfirmation urc "
+                            + "where urc.confirmationDate <= :before"
+                    )
+                    .setParameter(
+                        "before",
+                        before
                     )
                     .getSingleResult()
                     .toString()
@@ -95,6 +132,33 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
     }
 
     @Override
+    public BigInteger getActiveClientHostsNumber(
+        ZonedDateTime from,
+        ZonedDateTime to
+    ) {
+        try (Session session = sessionFactory.openSession()) {
+            return new BigInteger(
+                session
+                    .createQuery(
+                        "select count(distinct chs.id.clientHost) "
+                            + "from ClientHostStatistic chs "
+                            + "where chs.id.clientLocalTime >= "
+                            + ":lastReceivedStatisticDate "
+                            + "and chs.id.clientLocalTime between :from and :to"
+                    )
+                    .setParameter("from", from)
+                    .setParameter("to", to)
+                    .setParameter(
+                        "lastReceivedStatisticDate",
+                        to.minus(CLIENT_HOST_MAX_ACTIVE_DURATION)
+                    )
+                    .getSingleResult()
+                    .toString()
+            );
+        }
+    }
+
+    @Override
     public BigInteger getTotalSentEmailsNumber() {
         try (Session session = sessionFactory.openSession()) {
             return new BigInteger(
@@ -102,6 +166,27 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                     .createQuery(
                         "select count(distinct e) from Email e"
                     )
+                    .getSingleResult()
+                    .toString()
+            );
+        }
+    }
+
+    @Override
+    public BigInteger getTotalSentEmailsNumber(
+        ZonedDateTime from,
+        ZonedDateTime to
+    ) {
+        try (Session session = sessionFactory.openSession()) {
+            return new BigInteger(
+                session
+                    .createQuery(
+                        "select count(distinct e) "
+                            + "from Email e "
+                            + "where e.sentWhen between :from and :to"
+                    )
+                    .setParameter("from", from)
+                    .setParameter("to", to)
                     .getSingleResult()
                     .toString()
             );
@@ -117,6 +202,27 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                         "select count(distinct ac) "
                             + "from HttpAccessibilityCheckResult ac"
                     )
+                    .getSingleResult()
+                    .toString()
+            );
+        }
+    }
+
+    @Override
+    public BigInteger getTotalActiveChecksNumber(
+        ZonedDateTime from,
+        ZonedDateTime to
+    ) {
+        try (Session session = sessionFactory.openSession()) {
+            return new BigInteger(
+                session
+                    .createQuery(
+                        "select count(distinct ac) "
+                            + "from HttpAccessibilityCheckResult ac "
+                            + "where ac.checkedWhen between :from and :to"
+                    )
+                    .setParameter("from", from)
+                    .setParameter("to", to)
                     .getSingleResult()
                     .toString()
             );

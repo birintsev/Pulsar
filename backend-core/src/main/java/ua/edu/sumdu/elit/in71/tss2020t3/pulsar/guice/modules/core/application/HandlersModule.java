@@ -287,12 +287,16 @@ public class HandlersModule extends AbstractModule {
     Handler getAdminDashboardHandler(
         AuthenticationStrategy authenticationStrategy,
         AdminDashboardService adminDashboardService,
-        Function<Object, String> defaultResponseWriter
+        Function<Object, String> defaultResponseWriter,
+        Validator validator,
+        Function<Context, GetAdminDashboardHandler.Request> requestConverter
     ) {
         return new GetAdminDashboardHandler(
             authenticationStrategy,
             adminDashboardService,
-            defaultResponseWriter
+            defaultResponseWriter,
+            validator,
+            requestConverter
         );
     }
 

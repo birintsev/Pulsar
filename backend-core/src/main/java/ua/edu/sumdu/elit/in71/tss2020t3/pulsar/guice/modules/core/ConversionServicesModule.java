@@ -46,6 +46,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostSt
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.DiskInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.MemoryInfo;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.NetworkInfo;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAdminDashboardHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetClientHostStatisticHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.activetracker.GetHttpAccessibilityCheckResultsRequestHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.ClientHostService;
@@ -314,6 +315,16 @@ public class ConversionServicesModule extends AbstractModule {
             configurations,
             new TypeToken<List<HttpAccessibilityCheckConfigurationDTO>>() {
             }.getType()
+        );
+    }
+
+    @Provides
+    @Singleton
+    Function<Context, GetAdminDashboardHandler.Request> requestConverter(
+        Function<String, ZonedDateTime> zonedDateTimeReader
+    ) {
+        return new GetAdminDashboardHandler.RequestConverter(
+            zonedDateTimeReader
         );
     }
 }

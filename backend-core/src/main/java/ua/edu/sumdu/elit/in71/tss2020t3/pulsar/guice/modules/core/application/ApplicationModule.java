@@ -184,7 +184,7 @@ public class ApplicationModule extends AbstractModule {
                 permittedRoles
             )
             .get(
-                "/client-hosts/delete",
+                "/client-host/delete",
                 deleteClientHost,
                 permittedRoles
             )

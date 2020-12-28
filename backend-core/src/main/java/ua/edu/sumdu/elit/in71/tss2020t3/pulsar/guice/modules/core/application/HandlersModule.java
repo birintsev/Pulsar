@@ -7,6 +7,7 @@ import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import java.util.List;
 import java.util.function.Function;
+import javax.inject.Singleton;
 import javax.validation.Validator;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
@@ -30,6 +31,7 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHostSt
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.AuthenticationHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateClientHostHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.CreateOrganisationHandler;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.DeleteClientHostHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAdminDashboardHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetAllClientHostsHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.GetUserClientHostsHandler;
@@ -287,12 +289,16 @@ public class HandlersModule extends AbstractModule {
     Handler getAdminDashboardHandler(
         AuthenticationStrategy authenticationStrategy,
         AdminDashboardService adminDashboardService,
-        Function<Object, String> defaultResponseWriter
+        Function<Object, String> defaultResponseWriter,
+        Validator validator,
+        Function<Context, GetAdminDashboardHandler.Request> requestConverter
     ) {
         return new GetAdminDashboardHandler(
             authenticationStrategy,
             adminDashboardService,
-            defaultResponseWriter
+            defaultResponseWriter,
+            validator,
+            requestConverter
         );
     }
 
@@ -355,6 +361,23 @@ public class HandlersModule extends AbstractModule {
             responseWritingStrategy,
             toDtoConverter,
             accessibilityService
+        );
+    }
+
+    @Provides
+    @Singleton
+    @Named("DeleteClientHost")
+    Handler deleteClientHost(
+        AuthenticationStrategy authenticationStrategy,
+        Validator validator,
+        Function<Context, DeleteClientHostHandler.Request> requestConverter,
+        ClientHostService clientHostService
+    ) {
+        return new DeleteClientHostHandler(
+            authenticationStrategy,
+            validator,
+            requestConverter,
+            clientHostService
         );
     }
 }

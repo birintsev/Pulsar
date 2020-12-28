@@ -19,6 +19,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserSubscription;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.NotExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.UserAccessException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.UserStatusException;
 
 public class ClientHostServiceImpl implements ClientHostService {
@@ -299,6 +301,40 @@ public class ClientHostServiceImpl implements ClientHostService {
             return new HashSet<>(
                 (List<ClientHost>) session.createQuery("from ClientHost").list()
             );
+        }
+    }
+
+    @Override
+    public void removeByRequest(User requester, String privateKey)
+    throws UserAccessException, NotExistsException {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction t;
+            ClientHost clientHost = session.find(
+                ClientHost.class,
+                new ClientHost.ID(privateKey)
+            );
+            if (clientHost == null) {
+                throw new NotExistsException(
+                    "Client host with privateKey = "
+                        + privateKey
+                        + " does not exist"
+                );
+            }
+            if (!requester.equals(clientHost.getOwner())) {
+                throw new UserAccessException(
+                    requester,
+                    clientHost,
+                    "The requester (username = "
+                        + requester.getUsername()
+                        + ") is not an owner of client host (name = "
+                        + clientHost.getName()
+                        + ") requested to be removed"
+                );
+            }
+            t = session.beginTransaction();
+            session.delete(clientHost);
+            session.flush();
+            t.commit();
         }
     }
 }

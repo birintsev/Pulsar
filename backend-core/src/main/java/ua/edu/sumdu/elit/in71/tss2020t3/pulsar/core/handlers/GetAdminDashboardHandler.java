@@ -3,13 +3,15 @@ package ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.javalin.http.Context;
 import java.math.BigInteger;
+import java.time.ZonedDateTime;
 import java.util.function.Function;
+import javax.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.log4j.Logger;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
-import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.templates.HandlerAuthenticator;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.handlers.templates.UserRequestHandler;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.AdminDashboardService;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.AuthenticationStrategy;
 
@@ -26,7 +28,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.services.security.Authentica
  *
  * @see ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.UserStatus#USER_STATUS_ADMIN_ACCOUNT
  * */
-public class GetAdminDashboardHandler extends HandlerAuthenticator {
+public class GetAdminDashboardHandler
+extends UserRequestHandler<GetAdminDashboardHandler.Request> {
 
     private static final Logger LOGGER = Logger.getLogger(
         GetAdminDashboardHandler.class
@@ -43,27 +46,48 @@ public class GetAdminDashboardHandler extends HandlerAuthenticator {
      *                               client hosts etc.
      * @param defaultResponseWriter  a default converter for
      *                               {@link Response response} entities
+     * @param requestConverter       request POJO converter
+     * @param validator              entities validator
      * */
     public GetAdminDashboardHandler(
         AuthenticationStrategy authenticationStrategy,
         AdminDashboardService adminDashboardService,
-        Function<Object, String> defaultResponseWriter
+        Function<Object, String> defaultResponseWriter,
+        Validator validator,
+        Function<Context, Request> requestConverter
     ) {
-        super(authenticationStrategy);
+        super(authenticationStrategy, validator, requestConverter);
         this.adminDashboardService = adminDashboardService;
         this.defaultResponseWriter = defaultResponseWriter;
     }
 
     @Override
-    public void handleAuthenticated(Context context, User user) {
+    public void handleUserRequest(
+        Request request,
+        User requester,
+        Context context
+    ) {
         String stringResponse = defaultResponseWriter.apply(
             new Response(
-                adminDashboardService.getTotalUsersNumber(),
-                adminDashboardService.getActiveUsersNumber(),
+                adminDashboardService.getTotalUsersNumber(
+                    request.getEndDate()
+                ),
+                adminDashboardService.getActiveUsersNumber(
+                    request.getEndDate()
+                ),
                 adminDashboardService.getTotalClientHostsNumber(),
-                adminDashboardService.getActiveClientHostsNumber(),
-                adminDashboardService.getTotalSentEmailsNumber(),
-                adminDashboardService.getTotalActiveChecksNumber()
+                adminDashboardService.getActiveClientHostsNumber(
+                    request.getStartDate(),
+                    request.getEndDate()
+                ),
+                adminDashboardService.getTotalSentEmailsNumber(
+                    request.getStartDate(),
+                    request.getEndDate()
+                ),
+                adminDashboardService.getTotalActiveChecksNumber(
+                    request.getStartDate(),
+                    request.getEndDate()
+                )
             )
         );
         LOGGER.info("Current admin dashboard statistic: " + stringResponse);
@@ -95,5 +119,38 @@ public class GetAdminDashboardHandler extends HandlerAuthenticator {
 
         @JsonProperty("total_active_http_checks")
         private BigInteger totalActiveHttpChecks;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static final class Request {
+
+        private ZonedDateTime startDate;
+
+        private ZonedDateTime endDate;
+    }
+
+    @AllArgsConstructor
+    public static final class RequestConverter
+    implements Function<Context, Request> {
+
+        private final Function<String, ZonedDateTime> zonedDateTimeReader;
+
+        @Override
+        public Request apply(Context context) {
+            Request request = new Request();
+            request.setStartDate(
+                zonedDateTimeReader.apply(
+                    context.queryParam("start_date")
+                )
+            );
+            request.setEndDate(
+                zonedDateTimeReader.apply(
+                    context.queryParam("end_date")
+                )
+            );
+            return request;
+        }
     }
 }

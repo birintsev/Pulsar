@@ -71,6 +71,8 @@ public class ApplicationModule extends AbstractModule {
             Handler getHttpAccessibilityCheckResultsRequestHandler,
         @Named("GetActiveTrackerUserHosts")
             Handler getActiveTrackerUserHosts,
+        @Named("DeleteClientHost")
+            Handler deleteClientHost,
         InitialDataLoader initialDataLoader
     ) {
         Set<Role> permittedRoles = new HashSet<>(
@@ -179,6 +181,11 @@ public class ApplicationModule extends AbstractModule {
             .get(
                 "/active-tracker/my-hosts",
                 getActiveTrackerUserHosts,
+                permittedRoles
+            )
+            .get(
+                "/client-hosts/delete",
+                deleteClientHost,
                 permittedRoles
             )
             .exception(

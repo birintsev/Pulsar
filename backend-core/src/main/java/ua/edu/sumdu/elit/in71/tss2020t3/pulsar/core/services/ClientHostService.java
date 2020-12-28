@@ -5,6 +5,8 @@ import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.dto.CreateClientHostDTO;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.User;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.entities.client.ClientHost;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.AlreadyExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.NotExistsException;
+import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.UserAccessException;
 import ua.edu.sumdu.elit.in71.tss2020t3.pulsar.core.exceptions.businesslogic.UserStatusException;
 
 public interface ClientHostService {
@@ -118,4 +120,19 @@ public interface ClientHostService {
      * @return all the existing {@link ClientHost client hosts}
      * */
     Set<ClientHost> getAll();
+
+    /**
+     * Removes client host passed by {@code privateKey}
+     *
+     * @param  privateKey          a private key that points to a client host
+     * @param  requester           a user who has requested to remove
+     *                             the client host
+     * @throws UserAccessException if user is not authorized to remove
+     *                             the a client host pointed
+     *                             by passed {@code privateKey}
+     * @throws NotExistsException  if the client host denoted
+     *                             by passed {@code privateKey} does not exist
+     * */
+    void removeByRequest(User requester, String privateKey)
+        throws UserAccessException, NotExistsException;
 }

@@ -2,7 +2,8 @@ package moduleConverters;
 
 import moduleCore.entities.client.*;
 import org.junit.Assert;
-import org.junit.Test;
+import org.testng.annotations.Test;
+//import org.testng.annotations.Test;
 import moduleCore.dto.ClientHostStatisticDTO;
 import moduleCore.entities.User;
 import moduleCore.entities.UserStatus;

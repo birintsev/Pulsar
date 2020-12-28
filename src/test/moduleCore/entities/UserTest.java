@@ -2,11 +2,11 @@ package moduleCore.entities;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import moduleCore.entities.client.objects.UserObject;
+import objects.UserObject;
 
 import java.util.Arrays;
 import java.util.HashSet;

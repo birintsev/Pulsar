@@ -1,9 +1,10 @@
 package moduleConverters;
 
 import moduleCore.entities.client.*;
+import org.hibernate.validator.constraints.ModCheck;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -11,6 +12,7 @@ import moduleCore.dto.ClientHostStatisticDTO;
 import moduleCore.entities.User;
 import moduleCore.entities.UserStatus;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.function.Function;
@@ -26,15 +28,31 @@ public class ClientHostStatistic2DTOConverterTest {
     Function<MemoryInfo, ClientHostStatisticDTO.MemoryInfoDTO> memoryInfoConverter;
     @InjectMocks
     ClientHostStatistic2DTOConverter clientHostStatistic2DTOConverter;
+    @Mock
+    ClientHostStatistic clientHostStatistic = null;
+    @Mock
+    MemoryInfo memoryInfo = null;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        clientHostStatistic = new ClientHostStatistic();
+        clientHostStatistic.setAgentVersion("1");
+        clientHostStatistic.setHost("testhost");
+        memoryInfo = new MemoryInfo();
+        memoryInfo.setActive(BigInteger.TEN);
+        clientHostStatistic.setMemoryInfo(memoryInfo);
     }
 
     @Test
     public void testApply() throws Exception {
-        ClientHostStatisticDTO result = clientHostStatistic2DTOConverter.apply(new ClientHostStatistic(new ClientHostStatistic.ClientHostStatisticID(new ClientHost(new ClientHost.ID("privateKey"), "publicKey", new User(new User.UserID("email"), "username", "firstName", "lastName", 0, "phoneNumber", "password", new HashSet<UserStatus>(Arrays.asList(new UserStatus("status")))), "name"), null), "host", null, null, new HashSet<LoadAverage>(Arrays.asList(new LoadAverage(null, Integer.valueOf(0), Double.valueOf(0)))), new HashSet<CPUInfo>(Arrays.asList(new CPUInfo())), new HashSet<DiskInfo>(Arrays.asList(new DiskInfo())), new MemoryInfo(null, null, null, null, null, null), new HashSet<NetworkInfo>(Arrays.asList(new NetworkInfo(null, "name", null, null)))));
-        Assert.assertEquals("ClientHostStatisticDTO(host=host, clientLocalTime=null, bootTime=null, publicKey=null, agentVersion=null, cpuInfoList=[null], disksInfo=[null], loadAverage=[0.0], memoryInfo=null, networksInfo=[null])", result.toString());
+        ClientHostStatisticDTO result = clientHostStatistic2DTOConverter.apply(new ClientHostStatistic(new ClientHostStatistic.ClientHostStatisticID(new ClientHost(new ClientHost.ID("privateKey"), "publicKey", new User(
+                new User.UserID("email"), "username", "firstName", "lastName", 17, "phoneNumber", "password",
+                new HashSet<>(Arrays.asList(new UserStatus("status")))), "name"), null), "testhost", null, null,
+                new HashSet<>(Arrays.asList(new LoadAverage(clientHostStatistic, 15, 15d))),
+                new HashSet<>(Arrays.asList(new CPUInfo())), new HashSet<>(Arrays.asList(new DiskInfo())),
+                new MemoryInfo(clientHostStatistic, BigInteger.ONE, BigInteger.ONE, BigInteger.ONE, BigInteger.ONE, BigInteger.ONE),
+                new HashSet<>(Arrays.asList(new NetworkInfo(null, "name", BigInteger.ONE, BigInteger.ONE)))));
+        Assert.assertEquals("ClientHostStatisticDTO(host=testhost, clientLocalTime=null, bootTime=null, publicKey=null, agentVersion=null, cpuInfoList=[null], disksInfo=[null], loadAverage=[15.0], memoryInfo=null, networksInfo=[null])", result.toString());
     }
 }

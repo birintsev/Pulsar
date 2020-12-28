@@ -20,6 +20,7 @@ public class EmailPage extends PageObject{
     private By emailField = By.xpath("//span[@id='email']");
     private By message = By.xpath("//td[contains(text(), 'tss')]");
     private By frame = By.xpath("//iframe");
+    private By elem = By.xpath("//button//span[contains(text(), 'Sign In')]");
 
     private String jsScript = "alert(document.getElementById('iframeMail').contentWindow.document.body.innerHTML);";
     private String regexp = "href=[\\'\"]?([^\\'\" >]+)";
@@ -36,6 +37,7 @@ public class EmailPage extends PageObject{
         return tabs;
     }
     public String getEmail(){
+        wait.until(ExpectedConditions.visibilityOfElementLocated(emailField));
         return driver.findElement(emailField).getText();
     }
     public void clickToSubmit(){
@@ -73,6 +75,7 @@ public class EmailPage extends PageObject{
 
     public LoginPage submitCreation(){
         clickToSubmit();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(elem));
         return new LoginPage(driver, user);
     }
 }

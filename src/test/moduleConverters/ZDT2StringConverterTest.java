@@ -1,7 +1,7 @@
 package moduleConverters;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class ZDT2StringConverterTest {
     ZDT2StringConverter zDT2StringConverter = new ZDT2StringConverter();

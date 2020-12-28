@@ -1,9 +1,9 @@
 package moduleCore.entities.client;
 
-import moduleCore.entities.client.objects.ClientHostObject;
+import objects.ClientHostObject;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;

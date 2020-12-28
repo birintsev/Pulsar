@@ -81,22 +81,25 @@ public interface HttpAccessibilityService {
      * for executing regular active HTTP/HTTPS accessibility checks
      * ONLY in case when passed {@code targetUrl} is not already tracked
      *
-     * @param  targetUrl       a destination address
-     *                         (HTTP/HTTPS-based) to be checked
-     *                         by a scheduled job for a new
-     *                         {@link HttpAccessibilityCheckConfiguration configuration item}
-     * @param  responseTimeout a response timeout after which
-     *                         the host will be considered as
-     *                         unavailable
-     * @param  interval        a time period between two
-     *                         subsequent checks
-     * @return                 a new configuration item for tracking
-     *                         HTTP/HTTPS accessibility of the {@code targetUrl}
-     *                         or the existing one if it exists
-     *                         (<strong>NOTE</strong> that in this case
-     *                         the {@code interval} and {@code responseTimeout}
-     *                         are not updated in existing configuration)
-     * @see                    #create(URL, Duration, Duration)
+     * @param  targetUrl                   a destination address
+     *                                     (HTTP/HTTPS-based) to be checked
+     *                                     by a scheduled job for a new
+     *                                     {@link HttpAccessibilityCheckConfiguration
+     *                                     configuration item}
+     * @param  responseTimeout             a response timeout after which
+     *                                     the host will be considered as
+     *                                     unavailable
+     * @param  interval                    a time period between two
+     *                                     subsequent checks
+     * @return                             a new configuration item for tracking
+     *                                     HTTP/HTTPS accessibility of the {@code targetUrl}
+     *                                     or the existing one if it exists
+     *                                     (<strong>NOTE</strong> that in this case
+     *                                     the {@code interval} and {@code responseTimeout}
+     *                                     are not updated in existing configuration)
+     * @exception IllegalArgumentException if the interval is less than
+     *                                     {@link HttpAccessibilityCheckConfiguration#MIN_CHECK_INTERVAL}
+     * @see                                #create(URL, Duration, Duration)
      * */
     HttpAccessibilityCheckConfiguration createIfNotExist(
         URL targetUrl,
